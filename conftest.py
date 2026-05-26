@@ -15,8 +15,10 @@ from dotenv import load_dotenv
 
 # Load .env from the project root before pytest collects any tests.
 # This must happen at module import time so os.getenv(...) works everywhere.
-ROOT_DIR = Path(__file__).parent
-load_dotenv(ROOT_DIR / ".env")
+load_dotenv(Path(__file__).parent / ".env")
+
+from fixtures.browser_fixtures import *  # noqa: F401, F403, E402
+from fixtures.auth_fixtures import *     # noqa: F401, F403, E402
 
 
 # -----------------------------------------------------------------------------

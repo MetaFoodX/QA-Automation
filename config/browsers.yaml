@@ -1,0 +1,43 @@
+# Browser settings for Playwright. Defaults aim to work on Jenkins out of the box.
+# Local overrides: set HEADED=1 or BROWSER=firefox in your .env (or shell) before pytest.
+
+# Which browser engine to launch.
+# Options: chromium | firefox | webkit
+engine: chromium
+
+# Which "channel" of Chromium to use.
+# Options:
+#   chrome    — installed Google Chrome (matches your dev workflow)
+#   msedge    — installed Edge
+#   null      — Playwright's bundled chromium (lighter, used on Jenkins)
+# Leave null in CI so it works on a fresh Linux agent with no Chrome installed.
+channel: null
+
+# Headless = no visible browser window. REQUIRED on Jenkins (no display).
+# Locally: leave true. Set HEADED=1 in .env to flip when debugging.
+headless: true
+
+# Viewport (browser window) size in pixels.
+viewport:
+  width: 1440
+  height: 900
+
+# Delay (ms) between each Playwright action. Useful when you set HEADED=1
+# and want to watch the test step by step. Leave 0 for normal runs.
+slow_mo: 0
+
+# Record a video of every test run. Off by default (slows things down).
+# Set true when chasing a flaky test, or wire it to "on failure only" later.
+record_video: false
+
+# Record a Playwright trace file (full DOM + network + screenshots).
+# Off by default. The pytest-playwright plugin can flip this to "on failure"
+# automatically later — for now, keep simple.
+record_trace: false
+
+# Ignore HTTPS certificate errors (useful on dev environments with self-signed certs).
+ignore_https_errors: false
+
+# Browser locale and timezone — affects date formatting, currency, etc.
+locale: en-US
+timezone: America/Los_Angeles

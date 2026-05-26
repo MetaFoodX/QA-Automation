@@ -1,0 +1,33 @@
+# All time values are in milliseconds.
+# Tests/pages reference these by name (settings.timeouts.<name>), never as literals.
+
+# --- Action timeouts (how long Playwright waits for an element/action) ---
+
+# Page navigation: page.goto(), expect_navigation, etc.
+# Generous because cold-cache page loads on staging can be slow.
+navigation: 120000           # 2 minutes
+
+# Default for any other Playwright action (click, fill, locator wait).
+# Most should finish well under this; this is just the upper bound before
+# Playwright gives up and raises TimeoutError.
+default: 30000               # 30 seconds
+
+
+# --- Named explicit waits (used inside page objects when we need to wait) ---
+
+# Use these instead of arbitrary numbers like page.wait_for_timeout(2000).
+# Names describe intent: "this is a short pause" — not "wait 500ms because I said so."
+
+short: 500                   # 0.5s — let a small UI change settle
+medium: 2000                 # 2s   — give a dropdown / dialog time to appear
+long: 5000                   # 5s   — slow operations (data loads, large lists)
+
+
+# --- Retry settings (used by helpers like the Ant Design virtual-scroll loop) ---
+
+# Number of times the antd_helpers.scroll_and_select() helper will try scrolling
+# before declaring the option not found.
+scroll_max_attempts: 30
+
+# Pause between scroll attempts inside that helper.
+scroll_step_pause: 300

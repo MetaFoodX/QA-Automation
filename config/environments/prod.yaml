@@ -1,0 +1,15 @@
+# Production — live customer-facing systems.
+#
+# SAFETY: any test marked @pytest.mark.destructive is auto-skipped
+# when name == "prod". This applies regardless of which URL is targeted.
+
+# Usage:
+#   ENV=prod pytest                                            # uses default below
+#   ENV=prod BASE_URL=https://customer-a.skoopin.net pytest    # different prod
+#
+# In Jenkins: the build form has an ENV dropdown and an optional
+# BASE_URL text box. Leave BASE_URL blank to use the default below.
+
+name: prod
+base_url: https://mercato.skoopin.net
+allow_destructive: false

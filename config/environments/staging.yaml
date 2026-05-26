@@ -1,0 +1,9 @@
+# Staging — production-like, primary testing environment.
+# Any test (destructive or not) is allowed here.
+
+name: staging
+base_url: https://staging-mercato.skoopin.net
+allow_destructive: true
+
+# Test data defaults
+test_venue: Delicious Without

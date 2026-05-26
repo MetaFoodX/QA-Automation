@@ -1,0 +1,22 @@
+# Test user roles → credentials.
+#
+# Passwords reference env vars via ${VAR} placeholders, resolved at load
+# time by config/settings.py. Real values live in .env (local) or Jenkins
+# credentials (CI). Never put real passwords in this file.
+#
+# Each role has:
+#   email       — login email (can be a literal or ${VAR})
+#   password    — password (always ${VAR})
+#   role        — short tag describing the user's permissions (informational)
+#   description — what kind of user this is, for humans reading the file
+#
+# To add a new user:
+#   1. Add a new entry below
+#   2. Add the ${VAR} names to .env.example (without values)
+#   3. Put the real values in your local .env (or Jenkins credentials)
+
+kitchen_sapna:
+  email: ${SKOOPIN_KITCHEN_SAPNA_EMAIL}
+  password: ${SKOOPIN_KITCHEN_SAPNA_PASSWORD}
+  role: kitchen
+  description: Staging User 
