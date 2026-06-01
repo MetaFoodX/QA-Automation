@@ -25,7 +25,7 @@ class ExecutiveInsightsPage(BasePage):
         super().__init__(page)
         self._summary_row_count = None
 
-    def open_via_nav(self, restaurant: str = "Spanish Restaurant"):
+    def open_via_nav(self, restaurant: str = "Raj Restaurant"):
         """Pick restaurant → navigate via sidebar → cache summary row count."""
         self.select_current_view(restaurant)
         self.navigate_via_sidebar(self.SIDEBAR_GROUP, self.SIDEBAR_ITEM)
@@ -177,3 +177,61 @@ class ExecutiveInsightsPage(BasePage):
     def get_headers(self) -> list[str]:
         """Return the current table column header texts."""
         return self.page.locator("table thead th").all_inner_texts()
+
+    def get_all_rows(self) -> list[dict]:
+        """Read rows across all pagination pages, then reset pagination to page 1.
+
+        Resetting at the end prevents the page-2-or-later state from leaking
+        into subsequent operations (e.g., the summary view re-rendering still
+        on page 2 after navigate_back).
+        """
+        all_rows = list(self.get_rows())
+
+        while self._click_next_page():
+            all_rows.extend(self.get_rows())
+
+        self._reset_to_first_page()
+        return all_rows
+
+
+    def _reset_to_first_page(self):
+        """Click the pagination 'page 1' button if not already there."""
+        active = self.page.locator(".ant-pagination-item-active").first
+
+        if not active.is_visible():
+            return  # no pagination (single page, fewer rows than pageSize)
+
+        current = int(active.inner_text().strip())
+        if current == 1:
+            return  # already on page 1
+
+        self.page.locator(".ant-pagination-item-1").click()
+        self.page.locator(
+            ".ant-pagination-item-1.ant-pagination-item-active"
+        ).wait_for(state="visible")
+
+
+    def _click_next_page(self) -> bool:
+        """Click the pagination 'Next' button. Returns True if clicked, False if disabled."""
+        next_button = self.page.locator("li.ant-pagination-next")
+
+        if not next_button.is_visible():
+            return False
+
+        classes = next_button.get_attribute("class") or ""
+        if "ant-pagination-disabled" in classes:
+            return False
+
+        # Capture current active page so we can wait for it to advance
+        current_active = self.page.locator(".ant-pagination-item-active").first
+        current_page = int(current_active.inner_text().strip())
+
+        next_button.click()
+
+        # Wait for the next page indicator to become active.
+        # Works for client-side (instant DOM swap) and server-side (after API).
+        self.page.locator(
+            f".ant-pagination-item-{current_page + 1}.ant-pagination-item-active"
+        ).wait_for(state="visible")
+
+        return True

@@ -19,6 +19,7 @@ load_dotenv(Path(__file__).parent / ".env")
 
 from fixtures.browser_fixtures import *  # noqa: F401, F403, E402
 from fixtures.auth_fixtures import *     # noqa: F401, F403, E402
+from fixtures.api_fixtures import *
 
 
 # -----------------------------------------------------------------------------

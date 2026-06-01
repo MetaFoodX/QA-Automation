@@ -10,7 +10,7 @@ navigation: 120000           # 2 minutes
 # Default for any other Playwright action (click, fill, locator wait).
 # Most should finish well under this; this is just the upper bound before
 # Playwright gives up and raises TimeoutError.
-default: 30000               # 30 seconds
+default: 30000              # 30 seconds
 
 
 # --- Named explicit waits (used inside page objects when we need to wait) ---

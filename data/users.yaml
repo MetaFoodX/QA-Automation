@@ -20,3 +20,9 @@ kitchen_sapna:
   password: ${SKOOPIN_KITCHEN_SAPNA_PASSWORD}
   role: kitchen
   description: Staging User 
+
+system:
+  email: ${API_USERNAME}
+  password: ${API_PASSWORD}
+  role: system
+  description: System account for API authentication (separate from kitchen_sapna)

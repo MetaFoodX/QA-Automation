@@ -6,6 +6,9 @@ WHAT the test exercises, not WHERE it runs.
 Tests import the constants they need:
     from data.test_constants import DEFAULT_MEAL, CATEGORY_VEGETABLES
 """
+from datetime import date, timedelta
+
+_today = date.today()
 
 # Meal options (- All Meals - dropdown values)
 MEAL_BREAKFAST = "Breakfast"
@@ -28,5 +31,5 @@ NO_DATA_AVAILABLE = (
     "Headers loaded correctly. Marking as pass since there's nothing to verify."
 )
 
-DEFAULT_DATE_START = "05/15/2026"
-DEFAULT_DATE_END = "05/22/2026"
+DEFAULT_DATE_START = (_today - timedelta(days=7)).strftime("%m/%d/%Y")
+DEFAULT_DATE_END = _today.strftime("%m/%d/%Y")
