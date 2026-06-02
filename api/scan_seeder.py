@@ -9,7 +9,7 @@ from data.fixtures import RESTAURANTS
 
 ALLOWED_TYPES = [1, 2, 3, 4, 7, 8, 9]
 WEIGHT_RANGE_OZ = (100, 800)
-DEFAULT_SCAN_COUNT = 2000
+DEFAULT_SCAN_COUNT = 50
 
 DUMMY_IMAGE_BASE64 = "data:image/jpeg;base64,/9j/111"
 DUMMY_DEPTH_ARRAY  = [[12, 2, 1], [2, 3, 4]]
