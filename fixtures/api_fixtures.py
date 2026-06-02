@@ -47,17 +47,11 @@ def scan_client(access_token) -> ScanClient:
 
 
 @pytest.fixture(scope="session")
-def seeded_basic_scans(scan_client) -> list[str]:
-    """Insert basic scenario scans before tests, delete them after.
-
-    Returns the list of inserted scan IDs.
-    """
-    print("\n[seed] ENTERING seeded_basic_scans fixture")
-    seeder = ScanSeeder(scan_client, "post_data.json")
-    inserted_ids = seeder.seed()
-    print(f"\n[seed] Inserted {len(inserted_ids)} scans for test session")
-
-    yield inserted_ids
-
+def seeded_basic_scans(scan_client) -> list[dict]:
+    """Seed scans once per session, yield payloads, clean up at end."""
+    seeder = ScanSeeder(scan_client)
+    inserted = seeder.seed()
+    print(f"\n[seed] Inserted {len(inserted)} scans for test session")
+    yield inserted
     seeder.cleanup()
     print(f"\n[cleanup] Deleted {len(inserted_ids)} scans")
