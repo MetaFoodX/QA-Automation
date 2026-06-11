@@ -1,6 +1,17 @@
 pipeline {
     agent any
 
+    parameters {
+        choice(name: 'ENV',         choices: ['staging', 'production'], description: 'Target environment')
+        string(name: 'BASE_URL',    defaultValue: 'https://staging-mercato.skoopin.net', description: 'Base URL of the target environment')
+        choice(name: 'TEST_SUITE',  choices: ['all', 'smoke', 'regression'], description: 'Which tests to run')
+    }
+
+    environment {
+        ENV      = "${params.ENV}"
+        BASE_URL = "${params.BASE_URL}"
+    }
+
     stages {
         stage('Install Dependencies') {
             steps {
@@ -12,15 +23,16 @@ pipeline {
         stage('Run Tests') {
             steps {
                 withCredentials([
-                    string(credentialsId: 'env',                          variable: 'ENV'),
-                    string(credentialsId: 'base-url',                     variable: 'BASE_URL'),
-                    string(credentialsId: 'cognito-client-id',            variable: 'COGNITO_CLIENT_ID'),
-                    string(credentialsId: 'api-username',                 variable: 'API_USERNAME'),
-                    string(credentialsId: 'api-password',                 variable: 'API_PASSWORD'),
-                    string(credentialsId: 'skoopin-kitchen-sapna-email',  variable: 'SKOOPIN_KITCHEN_SAPNA_EMAIL'),
-                    string(credentialsId: 'skoopin-kitchen-sapna-password', variable: 'SKOOPIN_KITCHEN_SAPNA_PASSWORD'),
+                    string(credentialsId: 'qa-cognito-client-id',          variable: 'COGNITO_CLIENT_ID'),
+                    string(credentialsId: 'qa-api-username',               variable: 'API_USERNAME'),
+                    string(credentialsId: 'qa-api-password',               variable: 'API_PASSWORD'),
+                    string(credentialsId: 'qa-ui-username',                variable: 'SKOOPIN_KITCHEN_SAPNA_EMAIL'),
+                    string(credentialsId: 'qa-ui-password',                variable: 'SKOOPIN_KITCHEN_SAPNA_PASSWORD'),
                 ]) {
-                    sh 'pytest tests/ --ignore=tests/test_seed.py -s --alluredir=allure-results --clean-alluredir'
+                    script {
+                        def markerFlag = params.TEST_SUITE == 'all' ? '' : "-m ${params.TEST_SUITE}"
+                        sh "pytest tests/ --ignore=tests/test_seed.py -s ${markerFlag} --alluredir=allure-results --clean-alluredir"
+                    }
                 }
             }
         }
