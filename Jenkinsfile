@@ -47,6 +47,7 @@ exit \$PYTEST_EXIT
                             chmod +x run_tests.sh
 
                             CID=\$(docker create \\
+                                -w /workspace \\
                                 -e ENV='${params.ENV}' \\
                                 -e BASE_URL='${params.BASE_URL}' \\
                                 -e COGNITO_CLIENT_ID="\$COGNITO_CLIENT_ID" \\
