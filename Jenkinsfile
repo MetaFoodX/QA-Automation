@@ -14,10 +14,23 @@ pipeline {
     }
 
     stages {
+        stage('Checkout') {
+            steps {
+                git branch: "${params.BRANCH}",
+                    credentialsId: 'git',
+                    url: 'https://github.com/MetaFoodX/QA-Automation'
+            }
+        }
+
         stage('Install Dependencies') {
             steps {
-                sh 'pip3 install .'
-                sh 'playwright install chromium'
+                sh '''
+                    python3 --version
+                    pip3 --version
+                    pip3 install .
+                    playwright install chromium
+                    allure --version || (npm install -g allure-commandline && allure --version)
+                '''
             }
         }
 
