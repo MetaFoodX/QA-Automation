@@ -1,20 +1,53 @@
 pipeline {
     agent any
 
+    parameters {
+        string(name: 'BRANCH',      defaultValue: 'main',                               description: 'Git branch to build')
+        choice(name: 'ENV',         choices: ['staging', 'production'],                  description: 'Target environment')
+        string(name: 'BASE_URL',    defaultValue: 'https://staging-mercato.skoopin.net', description: 'Base URL of the target environment')
+        choice(name: 'TEST_SUITE',  choices: ['all', 'smoke', 'regression'],             description: 'Which tests to run')
+    }
+
     environment {
-        PATH = "/Library/Frameworks/Python.framework/Versions/3.14/bin:/opt/homebrew/bin:${env.PATH}"
+        ENV      = "${params.ENV}"
+        BASE_URL = "${params.BASE_URL}"
     }
 
     stages {
+        stage('Checkout') {
+            steps {
+                git branch: "${params.BRANCH}",
+                    credentialsId: 'git',
+                    url: 'https://github.com/MetaFoodX/QA-Automation'
+            }
+        }
+
         stage('Install Dependencies') {
             steps {
-                sh 'pip3 install -r requirements.txt'
+                sh '''
+                    python3 --version
+                    pip3 --version
+                    pip3 install .
+                    playwright install chromium
+                    allure --version || (npm install -g allure-commandline && allure --version)
+                '''
             }
         }
 
         stage('Run Tests') {
             steps {
-                sh 'pytest tests/ --ignore=tests/test_seed.py -s --alluredir=allure-results --clean-alluredir'
+                withCredentials([
+                    string(credentialsId: 'qa-cognito-client-id',          variable: 'COGNITO_CLIENT_ID'),
+                    string(credentialsId: 'qa-api-username',               variable: 'API_USERNAME'),
+                    string(credentialsId: 'qa-api-password',               variable: 'API_PASSWORD'),
+                    string(credentialsId: 'qa-ui-username',                variable: 'SKOOPIN_KITCHEN_SAPNA_EMAIL'),
+                    string(credentialsId: 'qa-ui-password',                variable: 'SKOOPIN_KITCHEN_SAPNA_PASSWORD'),
+                ]) {
+                    script {
+                        def markerFlag = params.TEST_SUITE == 'all' ? '' : "-m ${params.TEST_SUITE}"
+                        sh "pytest tests/ --ignore=tests/test_seed.py -s ${markerFlag} --alluredir=allure-results --clean-alluredir"
+                    }
+                }
             }
         }
 

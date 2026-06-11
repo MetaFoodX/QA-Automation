@@ -68,12 +68,16 @@ class ScanSeeder:
         return self.inserted_payloads
 
     def cleanup(self) -> None:
+        failed = []
         for payload in self.inserted_payloads:
             try:
                 self.client.delete_scan(payload["ID"])
             except Exception as e:
                 print(f"Failed to delete scan {payload['ID']}: {e}")
-        print(f"[cleanup] Deleted {len(self.inserted_payloads)} scans")
+                failed.append(payload)
+        deleted = len(self.inserted_payloads) - len(failed)
+        self.inserted_payloads = failed
+        print(f"[cleanup] Deleted {deleted} scans, {len(failed)} failed")
 
     def seed_concurrent(self, workers: int = 20) -> list[dict]:
         scans = generate_scans(self.count)
@@ -100,17 +104,22 @@ class ScanSeeder:
 
     def cleanup_concurrent(self, workers: int = 20) -> None:
         lock = threading.Lock()
-        deleted = []
+        failed = []
 
         def delete(payload):
-            try:
-                self.client.delete_scan(payload["ID"])
-                with lock:
-                    deleted.append(payload["ID"])
-            except Exception as e:
-                print(f"Failed to delete scan {payload['ID']}: {e}")
+            for attempt in range(3):
+                try:
+                    self.client.delete_scan(payload["ID"])
+                    return
+                except Exception as e:
+                    if attempt == 2:
+                        with lock:
+                            failed.append(payload)
+                        print(f"Failed to delete scan {payload['ID']}: {e}")
 
         with ThreadPoolExecutor(max_workers=workers) as executor:
-            executor.map(delete, self.inserted_payloads)
+            executor.map(delete, list(self.inserted_payloads))
 
-        print(f"[cleanup_concurrent] Deleted {len(deleted)} scans")
+        deleted = len(self.inserted_payloads) - len(failed)
+        self.inserted_payloads = failed
+        print(f"[cleanup_concurrent] Deleted {deleted} scans, {len(failed)} failed")

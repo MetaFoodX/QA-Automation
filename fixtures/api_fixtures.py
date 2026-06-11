@@ -56,7 +56,7 @@ def scan_client(access_token) -> ScanClient:
 def seeded_basic_scans(scan_client) -> list[dict]:
     """Seed scans once per session, yield payloads, clean up at end."""
     seeder = ScanSeeder(scan_client)
-    inserted = seeder.seed()
+    inserted = seeder.seed_concurrent()
     log.info("Seeded %d scans for test session", len(inserted))
 
     JSON_REPORT_DIR.mkdir(parents=True, exist_ok=True)
@@ -66,4 +66,4 @@ def seeded_basic_scans(scan_client) -> list[dict]:
     log.info("Seed data saved → %s", json_path)
 
     yield inserted
-    seeder.cleanup()
+    seeder.cleanup_concurrent()
