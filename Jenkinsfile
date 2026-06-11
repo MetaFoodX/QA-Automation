@@ -9,6 +9,8 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 sh 'pip3 install .'
+                sh 'playwright install chromium'
+                sh 'cp /Users/bhavesh/QA-Automation/.env $WORKSPACE/.env'
             }
         }
 
