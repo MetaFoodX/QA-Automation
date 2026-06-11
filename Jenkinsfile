@@ -63,6 +63,7 @@ exit \$PYTEST_EXIT
                             docker logs \$CID
                             docker cp \$CID:/workspace/allure-results . 2>/dev/null || true
                             docker cp \$CID:/workspace/allure-report  . 2>/dev/null || true
+                            docker cp \$CID:/workspace/reports        . 2>/dev/null || true
                             docker rm \$CID
                             exit \$EXIT
                         """
@@ -75,7 +76,7 @@ exit \$PYTEST_EXIT
     post {
         always {
             archiveArtifacts artifacts: 'allure-report/index.html', fingerprint: true
-            archiveArtifacts artifacts: 'reports/junit.xml', fingerprint: true
+            archiveArtifacts artifacts: 'reports/**', fingerprint: true
         }
     }
 }

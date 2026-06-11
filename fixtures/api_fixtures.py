@@ -19,7 +19,7 @@ from api.scan_seeder import ScanSeeder
 
 USERS_FILE = Path(__file__).parent.parent / "data" / "users.yaml"
 ENV_VAR_PATTERN = re.compile(r"\$\{([A-Za-z_][A-Za-z0-9_]*)\}")
-JSON_REPORT_DIR = Path("/Users/bhavesh/Documents/Reports/Json")
+JSON_REPORT_DIR = Path(os.environ.get("JSON_REPORT_DIR", "reports/json"))
 
 
 def _resolve(value: str) -> str:
