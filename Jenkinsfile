@@ -53,7 +53,7 @@ exit \$PYTEST_EXIT
                                 -e API_PASSWORD="\$API_PASSWORD" \\
                                 -e SKOOPIN_KITCHEN_SAPNA_EMAIL="\$SKOOPIN_KITCHEN_SAPNA_EMAIL" \\
                                 -e SKOOPIN_KITCHEN_SAPNA_PASSWORD="\$SKOOPIN_KITCHEN_SAPNA_PASSWORD" \\
-                                --volumes-from \$HOSTNAME \\
+                                --volumes-from \$(cat /etc/hostname) \\
                                 -w \$WORKSPACE \\
                                 qa-automation-ci \\
                                 \$WORKSPACE/run_tests.sh
