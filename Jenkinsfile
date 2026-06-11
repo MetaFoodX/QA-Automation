@@ -56,7 +56,7 @@ exit \$PYTEST_EXIT
                                 -e SKOOPIN_KITCHEN_SAPNA_PASSWORD="\$SKOOPIN_KITCHEN_SAPNA_PASSWORD" \\
                                 qa-automation-ci bash /workspace/run_tests.sh)
 
-                            docker cp . \$CID:/workspace
+                            docker cp "\$WORKSPACE/." "\$CID:/workspace"
                             docker start \$CID
                             EXIT=\$(docker wait \$CID)
                             docker logs \$CID

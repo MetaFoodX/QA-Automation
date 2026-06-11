@@ -4,6 +4,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     git \
     nodejs \
     npm \
+    default-jre-headless \
     && npm install -g allure-commandline \
     && pip install --no-cache-dir playwright \
     && playwright install --with-deps chromium \
