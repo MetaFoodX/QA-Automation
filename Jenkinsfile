@@ -45,7 +45,8 @@ exit \$PYTEST_EXIT
 """
                         sh """
                             chmod +x run_tests.sh
-                            docker run --rm \\
+
+                            CID=\$(docker create \\
                                 -e ENV='${params.ENV}' \\
                                 -e BASE_URL='${params.BASE_URL}' \\
                                 -e COGNITO_CLIENT_ID="\$COGNITO_CLIENT_ID" \\
@@ -53,10 +54,16 @@ exit \$PYTEST_EXIT
                                 -e API_PASSWORD="\$API_PASSWORD" \\
                                 -e SKOOPIN_KITCHEN_SAPNA_EMAIL="\$SKOOPIN_KITCHEN_SAPNA_EMAIL" \\
                                 -e SKOOPIN_KITCHEN_SAPNA_PASSWORD="\$SKOOPIN_KITCHEN_SAPNA_PASSWORD" \\
-                                --volumes-from \$(cat /etc/hostname) \\
-                                -w \$WORKSPACE \\
-                                qa-automation-ci \\
-                                \$WORKSPACE/run_tests.sh
+                                qa-automation-ci bash /workspace/run_tests.sh)
+
+                            docker cp . \$CID:/workspace
+                            docker start \$CID
+                            EXIT=\$(docker wait \$CID)
+                            docker logs \$CID
+                            docker cp \$CID:/workspace/allure-results . 2>/dev/null || true
+                            docker cp \$CID:/workspace/allure-report  . 2>/dev/null || true
+                            docker rm \$CID
+                            exit \$EXIT
                         """
                     }
                 }
