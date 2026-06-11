@@ -1,8 +1,12 @@
 """HTTP client for the Scan API."""
 
+import allure
 import requests
+from requests.adapters import HTTPAdapter
 
 from config.settings import settings
+
+_POOL_SIZE = 55
 
 
 class ScanClient:
@@ -11,6 +15,9 @@ class ScanClient:
     def __init__(self, access_token: str):
         self.base_url = f"{settings.base_url}/api/v1"
         self.session = requests.Session()
+        adapter = HTTPAdapter(pool_connections=_POOL_SIZE, pool_maxsize=_POOL_SIZE)
+        self.session.mount("https://", adapter)
+        self.session.mount("http://", adapter)
         self.session.headers.update({
             "Authorization": f"Bearer {access_token}",
             "Content-Type": "application/json",
@@ -19,19 +26,22 @@ class ScanClient:
 
     def insert_scan(self, scan: dict) -> dict:
         url = f"{self.base_url}/scans"
-
-        print(f"\n[scan_client] POST {url}")
-        print(f"[scan_client] Scan ID: {scan.get('ID')}")
-
-        resp = self.session.post(url, json=scan, timeout=30)
-
-        print(f"[scan_client] Status Code: {resp.status_code}")
-        print(f"[scan_client] Response: {resp.text}")
-
-        resp.raise_for_status()
-        return resp.json()
+        with allure.step(f"POST /scans [{scan.get('MenuItemName', '?')}]"):
+            resp = self.session.post(url, json=scan, timeout=30)
+            resp.raise_for_status()
+            allure.attach(
+                f"status={resp.status_code}  time={resp.elapsed.total_seconds():.3f}s",
+                name="response",
+                attachment_type=allure.attachment_type.TEXT,
+            )
+            return resp.json()
 
     def delete_scan(self, scan_id: str) -> None:
-        """DELETE a scan by ID."""
-        resp = self.session.delete(f"{self.base_url}/scans/{scan_id}", timeout=30)
-        resp.raise_for_status()
+        with allure.step(f"DELETE /scans/{scan_id}"):
+            resp = self.session.delete(f"{self.base_url}/scans/{scan_id}", timeout=30)
+            resp.raise_for_status()
+            allure.attach(
+                f"status={resp.status_code}  time={resp.elapsed.total_seconds():.3f}s",
+                name="response",
+                attachment_type=allure.attachment_type.TEXT,
+            )

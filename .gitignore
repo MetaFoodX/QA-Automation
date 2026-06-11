@@ -38,3 +38,7 @@ allure-results/
 
 # === Mac noise ===
 .DS_Store
+
+# === Dev repo reference (local only) ===
+ui-yoda/
+ui_yoda/

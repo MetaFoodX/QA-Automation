@@ -1,5 +1,6 @@
 """Base class for Executive Insights pages."""
 
+import re
 import time
 
 from playwright.sync_api import expect
@@ -25,16 +26,14 @@ class ExecutiveInsightsPage(BasePage):
         super().__init__(page)
         self._summary_row_count = None
 
-    def open_via_nav(self, restaurant: str = "Raj Restaurant"):
+    def open_via_nav(self, restaurant: str = "Test Kitchen"):
         """Pick restaurant → navigate via sidebar → cache summary row count."""
         self.select_current_view(restaurant)
         self.navigate_via_sidebar(self.SIDEBAR_GROUP, self.SIDEBAR_ITEM)
         self.page.wait_for_selector(L.TABLE_LOADED_MARKER)
         self.page.wait_for_load_state("networkidle")
-        self.page.locator(L.TABLE_BODY_ROW).first.wait_for(state="visible")
+        self._wait_for_table_to_settle()
 
-        # Cache the summary row count — this is what we expect to see again
-        # after every navigate_back_to_summary call.
         self._summary_row_count = self.page.locator(L.TABLE_BODY_ROW).count()
 
     def set_venue(self, venue_name: str):
@@ -163,6 +162,23 @@ class ExecutiveInsightsPage(BasePage):
         # Filter change triggers a refetch — wait for the table to settle
         self._wait_for_table_to_settle()
     
+    def is_venue_selected(self, venue_name: str) -> bool:
+        """Check if the given venue name is currently selected in the venue dropdown."""
+        return (
+            self.page.locator(f"form.ant-form .ant-select-selection-item:has-text('{venue_name}')")
+            .is_visible()
+        )
+
+    def click_column_sort(self, column_name: str):
+        """Click a column header to cycle sort state (none → asc → desc → none)."""
+        self.page.get_by_role("columnheader", name=re.compile(rf"^{re.escape(column_name)}")).click()
+        self._wait_for_table_to_settle()
+
+    def toggle_day_view(self):
+        """Click the day-range toggle button — switches between by-date and combined view."""
+        self.page.locator(L.FILTER_ACTION_BUTTONS).nth(0).click()
+        self._wait_for_table_to_settle()
+
     def toggle_cost_view(self):
         """Click the cost/weight toggle button (next to day-toggle).
 
