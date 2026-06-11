@@ -2,9 +2,10 @@ pipeline {
     agent any
 
     parameters {
-        choice(name: 'ENV',         choices: ['staging', 'production'], description: 'Target environment')
+        string(name: 'BRANCH',      defaultValue: 'main',                               description: 'Git branch to build')
+        choice(name: 'ENV',         choices: ['staging', 'production'],                  description: 'Target environment')
         string(name: 'BASE_URL',    defaultValue: 'https://staging-mercato.skoopin.net', description: 'Base URL of the target environment')
-        choice(name: 'TEST_SUITE',  choices: ['all', 'smoke', 'regression'], description: 'Which tests to run')
+        choice(name: 'TEST_SUITE',  choices: ['all', 'smoke', 'regression'],             description: 'Which tests to run')
     }
 
     environment {
