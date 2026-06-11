@@ -6,6 +6,6 @@ base_url: https://staging-mercato.skoopin.net
 allow_destructive: true
 
 # Test data defaults
-test_venue: Dinning Hall
+test_venue: Mexican Venue
 # Cognito client ID for API authentication
 cognito_client_id: ${COGNITO_CLIENT_ID}

@@ -19,3 +19,8 @@ class ConsumptionSummaryPage(ExecutiveInsightsPage):
     COL_PRODUCTION = "Production (lb)"
     COL_CONSUMPTION = "Consumption (lb)"
     COL_OVERPRODUCTION = "Overproduction (lb)"
+
+    # Full column names in cost ($) view
+    COL_PRODUCTION_COST = "Production ($)"
+    COL_CONSUMPTION_COST = "Consumption ($)"
+    COL_OVERPRODUCTION_COST = "Overproduction ($)"

@@ -1,5 +1,7 @@
 """Scan seeder: generates N random scans across the test account and POSTs them."""
 import random
+import threading
+from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta
 from uuid import uuid4
 
@@ -9,7 +11,7 @@ from data.fixtures import RESTAURANTS
 
 ALLOWED_TYPES = [1, 2, 3, 4, 7, 8, 9]
 WEIGHT_RANGE_OZ = (100, 800)
-DEFAULT_SCAN_COUNT = 50
+DEFAULT_SCAN_COUNT = 200
 
 DUMMY_IMAGE_BASE64 = "data:image/jpeg;base64,/9j/111"
 DUMMY_DEPTH_ARRAY  = [[12, 2, 1], [2, 3, 4]]
@@ -72,3 +74,43 @@ class ScanSeeder:
             except Exception as e:
                 print(f"Failed to delete scan {payload['ID']}: {e}")
         print(f"[cleanup] Deleted {len(self.inserted_payloads)} scans")
+
+    def seed_concurrent(self, workers: int = 20) -> list[dict]:
+        scans = generate_scans(self.count)
+        base_date = datetime.now() - timedelta(days=7)
+        for index, scan in enumerate(scans):
+            scan["ID"] = str(uuid4())
+            scan["CapturedAt"] = (base_date + timedelta(days=index % 8)).strftime("%Y-%m-%dT%H:%M:%S.000Z")
+
+        lock = threading.Lock()
+
+        def insert(scan):
+            try:
+                self.client.insert_scan(scan)
+                with lock:
+                    self.inserted_payloads.append(scan)
+            except Exception as e:
+                print(f"Failed to insert scan {scan.get('ID')}: {e}")
+
+        with ThreadPoolExecutor(max_workers=workers) as executor:
+            executor.map(insert, scans)
+
+        print(f"[seed_concurrent] Inserted {len(self.inserted_payloads)}/{self.count} scans")
+        return self.inserted_payloads
+
+    def cleanup_concurrent(self, workers: int = 20) -> None:
+        lock = threading.Lock()
+        deleted = []
+
+        def delete(payload):
+            try:
+                self.client.delete_scan(payload["ID"])
+                with lock:
+                    deleted.append(payload["ID"])
+            except Exception as e:
+                print(f"Failed to delete scan {payload['ID']}: {e}")
+
+        with ThreadPoolExecutor(max_workers=workers) as executor:
+            executor.map(delete, self.inserted_payloads)
+
+        print(f"[cleanup_concurrent] Deleted {len(deleted)} scans")
