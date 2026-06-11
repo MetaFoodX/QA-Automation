@@ -53,10 +53,10 @@ exit \$PYTEST_EXIT
                                 -e API_PASSWORD="\$API_PASSWORD" \\
                                 -e SKOOPIN_KITCHEN_SAPNA_EMAIL="\$SKOOPIN_KITCHEN_SAPNA_EMAIL" \\
                                 -e SKOOPIN_KITCHEN_SAPNA_PASSWORD="\$SKOOPIN_KITCHEN_SAPNA_PASSWORD" \\
-                                -v "\$WORKSPACE:/workspace" \\
-                                -w /workspace \\
+                                --volumes-from \$HOSTNAME \\
+                                -w \$WORKSPACE \\
                                 qa-automation-ci \\
-                                /workspace/run_tests.sh
+                                \$WORKSPACE/run_tests.sh
                         """
                     }
                 }
@@ -66,7 +66,6 @@ exit \$PYTEST_EXIT
 
     post {
         always {
-            sh 'docker rmi qa-automation-ci --no-prune || true'
             archiveArtifacts artifacts: 'allure-report/index.html', fingerprint: true
             archiveArtifacts artifacts: 'reports/junit.xml', fingerprint: true
         }
