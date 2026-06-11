@@ -1,5 +1,10 @@
 pipeline {
-    agent any
+    agent {
+        dockerfile {
+            filename 'Dockerfile.ci'
+            args '-u root'
+        }
+    }
 
     parameters {
         string(name: 'BRANCH',      defaultValue: 'main',                               description: 'Git branch to build')
@@ -26,10 +31,8 @@ pipeline {
             steps {
                 sh '''
                     python3 --version
-                    pip3 --version
                     pip3 install .
-                    playwright install chromium
-                    allure --version || (npm install -g allure-commandline && allure --version)
+                    playwright install --with-deps chromium
                 '''
             }
         }
