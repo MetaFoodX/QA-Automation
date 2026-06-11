@@ -7,7 +7,7 @@ from pathlib import Path
 import pytest
 from dotenv import load_dotenv
 
-OUTCOMES_DIR = Path("/Users/bhavesh/Documents/Reports/Outcomes")
+OUTCOMES_DIR = Path(os.environ.get("QA_OUTCOMES_DIR", "reports/outcomes"))
 ALLURE_RESULTS = Path("allure-results")
 
 _run_timestamp: str = ""
