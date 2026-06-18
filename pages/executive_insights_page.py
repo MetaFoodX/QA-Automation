@@ -164,10 +164,42 @@ class ExecutiveInsightsPage(BasePage):
     
     def is_venue_selected(self, venue_name: str) -> bool:
         """Check if the given venue name is currently selected in the venue dropdown."""
+        return self.is_filter_selected(venue_name)
+
+    def is_filter_selected(self, value: str) -> bool:
+        """Check if any filter dropdown in the header form currently shows the given value."""
         return (
-            self.page.locator(f"form.ant-form .ant-select-selection-item:has-text('{venue_name}')")
+            self.page.locator(f"{L.FILTER_SELECTION_ITEM}:has-text('{value}')")
             .is_visible()
         )
+
+    def click_search_toggle(self):
+        """Toggle the menu-item search select visible/hidden."""
+        opening = not self.page.locator(L.SEARCH_MINIMIZE_BUTTON).is_visible()
+        self.page.locator(
+            f"{L.SEARCH_BUTTON}, {L.SEARCH_MINIMIZE_BUTTON}"
+        ).first.click()
+        expected_state = "visible" if opening else "hidden"
+        self.page.locator(L.MENU_ITEM_SEARCH_SELECT).wait_for(state=expected_state)
+
+    def is_search_active(self) -> bool:
+        """True if the menu-item search select is currently shown (arrow icon visible)."""
+        return self.page.locator(L.SEARCH_MINIMIZE_BUTTON).is_visible()
+
+    def select_menu_items_in_search(self, *item_names: str):
+        """Open the Menu Items multi-select and pick items by display name."""
+        self.page.locator(L.MENU_ITEM_SEARCH_SELECT).click()
+        for name in item_names:
+            select_dropdown_option(self.page, name, exact=True)
+        self.page.keyboard.press("Escape")
+        self._wait_for_table_to_settle()
+
+    def clear_menu_item_search(self):
+        """Clear all selected items in the Menu Items search multi-select."""
+        select = self.page.locator(L.MENU_ITEM_SEARCH_SELECT)
+        select.hover()
+        select.locator(".ant-select-clear").click()
+        self._wait_for_table_to_settle()
 
     def click_column_sort(self, column_name: str):
         """Click a column header to cycle sort state (none → asc → desc → none)."""
@@ -178,6 +210,20 @@ class ExecutiveInsightsPage(BasePage):
         """Click the day-range toggle button — switches between by-date and combined view."""
         self.page.locator(L.FILTER_ACTION_BUTTONS).nth(0).click()
         self._wait_for_table_to_settle()
+
+    def click_export_button(self):
+        """Click the export (download) button — 3rd action button after the date picker."""
+        self.page.locator(L.FILTER_ACTION_BUTTONS).nth(2).click()
+
+    def download_export(self):
+        """Click export and return the resulting Playwright Download object."""
+        with self.page.expect_download() as dl_info:
+            self.click_export_button()
+        return dl_info.value
+
+    def is_export_button_enabled(self) -> bool:
+        """Return True if the export button is not disabled."""
+        return not self.page.locator(L.FILTER_ACTION_BUTTONS).nth(2).is_disabled()
 
     def toggle_cost_view(self):
         """Click the cost/weight toggle button (next to day-toggle).

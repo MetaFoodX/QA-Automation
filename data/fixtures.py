@@ -25,6 +25,7 @@ class ServicePeriod:
 class MenuItem:
     id: int
     name: str
+    category: str = ""
 
 
 @dataclass(frozen=True)
@@ -52,32 +53,33 @@ RESTAURANT_A = Restaurant(
         "v_a2": Venue(id="89070b42-42f9-4568-8eeb-21896622f5e6", name="Stuffing Venue"),
     },
     service_periods={
-        "all_day":  ServicePeriod(id="6e49bf41-2f2c-4c1f-9210-f4c29aeb342a", name="All Day"),
-        "breakfast": ServicePeriod(id="46ef8254-14eb-4152-9523-5f706d8a2c03", name="Breakfast"),
+        "all_day": ServicePeriod(id="6e49bf41-2f2c-4c1f-9210-f4c29aeb342a", name="All Day"),
+        "lunch":   ServicePeriod(id="92d56099-e75f-4984-b0c5-dd62705b06f9", name="Lunch"),
+        "dinner":  ServicePeriod(id="27a36991-3ae1-41c4-a5b6-9882e6b76d93", name="Dinner"),
     },
     menu_items={
         # Fruits
-        "ancient_tree_black_tea":    MenuItem(id=85458, name="Ancient Tree Black Tea"),
-        "bananas":                   MenuItem(id=85475, name="Bananas"),
-        "cherries":                  MenuItem(id=85522, name="Cherries"),
-        "fresas":                    MenuItem(id=85572, name="Fresas"),
-        "one_birthday_protein_bar":  MenuItem(id=85641, name="One Birthday Protein Bar"),
-        "strawberries":              MenuItem(id=85735, name="Strawberries"),
-        "uvas":                      MenuItem(id=85756, name="Uvas"),
+        "ancient_tree_black_tea":    MenuItem(id=85458, name="Ancient Tree Black Tea",  category="Fruits"),
+        "bananas":                   MenuItem(id=85475, name="Bananas",                 category="Fruits"),
+        "cherries":                  MenuItem(id=85522, name="Cherries",                category="Fruits"),
+        "fresas":                    MenuItem(id=85572, name="Fresas",                  category="Fruits"),
+        "one_birthday_protein_bar":  MenuItem(id=85641, name="One Birthday Protein Bar",category="Fruits"),
+        "strawberries":              MenuItem(id=85735, name="Strawberries",            category="Fruits"),
+        "uvas":                      MenuItem(id=85756, name="Uvas",                    category="Fruits"),
         # Kitchen Waste
-        "diced_ham":                 MenuItem(id=85552, name="Diced Ham"),
-        "edamame":                   MenuItem(id=85561, name="Edamame"),
-        "fennel_trim":               MenuItem(id=85568, name="Fennel Trim"),
+        "diced_ham":                 MenuItem(id=85552, name="Diced Ham",               category="Kitchen Waste"),
+        "edamame":                   MenuItem(id=85561, name="Edamame",                 category="Kitchen Waste"),
+        "fennel_trim":               MenuItem(id=85568, name="Fennel Trim",             category="Kitchen Waste"),
         # Post Consumer
-        "turkey":                    MenuItem(id=85753, name="Turkey"),
-        "vanilla_yogurt":            MenuItem(id=85757, name="Vanilla Yogurt"),
-        "zucchini":                  MenuItem(id=85775, name="Zucchini"),
+        "turkey":                    MenuItem(id=85753, name="Turkey",                  category="Post Consumer"),
+        "vanilla_yogurt":            MenuItem(id=85757, name="Vanilla Yogurt",          category="Post Consumer"),
+        "zucchini":                  MenuItem(id=85775, name="Zucchini",                category="Post Consumer"),
         # Vegetables
-        "hojas_de_espinaca":         MenuItem(id=85600, name="Hojas de Espinaca"),
-        "mi_fan":                    MenuItem(id=85629, name="Mi Fan"),
-        "nuts":                      MenuItem(id=85639, name="Nuts"),
-        "yucca_fries":               MenuItem(id=85772, name="Yucca Fries"),
-        "corn":                      MenuItem(id=85536, name="Corn"),
+        "hojas_de_espinaca":         MenuItem(id=85600, name="Hojas de Espinaca",       category="Vegetables"),
+        "mi_fan":                    MenuItem(id=85629, name="Mi Fan",                  category="Vegetables"),
+        "nuts":                      MenuItem(id=85639, name="Nuts",                    category="Vegetables"),
+        "yucca_fries":               MenuItem(id=85772, name="Yucca Fries",             category="Vegetables"),
+        "corn":                      MenuItem(id=85536, name="Corn",                    category="Vegetables"),
     },
 )
 

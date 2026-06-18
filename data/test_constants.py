@@ -22,9 +22,18 @@ CATEGORY_VEGETABLES = "Vegetables"
 CATEGORY_FRUITS = "Fruits"
 CATEGORY_MEAT = "Meat"
 CATEGORY_KITCHEN_WASTE = "Kitchen Waste"
-CATEGORY_POST_CONSUMER = "Post-Consumer"
+CATEGORY_POST_CONSUMER = "Post Consumer"
 CATEGORY_ALL = "- All Categories -"
 
+# Venue options
+VENUE_ALL = "- All Service Line Venues -"
+
+
+# Cross-period meal test item — absent from fixtures.py so random seeder never touches it
+CROSS_PERIOD_ITEM_ID     = 85537
+CROSS_PERIOD_ITEM_NAME   = "Corn in a Basket"
+CROSS_PERIOD_REFILL_OZ   = 400   # Refill scan at Lunch
+CROSS_PERIOD_LEFTOVER_OZ = 200   # ServedLeftover scan at Dinner (same day)
 
 NO_DATA_AVAILABLE = (
     "No data was available for the selected filters"

@@ -32,6 +32,12 @@ def select_dropdown_option(
     holder = dropdown.locator(VIRTUAL_LIST_HOLDER)
     has_virtual_list = holder.count() > 0
 
+    # Wait for at least one option to render before checking — prevents the
+    # race where the dropdown opens but React hasn't populated the list yet.
+    dropdown.locator(".ant-select-item-option").first.wait_for(
+        state="visible", timeout=settings.timeouts.default
+    )
+
     matcher = (
         re.compile(rf"^\s*{re.escape(option_text)}\s*$")
         if exact else option_text

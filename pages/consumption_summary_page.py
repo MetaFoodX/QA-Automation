@@ -24,3 +24,17 @@ class ConsumptionSummaryPage(ExecutiveInsightsPage):
     COL_PRODUCTION_COST = "Production ($)"
     COL_CONSUMPTION_COST = "Consumption ($)"
     COL_OVERPRODUCTION_COST = "Overproduction ($)"
+
+    # Column headers as they appear in the exported Excel file (row 3)
+    EXPORT_HEADERS = [
+        "Menu Item",
+        "Venue",
+        "Number of Pan",
+        "Production (lb)",
+        "Consumption (lb)",
+        "Overproduction (lb)",
+        "Production ($)",
+        "Consumption ($)",
+        "Overproduction ($)",
+        "Days Served",
+    ]

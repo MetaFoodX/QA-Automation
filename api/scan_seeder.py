@@ -9,7 +9,17 @@ from api.scan_client import ScanClient
 from data.fixtures import RESTAURANTS
 
 
-ALLOWED_TYPES = [1, 2, 3, 4, 7, 8, 9]
+ALLOWED_TYPES_ALL          = [1, 2, 3, 4, 7, 8, 9]
+ALLOWED_TYPES_SERVED_WASTE = [2, 3, 4]        # Post-Consumer: served leftovers only
+ALLOWED_TYPES_PREP_WASTE   = [7, 8, 9]        # Kitchen Waste: not-served leftovers only
+
+CATEGORY_TYPES = {
+    "Fruits":         ALLOWED_TYPES_ALL,
+    "Vegetables":     ALLOWED_TYPES_ALL,
+    "Post-Consumer":  ALLOWED_TYPES_SERVED_WASTE,
+    "Kitchen Waste":  ALLOWED_TYPES_PREP_WASTE,
+}
+
 WEIGHT_RANGE_OZ = (100, 800)
 DEFAULT_SCAN_COUNT = 200
 
@@ -38,7 +48,7 @@ def generate_scans(count: int) -> list[dict]:
             "ImageBase64":      DUMMY_IMAGE_BASE64,
             "DepthArray":       DUMMY_DEPTH_ARRAY,
             "ImageType":        "jpg",
-            "Type":             random.choice(ALLOWED_TYPES),
+            "Type":             random.choice(CATEGORY_TYPES.get(menu_item.category, ALLOWED_TYPES_ALL)),
             "WithPreSignedURL": False,
         })
     return scans

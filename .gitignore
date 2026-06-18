@@ -39,6 +39,9 @@ allure-results/
 # === Mac noise ===
 .DS_Store
 
+# === Playwright MCP session artifacts ===
+.playwright-mcp/
+
 # === Dev repo reference (local only) ===
 ui-yoda/
 ui_yoda/

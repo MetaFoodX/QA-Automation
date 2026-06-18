@@ -26,9 +26,24 @@ DAY_TOGGLE_BUTTON = ".ant-picker-range + button.ant-btn"
 # Anchored to .custom-breadcrumb (Header.jsx wrapper) to scope away from sidebar links.
 BREADCRUMB_PAGE_LINK = ".custom-breadcrumb a[href='#']"
 
+# Breadcrumb item text nodes (span.ant-breadcrumb-link inside .custom-breadcrumb).
+BREADCRUMB_ITEM_LINK = ".custom-breadcrumb .ant-breadcrumb-link"
+
+# Filter dropdown selection item (shows the currently selected value in any filter select).
+FILTER_SELECTION_ITEM = "form.ant-form .ant-select-selection-item"
+
 # Date range picker (Ant RangePicker — uses MM/DD/YYYY format in this app)
 DATE_RANGE_PICKER = ".ant-picker.ant-picker-range"
 
 # All action buttons rendered after the date range picker, in order:
 # 0 = day-toggle, 1 = cost-toggle ($/lb), 2 = export (download)
 FILTER_ACTION_BUTTONS = ".ant-picker-range ~ button.ant-btn"
+
+# Search/Minimize toggle button (rendered BEFORE the RangePicker in Header.jsx)
+SEARCH_BUTTON = "form.ant-form button:has(.anticon-search)"
+SEARCH_MINIMIZE_BUTTON = "form.ant-form button:has(.anticon-arrow-right)"
+
+# Menu Items multi-select — only visible when search is active.
+# Ant Design renders placeholder as a <span>, not input[placeholder],
+# so match by .ant-select-multiple (only multi-select in this form).
+MENU_ITEM_SEARCH_SELECT = "form.ant-form .ant-select-multiple"
