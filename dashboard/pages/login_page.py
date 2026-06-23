@@ -1,7 +1,7 @@
 """Login page actions."""
-from config.settings import settings
-from pages.base_page import BasePage
-from locators import login_locators as L
+from shared.config.settings import settings
+from dashboard.pages.base_page import BasePage
+from dashboard.locators import login_locators as L
 
 
 class LoginPage(BasePage):

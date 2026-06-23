@@ -92,6 +92,6 @@ def pytest_sessionfinish(session, exitstatus):  # noqa: ARG001
 
 load_dotenv(Path(__file__).parent / ".env")
 
-from fixtures.browser_fixtures import *  # noqa: F401, F403, E402
-from fixtures.auth_fixtures import *     # noqa: F401, F403, E402
-from fixtures.api_fixtures import *      # noqa: F401, F403, E402
+from dashboard.fixtures.browser_fixtures import *  # noqa: F401, F403, E402
+from dashboard.fixtures.auth_fixtures import *     # noqa: F401, F403, E402
+from dashboard.fixtures.api_fixtures import *      # noqa: F401, F403, E402

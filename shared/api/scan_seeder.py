@@ -5,8 +5,8 @@ from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta
 from uuid import uuid4
 
-from api.scan_client import ScanClient
-from data.fixtures import RESTAURANTS
+from shared.api.scan_client import ScanClient
+from shared.data.fixtures import RESTAURANTS
 
 
 ALLOWED_TYPES_ALL          = [1, 2, 3, 4, 7, 8, 9]

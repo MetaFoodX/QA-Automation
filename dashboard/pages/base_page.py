@@ -2,8 +2,8 @@
 
 from playwright.sync_api import Page
 
-from locators import common_locators as L
-from utils.antd_helpers import select_dropdown_option
+from dashboard.locators import common_locators as L
+from shared.utils.antd_helpers import select_dropdown_option
 
 
 class BasePage:

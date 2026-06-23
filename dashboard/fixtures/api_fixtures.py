@@ -13,12 +13,12 @@ import yaml
 
 log = logging.getLogger(__name__)
 
-from api.auth_client import get_access_token
-from config.settings import settings
-from api.scan_client import ScanClient
-from api.scan_seeder import ScanSeeder
+from shared.api.auth_client import get_access_token
+from shared.config.settings import settings
+from shared.api.scan_client import ScanClient
+from shared.api.scan_seeder import ScanSeeder
 
-USERS_FILE = Path(__file__).parent.parent / "data" / "users.yaml"
+USERS_FILE = Path(__file__).parent.parent.parent / "shared" / "data" / "users.yaml"
 ENV_VAR_PATTERN = re.compile(r"\$\{([A-Za-z_][A-Za-z0-9_]*)\}")
 JSON_REPORT_DIR = Path(os.environ.get("JSON_REPORT_DIR", "reports/json"))
 
@@ -53,7 +53,7 @@ def scan_client(access_token) -> ScanClient:
     return ScanClient(access_token=access_token)
 
 
-from data.test_constants import (
+from shared.data.test_constants import (
     CROSS_PERIOD_ITEM_ID, CROSS_PERIOD_ITEM_NAME,
     CROSS_PERIOD_REFILL_OZ, CROSS_PERIOD_LEFTOVER_OZ,
 )
@@ -73,7 +73,7 @@ def seeded_cross_period_scans(scan_client) -> list[dict]:
     Item 85537 ("Corn in a Basket") is absent from data/fixtures.py
     so the random seeder never generates scans for it.
     """
-    from data.fixtures import RESTAURANT_A
+    from shared.data.fixtures import RESTAURANT_A
 
     captured_at = (datetime.now() - timedelta(days=3)).strftime("%Y-%m-%dT%H:%M:%S.000Z")
     scans = [

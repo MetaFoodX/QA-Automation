@@ -2,7 +2,7 @@
 import re
 
 from playwright.sync_api import Page
-from config.settings import settings
+from shared.config.settings import settings
 
 DROPDOWN_VISIBLE = ".ant-select-dropdown:not(.ant-select-dropdown-hidden)"
 VIRTUAL_LIST_HOLDER = ".rc-virtual-list-holder"

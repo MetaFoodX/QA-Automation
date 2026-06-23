@@ -3,10 +3,10 @@
 import allure
 import pytest
 
-from config.settings import settings
-from fixtures.auth_fixtures import _load_user
-from locators import login_locators as L
-from pages.login_page import LoginPage
+from shared.config.settings import settings
+from dashboard.fixtures.auth_fixtures import _load_user
+from dashboard.locators import login_locators as L
+from dashboard.pages.login_page import LoginPage
 from playwright.sync_api import expect
 
 

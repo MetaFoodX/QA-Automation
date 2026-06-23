@@ -4,11 +4,11 @@ import csv
 import pytest
 
 
-from config.settings import settings
-from data.fixtures import RESTAURANT_A
-from data.test_constants import *  # noqa: F401, F403
-from locators import common_locators as L
-from pages.consumption_summary_page import ConsumptionSummaryPage as Page
+from shared.config.settings import settings
+from shared.data.fixtures import RESTAURANT_A
+from shared.data.test_constants import *  # noqa: F401, F403
+from dashboard.locators import common_locators as L
+from dashboard.pages.consumption_summary_page import ConsumptionSummaryPage as Page
 
 
 OZ_PER_LB = 16

@@ -4,7 +4,7 @@ Test-specific values that don't fit in environment config — they describe
 WHAT the test exercises, not WHERE it runs.
 
 Tests import the constants they need:
-    from data.test_constants import DEFAULT_MEAL, CATEGORY_VEGETABLES
+    from shared.data.test_constants import DEFAULT_MEAL, CATEGORY_VEGETABLES
 """
 from datetime import date, timedelta
 
@@ -29,7 +29,7 @@ CATEGORY_ALL = "- All Categories -"
 VENUE_ALL = "- All Service Line Venues -"
 
 
-# Cross-period meal test item — absent from fixtures.py so random seeder never touches it
+# Cross-period meal test item — absent from dashboard.fixtures.py so random seeder never touches it
 CROSS_PERIOD_ITEM_ID     = 85537
 CROSS_PERIOD_ITEM_NAME   = "Corn in a Basket"
 CROSS_PERIOD_REFILL_OZ   = 400   # Refill scan at Lunch

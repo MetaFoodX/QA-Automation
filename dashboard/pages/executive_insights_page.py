@@ -5,10 +5,10 @@ import time
 
 from playwright.sync_api import expect
 
-from config.settings import settings
-from locators import common_locators as L
-from pages.base_page import BasePage
-from utils.antd_helpers import select_dropdown_option
+from shared.config.settings import settings
+from dashboard.locators import common_locators as L
+from dashboard.pages.base_page import BasePage
+from shared.utils.antd_helpers import select_dropdown_option
 
 
 class ExecutiveInsightsPage(BasePage):

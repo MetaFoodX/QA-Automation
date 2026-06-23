@@ -38,7 +38,7 @@ pipeline {
 #!/usr/bin/env bash
 pip install .
 playwright install chromium
-pytest tests/ --ignore=tests/test_seed.py -s ${markerFlag} --alluredir=allure-results --clean-alluredir
+pytest dashboard/tests/ --ignore=dashboard/tests/test_seed.py -s ${markerFlag} --alluredir=allure-results --clean-alluredir
 PYTEST_EXIT=\$?
 allure generate allure-results -o allure-report --clean --single-file
 exit \$PYTEST_EXIT

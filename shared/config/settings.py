@@ -6,7 +6,7 @@ placeholders, and exposes a single `settings` object the rest of the
 project imports.
 
 Usage:
-    from config.settings import settings
+    from shared.config.settings import settings
 
     settings.name                  # 'staging' or 'prod'
     settings.base_url              # final URL (after BASE_URL override)

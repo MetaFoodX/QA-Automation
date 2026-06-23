@@ -4,7 +4,7 @@ import allure
 import requests
 from requests.adapters import HTTPAdapter
 
-from config.settings import settings
+from shared.config.settings import settings
 
 _POOL_SIZE = 55
 

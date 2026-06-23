@@ -2,7 +2,7 @@
 import pytest
 from playwright.sync_api import sync_playwright
 
-from config.settings import settings
+from shared.config.settings import settings
 
 
 @pytest.fixture(scope="session")

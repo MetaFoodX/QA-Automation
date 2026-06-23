@@ -6,21 +6,20 @@ from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta
 from uuid import uuid4
 
-from api.scan_seeder import ScanSeeder, generate_scans, DEFAULT_SCAN_COUNT
+from shared.api.scan_seeder import ScanSeeder, generate_scans, DEFAULT_SCAN_COUNT
 
 WORKERS = 50
 
 
 def test_concurrent_benchmark(scan_client):
 
-    count = DEFAULT_SCAN_COUNT
+    count = 10000
     print(f"\n--- CONCURRENT {WORKERS} workers ({count} scans) ---")
 
     scans = generate_scans(count)
-    base_date = datetime.now() - timedelta(days=7)
     for i, scan in enumerate(scans):
         scan["ID"] = str(uuid4())
-        scan["CapturedAt"] = (base_date + timedelta(days=i % 8)).strftime("%Y-%m-%dT%H:%M:%S.000Z")
+        scan["CapturedAt"] = datetime.now().strftime("%Y-%m-%dT%H:%M:%S.000Z")
 
     lock          = threading.Lock()
     inserted      = []
@@ -83,9 +82,9 @@ def test_concurrent_benchmark(scan_client):
         tot = sum(times) * 1000
         print(f"{thread:<20} {len(times):>9} {avg:>9.0f}ms {mx:>9.0f}ms {tot:>11.0f}ms")
 
-    # Cleanup
-    seeder_con = ScanSeeder(scan_client)
-    seeder_con.inserted_payloads = inserted
-    t0 = time.perf_counter()
-    seeder_con.cleanup_concurrent(workers=WORKERS)
-    print(f"Cleanup          : {time.perf_counter() - t0:.2f}s")
+    # Cleanup disabled temporarily
+    # seeder_con = ScanSeeder(scan_client)
+    # seeder_con.inserted_payloads = inserted
+    # t0 = time.perf_counter()
+    # seeder_con.cleanup_concurrent(workers=WORKERS)
+    # print(f"Cleanup          : {time.perf_counter() - t0:.2f}s")

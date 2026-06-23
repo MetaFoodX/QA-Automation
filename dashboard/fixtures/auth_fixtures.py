@@ -6,8 +6,8 @@ from pathlib import Path
 import pytest
 import yaml
 
-from config.settings import settings
-from pages.login_page import LoginPage
+from shared.config.settings import settings
+from dashboard.pages.login_page import LoginPage
 
 AUTH_STATE_DIR = Path(__file__).parent.parent / ".auth-state"
 USERS_FILE = Path(__file__).parent.parent / "data" / "users.yaml"

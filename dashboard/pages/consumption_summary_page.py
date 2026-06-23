@@ -1,6 +1,6 @@
 """Consumption Summary page — just the deltas from ExecutiveInsightsPage."""
 
-from pages.executive_insights_page import ExecutiveInsightsPage
+from dashboard.pages.executive_insights_page import ExecutiveInsightsPage
 
 
 class ConsumptionSummaryPage(ExecutiveInsightsPage):
