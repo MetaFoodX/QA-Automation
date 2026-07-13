@@ -15,6 +15,7 @@ dependencies = [
     "requests>=2.31.0",
     "allure-pytest>=2.13.0",
     "openpyxl>=3.1.0",
+    "Appium-Python-Client>=3.1.0",
 ]
 
 [build-system]
