@@ -7,7 +7,7 @@ from shared.data.fixtures import RESTAURANT_A
 from shared.data.test_constants import *  # noqa: F401, F403
 from dashboard.locators import common_locators as L
 from dashboard.pages.consumption_summary_page import ConsumptionSummaryPage as Page
-from tests.executive_insights.consumption_summary._helpers import (
+from dashboard.tests.executive_insights.consumption_summary._helpers import (
     OZ_PER_LB,
     CURRENT_RESTAURANT_ID, CURRENT_VENUE_ID, CURRENT_VENUE_NAME,
     SECOND_VENUE_ID, SECOND_VENUE_NAME,

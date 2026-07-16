@@ -47,6 +47,7 @@ exit \$PYTEST_EXIT
                             chmod +x run_tests.sh
 
                             CID=\$(docker create \\
+                                --add-host=host.docker.internal:host-gateway \\
                                 -w /workspace \\
                                 -e ENV='${params.ENV}' \\
                                 -e BASE_URL='${params.BASE_URL}' \\
@@ -55,6 +56,9 @@ exit \$PYTEST_EXIT
                                 -e API_PASSWORD="\$API_PASSWORD" \\
                                 -e SKOOPIN_KITCHEN_SAPNA_EMAIL="\$SKOOPIN_KITCHEN_SAPNA_EMAIL" \\
                                 -e SKOOPIN_KITCHEN_SAPNA_PASSWORD="\$SKOOPIN_KITCHEN_SAPNA_PASSWORD" \\
+                                -e JENKINS_URL='http://host.docker.internal:8999' \\
+                                -e JENKINS_USERNAME="\$JENKINS_USERNAME" \\
+                                -e JENKINS_API_TOKEN="\$JENKINS_API_TOKEN" \\
                                 qa-automation-ci bash /workspace/run_tests.sh)
 
                             docker cp "\$WORKSPACE/." "\$CID:/workspace"

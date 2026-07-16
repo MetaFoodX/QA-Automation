@@ -1,7 +1,10 @@
 """Root pytest configuration for QA-Automation."""
 
+import base64
+import json
 import os
 import subprocess
+import urllib.request
 from datetime import datetime
 from pathlib import Path
 
@@ -11,13 +14,53 @@ from dotenv import load_dotenv
 OUTCOMES_DIR = Path(os.environ.get("QA_OUTCOMES_DIR", "reports/outcomes"))
 ALLURE_RESULTS = Path("allure-results")
 
+_JENKINS_JOB = "Build%20Staging%20Skoopin%20Server%20New"
+
 _run_timestamp: str = ""
 _test_results: list[dict] = []
+
+
+def _fetch_deployed_branch() -> str:
+    jenkins_url = os.environ.get("JENKINS_URL", "http://host.docker.internal:8999")
+    url = (
+        f"{jenkins_url}/job/{_JENKINS_JOB}/lastSuccessfulBuild/api/json"
+        "?tree=actions[parameters[name,value]]"
+    )
+    headers = {}
+    user  = os.environ.get("JENKINS_USERNAME", "")
+    token = os.environ.get("JENKINS_API_TOKEN", "")
+    if user and token:
+        creds = base64.b64encode(f"{user}:{token}".encode()).decode()
+        headers["Authorization"] = f"Basic {creds}"
+    try:
+        req = urllib.request.Request(url, headers=headers)
+        with urllib.request.urlopen(req, timeout=5) as resp:
+            data = json.loads(resp.read())
+        for action in data.get("actions", []):
+            for param in action.get("parameters", []):
+                if param.get("name") == "BRANCH_NAME":
+                    return param.get("value", "unknown").removeprefix("origin/")
+    except Exception:
+        pass
+    return "unknown"
+
+
+def _write_allure_environment():
+    branch   = _fetch_deployed_branch()
+    env      = os.environ.get("ENV", "staging")
+    base_url = os.environ.get("BASE_URL", "https://staging-mercato.skoopin.net")
+    ALLURE_RESULTS.mkdir(parents=True, exist_ok=True)
+    (ALLURE_RESULTS / "environment.properties").write_text(
+        f"Deployed.Branch={branch}\n"
+        f"Environment={env}\n"
+        f"Base.URL={base_url}\n"
+    )
 
 
 def pytest_configure(config):  # noqa: ARG001
     global _run_timestamp
     _run_timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    _write_allure_environment()
 
 
 @pytest.hookimpl(hookwrapper=True)
