@@ -10,7 +10,7 @@ from shared.config.settings import settings
 from dashboard.pages.login_page import LoginPage
 
 AUTH_STATE_DIR = Path(__file__).parent.parent / ".auth-state"
-USERS_FILE = Path(__file__).parent.parent / "data" / "users.yaml"
+USERS_FILE = Path(__file__).parent.parent.parent / "shared" / "data" / "users.yaml"
 ENV_VAR_PATTERN = re.compile(r"\$\{([A-Za-z_][A-Za-z0-9_]*)\}")
 
 
