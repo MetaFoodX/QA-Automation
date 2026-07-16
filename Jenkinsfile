@@ -36,7 +36,16 @@ pipeline {
                     script {
                         def markerFlag = params.TEST_SUITE == 'all' ? '' : "-m ${params.TEST_SUITE}"
                         def deployedBranch = sh(
-                            script: """curl -s 'http://localhost:8999/job/Build%20Staging%20Skoopin%20Server%20New/lastSuccessfulBuild/api/json?tree=actions[parameters[name,value]]' | python3 -c "import sys,json; data=json.load(sys.stdin); params=[p for a in data.get('actions',[]) for p in a.get('parameters',[]) if p.get('name')=='BRANCH_NAME']; print(params[0]['value'].replace('origin/','') if params else 'unknown')" """,
+                            script: '''
+                                RESULT=$(curl -sf 'http://localhost:8999/job/Build%20Staging%20Skoopin%20Server%20New/lastSuccessfulBuild/api/json?tree=actions%5Bparameters%5Bname%2Cvalue%5D%5D' 2>/dev/null) || true
+                                if [ -z "$RESULT" ]; then echo "unknown"; exit 0; fi
+                                echo "$RESULT" | python3 -c "
+import sys, json
+data = json.load(sys.stdin)
+params = [p for a in data.get('actions', []) for p in a.get('parameters', []) if p.get('name') == 'BRANCH_NAME']
+print(params[0]['value'].replace('origin/', '') if params else 'unknown')
+" 2>/dev/null || echo "unknown"
+                            ''',
                             returnStdout: true
                         ).trim()
                         writeFile file: 'run_tests.sh', text: """\
