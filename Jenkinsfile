@@ -35,6 +35,10 @@ pipeline {
                 ]) {
                     script {
                         def markerFlag = params.TEST_SUITE == 'all' ? '' : "-m ${params.TEST_SUITE}"
+                        def deployedBranch = sh(
+                            script: """curl -s 'http://localhost:8999/job/Build%20Staging%20Skoopin%20Server%20New/lastSuccessfulBuild/api/json?tree=actions[parameters[name,value]]' | python3 -c "import sys,json; data=json.load(sys.stdin); params=[p for a in data.get('actions',[]) for p in a.get('parameters',[]) if p.get('name')=='BRANCH_NAME']; print(params[0]['value'].replace('origin/','') if params else 'unknown')" """,
+                            returnStdout: true
+                        ).trim()
                         writeFile file: 'run_tests.sh', text: """\
 #!/usr/bin/env bash
 pip install .
@@ -48,7 +52,6 @@ exit \$PYTEST_EXIT
                             chmod +x run_tests.sh
 
                             CID=\$(docker create \\
-                                --add-host=host.docker.internal:host-gateway \\
                                 -w /workspace \\
                                 -e ENV='${params.ENV}' \\
                                 -e BASE_URL='${params.BASE_URL}' \\
@@ -57,9 +60,7 @@ exit \$PYTEST_EXIT
                                 -e API_PASSWORD="\$API_PASSWORD" \\
                                 -e SKOOPIN_KITCHEN_SAPNA_EMAIL="\$SKOOPIN_KITCHEN_SAPNA_EMAIL" \\
                                 -e SKOOPIN_KITCHEN_SAPNA_PASSWORD="\$SKOOPIN_KITCHEN_SAPNA_PASSWORD" \\
-                                -e JENKINS_URL='http://host.docker.internal:8999' \\
-                                -e JENKINS_USERNAME="\$JENKINS_USERNAME" \\
-                                -e JENKINS_API_TOKEN="\$JENKINS_API_TOKEN" \\
+                                -e DEPLOYED_BRANCH='${deployedBranch}' \\
                                 qa-automation-ci bash /workspace/run_tests.sh)
 
                             docker cp "\$WORKSPACE/." "\$CID:/workspace"
