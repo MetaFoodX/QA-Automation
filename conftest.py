@@ -60,6 +60,9 @@ def _write_allure_environment():
 def pytest_configure(config):  # noqa: ARG001
     global _run_timestamp
     _run_timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+
+
+def pytest_sessionstart(session):  # noqa: ARG001
     _write_allure_environment()
 
 

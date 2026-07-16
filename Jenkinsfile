@@ -11,6 +11,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
+                cleanWs()
                 git branch: "${params.BRANCH}",
                     credentialsId: 'git',
                     url: 'https://github.com/MetaFoodX/QA-Automation'
@@ -79,8 +80,7 @@ exit \$PYTEST_EXIT
 
     post {
         always {
-            archiveArtifacts artifacts: 'allure-report/index.html', fingerprint: true
-            archiveArtifacts artifacts: 'reports/**', fingerprint: true
+            archiveArtifacts artifacts: 'reports/outcomes/*/allure-report/index.html, reports/outcomes/*/test_results.xlsx', fingerprint: true, allowEmptyArchive: true
         }
     }
 }
