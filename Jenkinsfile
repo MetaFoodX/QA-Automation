@@ -40,7 +40,7 @@ pipeline {
                         def markerFlag = params.TEST_SUITE == 'all' ? '' : "-m ${params.TEST_SUITE}"
                         def deployedBranch = sh(
                             script: '''
-                                RESULT=$(curl -sf -u "$JENKINS_USER:$JENKINS_TOKEN" 'http://localhost:8999/job/Build%20Staging%20Skoopin%20Server%20New/lastSuccessfulBuild/api/json?tree=actions%5Bparameters%5Bname%2Cvalue%5D%5D' 2>/dev/null) || true
+                                RESULT=$(curl -sf -u "$JENKINS_USER:$JENKINS_TOKEN" 'http://localhost:8080/job/Build%20Staging%20Skoopin%20Server%20New/lastSuccessfulBuild/api/json?tree=actions%5Bparameters%5Bname%2Cvalue%5D%5D' 2>/dev/null) || true
                                 if [ -z "$RESULT" ]; then echo "unknown"; exit 0; fi
                                 echo "$RESULT" | python3 -c "
 import sys, json
