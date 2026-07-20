@@ -32,12 +32,15 @@ pipeline {
                     string(credentialsId: 'qa-api-password',      variable: 'API_PASSWORD'),
                     string(credentialsId: 'qa-ui-username',       variable: 'SKOOPIN_KITCHEN_SAPNA_EMAIL'),
                     string(credentialsId: 'qa-ui-password',       variable: 'SKOOPIN_KITCHEN_SAPNA_PASSWORD'),
+                    usernamePassword(credentialsId: 'jenkins-branch-token',
+                                     usernameVariable: 'JENKINS_USER',
+                                     passwordVariable: 'JENKINS_TOKEN'),
                 ]) {
                     script {
                         def markerFlag = params.TEST_SUITE == 'all' ? '' : "-m ${params.TEST_SUITE}"
                         def deployedBranch = sh(
                             script: '''
-                                RESULT=$(curl -sf 'http://localhost:8999/job/Build%20Staging%20Skoopin%20Server%20New/lastSuccessfulBuild/api/json?tree=actions%5Bparameters%5Bname%2Cvalue%5D%5D' 2>/dev/null) || true
+                                RESULT=$(curl -sf -u "$JENKINS_USER:$JENKINS_TOKEN" 'http://localhost:8999/job/Build%20Staging%20Skoopin%20Server%20New/lastSuccessfulBuild/api/json?tree=actions%5Bparameters%5Bname%2Cvalue%5D%5D' 2>/dev/null) || true
                                 if [ -z "$RESULT" ]; then echo "unknown"; exit 0; fi
                                 echo "$RESULT" | python3 -c "
 import sys, json
