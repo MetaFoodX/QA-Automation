@@ -188,8 +188,12 @@ class ExecutiveInsightsPage(BasePage):
 
     def select_menu_items_in_search(self, *item_names: str):
         """Open the Menu Items multi-select and pick items by display name."""
-        self.page.locator(L.MENU_ITEM_SEARCH_SELECT).click()
+        select = self.page.locator(L.MENU_ITEM_SEARCH_SELECT)
         for name in item_names:
+            select.click()
+            search_input = select.locator("input")
+            search_input.fill("")
+            search_input.type(name)
             select_dropdown_option(self.page, name, exact=True)
         self.page.keyboard.press("Escape")
         self._wait_for_table_to_settle()
