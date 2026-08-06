@@ -10,9 +10,9 @@ pipeline {
     stages {
         stage('Trigger QA on Staging') {
             steps {
-                sshagent(['ubuntu']) {
+                withCredentials([sshUserPrivateKey(credentialsId: 'ubuntu', keyFileVariable: 'SSH_KEY')]) {
                     sh """
-                        ssh -o StrictHostKeyChecking=no ubuntu@10.0.21.215 \
+                        ssh -o StrictHostKeyChecking=no -i \$SSH_KEY ubuntu@10.0.21.215 \
                             "bash /home/ubuntu/run_qa.sh ${params.ENV} ${params.BASE_URL} ${params.TEST_SUITE} ${BUILD_NUMBER}"
                     """
                 }
