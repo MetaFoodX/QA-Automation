@@ -1,0 +1,48 @@
+pipeline {
+    agent any
+
+    triggers {
+        githubPush()
+    }
+
+    environment {
+        AWS_REGION = 'us-west-2'
+        ECR_REPO   = 'qa-automation-ci'
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                cleanWs()
+                git branch: 'main',
+                    credentialsId: 'git',
+                    url: 'https://github.com/MetaFoodX/QA-Automation'
+            }
+        }
+
+        stage('Build & Push to ECR') {
+            steps {
+                script {
+                    def accountId = sh(script: 'aws sts get-caller-identity --query Account --output text', returnStdout: true).trim()
+                    def ecrUri    = "${accountId}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPO}"
+                    def gitSha    = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
+                    sh """
+                        aws ecr get-login-password --region ${AWS_REGION} | \
+                            docker login --username AWS --password-stdin ${ecrUri}
+
+                        docker build -t ${ecrUri}:${gitSha} -t ${ecrUri}:latest -f Dockerfile.ci .
+
+                        docker push ${ecrUri}:${gitSha}
+                        docker push ${ecrUri}:latest
+                    """
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            sh 'docker system prune -f || true'
+        }
+    }
+}

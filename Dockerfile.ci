@@ -5,7 +5,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     nodejs \
     npm \
     default-jre-headless \
+    awscli \
     && npm install -g allure-commandline \
     && pip install --no-cache-dir playwright \
     && playwright install --with-deps chromium \
     && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /workspace
+COPY . /workspace
+RUN pip install --no-cache-dir .
