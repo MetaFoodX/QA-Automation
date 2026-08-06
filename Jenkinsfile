@@ -10,7 +10,7 @@ pipeline {
     stages {
         stage('Trigger QA on Staging') {
             steps {
-                withCredentials([sshUserPrivateKey(credentialsId: 'ubuntu', keyFileVariable: 'SSH_KEY')]) {
+                withCredentials([sshUserPrivateKey(credentialsId: 'production-server', keyFileVariable: 'SSH_KEY')]) {
                     sh """
                         ssh -o StrictHostKeyChecking=no -i \$SSH_KEY ubuntu@10.0.21.215 \
                             "bash /home/ubuntu/run_qa.sh ${params.ENV} ${params.BASE_URL} ${params.TEST_SUITE} ${BUILD_NUMBER}"
