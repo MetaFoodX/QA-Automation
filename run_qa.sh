@@ -59,19 +59,17 @@ CID=$(docker create \
     -e SKOOPIN_KITCHEN_SAPNA_PASSWORD="$UI_PASSWORD" \
     -e DEPLOYED_BRANCH="$DEPLOYED_BRANCH" \
     $ECR_URI:latest \
-    bash -c "pytest dashboard/tests/ --ignore=dashboard/tests/test_seed.py -s $MARKER_FLAG --alluredir=allure-results --clean-alluredir; PYTEST_EXIT=\$?; allure generate allure-results -o allure-report --clean --single-file; exit \$PYTEST_EXIT")
+    bash -c "pytest dashboard/tests/ --ignore=dashboard/tests/test_seed.py -s $MARKER_FLAG --alluredir=allure-results --clean-alluredir; exit \$?")
 
 docker start $CID
 EXIT=$(docker wait $CID)
 docker logs $CID
 docker cp $CID:/workspace/allure-results $WORKDIR/ 2>/dev/null || true
-docker cp $CID:/workspace/allure-report  $WORKDIR/ 2>/dev/null || true
 docker cp $CID:/workspace/reports        $WORKDIR/ 2>/dev/null || true
 docker rm $CID
 
 echo "==> Uploading reports to S3"
-aws s3 sync $WORKDIR/allure-report/ s3://$S3_BUCKET/QA-Reports/$BUILD_NUMBER/allure-report/ --region $AWS_REGION || true
-aws s3 sync $WORKDIR/reports/       s3://$S3_BUCKET/QA-Reports/$BUILD_NUMBER/reports/       --region $AWS_REGION || true
+aws s3 sync $WORKDIR/reports/ s3://$S3_BUCKET/QA-Reports/$BUILD_NUMBER/reports/ --region $AWS_REGION || true
 
 echo "==> Cleaning up"
 rm -rf $WORKDIR

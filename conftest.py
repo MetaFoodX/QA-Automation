@@ -64,9 +64,8 @@ def pytest_sessionfinish(session, exitstatus):  # noqa: ARG001
     run_dir.mkdir(parents=True, exist_ok=True)
 
     # Allure report
-    report_dir = run_dir / "allure-report"
     subprocess.run(
-        ["allure", "generate", str(ALLURE_RESULTS), "-o", str(report_dir), "--clean", "--single-file"],
+        ["allure", "generate", str(ALLURE_RESULTS), "-o", str(run_dir), "--clean", "--single-file"],
         check=False,
     )
 
