@@ -42,6 +42,7 @@ def login_page(browser):
         "4. Click 'Sign In' button\n"
         "5. Verify 'Current View' marker is visible (post-login state)"
     ),
+    key="FQL-11",
 )
 @pytest.mark.smoke
 @pytest.mark.regression
@@ -70,6 +71,7 @@ def test_login_happy_path(login_page):
         "4. Verify 'Please enter a valid email address' is shown under Username\n"
         "5. Verify 'Required' is shown under Password"
     ),
+    key="FQL-14",
 )
 @pytest.mark.regression
 def test_login_empty_fields_shows_inline_validation(login_page):
@@ -95,6 +97,7 @@ def test_login_empty_fields_shows_inline_validation(login_page):
         "4. Click 'Sign In' button\n"
         "5. Verify 'Incorrect username or password.' popup appears at top"
     ),
+    key="FQL-16",
 )
 @pytest.mark.regression
 def test_login_wrong_credentials_shows_error_popup(login_page):
@@ -122,6 +125,7 @@ def test_login_wrong_credentials_shows_error_popup(login_page):
         "4. Assert HTTP status code is 200\n"
         "5. Parse the JSON response and assert AuthenticationResult.AccessToken is present and non-empty"
     ),
+    key="FQL-17",
 )
 @pytest.mark.smoke
 @pytest.mark.regression

@@ -42,6 +42,7 @@ from dashboard.tests.executive_insights.consumption_summary._helpers import (
         "4. If no seeded data for Lunch, assert table is empty and pass\n"
         "5. For each row assert Production == Consumption + Overproduction (tolerance 0.01)"
     ),
+    key="FQL-57",
 )
 @pytest.mark.regression
 def test_meal_period_lunch_math_invariant(logged_in_page, seeded_basic_scans):
@@ -90,6 +91,7 @@ def test_meal_period_lunch_math_invariant(logged_in_page, seeded_basic_scans):
         "4. If no seeded data for Dinner, assert table is empty and pass\n"
         "5. For each row assert Production == Consumption + Overproduction (tolerance 0.01)"
     ),
+    key="FQL-58",
 )
 @pytest.mark.regression
 def test_meal_period_dinner_math_invariant(logged_in_page, seeded_basic_scans):
@@ -138,6 +140,7 @@ def test_meal_period_dinner_math_invariant(logged_in_page, seeded_basic_scans):
         "4. Compute expected Consumption per item from seeded payloads\n"
         "5. Assert UI Consumption matches expected (tolerance 0.01)"
     ),
+    key="FQL-59",
 )
 @pytest.mark.regression
 def test_meal_period_lunch_consumption_matches_seeded_data(logged_in_page, seeded_basic_scans):
@@ -171,6 +174,7 @@ def test_meal_period_lunch_consumption_matches_seeded_data(logged_in_page, seede
         "4. Compute expected Overproduction per item from seeded payloads\n"
         "5. Assert UI Overproduction matches expected (tolerance 0.01)"
     ),
+    key="FQL-60",
 )
 @pytest.mark.regression
 def test_meal_period_lunch_overproduction_matches_seeded_data(logged_in_page, seeded_basic_scans):
@@ -203,6 +207,7 @@ def test_meal_period_lunch_overproduction_matches_seeded_data(logged_in_page, se
         "3. For each summary row click to drill down\n"
         "4. Sum detail Production values and assert equals summary value (tolerance 0.01)"
     ),
+    key="FQL-61",
 )
 @pytest.mark.regression
 def test_meal_period_dinner_production_sums_match_summary(logged_in_page, seeded_basic_scans):
@@ -235,6 +240,7 @@ def test_meal_period_dinner_production_sums_match_summary(logged_in_page, seeded
         "3. For each summary row click to drill down\n"
         "4. Sum detail Consumption values and assert equals summary value (tolerance 0.01)"
     ),
+    key="FQL-62",
 )
 @pytest.mark.regression
 def test_meal_period_dinner_consumption_sums_match_summary(logged_in_page, seeded_basic_scans):
@@ -267,6 +273,7 @@ def test_meal_period_dinner_consumption_sums_match_summary(logged_in_page, seede
         "3. For each summary row click to drill down\n"
         "4. Sum detail Overproduction values and assert equals summary value (tolerance 0.01)"
     ),
+    key="FQL-63",
 )
 @pytest.mark.regression
 def test_meal_period_dinner_overproduction_sums_match_summary(logged_in_page, seeded_basic_scans):
@@ -304,6 +311,7 @@ def test_meal_period_dinner_overproduction_sums_match_summary(logged_in_page, se
         "4. From seeded payloads, build the set of menu item names with Lunch scans\n"
         "5. Assert every UI row's Menu Item is in that set — no items from other periods visible"
     ),
+    key="FQL-64",
 )
 @pytest.mark.regression
 def test_meal_period_lunch_filter_shows_only_lunch_items(logged_in_page, seeded_basic_scans):
@@ -346,6 +354,7 @@ def test_meal_period_lunch_filter_shows_only_lunch_items(logged_in_page, seeded_
         "4. From seeded payloads, build the set of menu item names with Dinner scans\n"
         "5. Assert every UI row's Menu Item is in that set — no items from other periods visible"
     ),
+    key="FQL-65",
 )
 @pytest.mark.regression
 def test_meal_period_dinner_filter_shows_only_dinner_items(logged_in_page, seeded_basic_scans):
@@ -388,6 +397,7 @@ def test_meal_period_dinner_filter_shows_only_dinner_items(logged_in_page, seede
         "4. From seeded payloads, build the set of menu item names with All Day scans\n"
         "5. Assert every UI row's Menu Item is in that set — no items from other periods visible"
     ),
+    key="FQL-66",
 )
 @pytest.mark.regression
 def test_meal_period_all_day_filter_shows_only_all_day_items(logged_in_page, seeded_basic_scans):
@@ -429,6 +439,7 @@ def test_meal_period_all_day_filter_shows_only_all_day_items(logged_in_page, see
         "3. If no seeded All Day data, assert table is empty and pass\n"
         "4. For each row assert Production == Consumption + Overproduction (tolerance 0.01)"
     ),
+    key="FQL-67",
 )
 @pytest.mark.regression
 def test_meal_period_all_day_math_invariant(logged_in_page, seeded_basic_scans):
@@ -486,6 +497,7 @@ def test_meal_period_all_day_math_invariant(logged_in_page, seeded_basic_scans):
         "5. Read 'Corn in a Basket' Consumption — assert equals 25.0 lb (Dinner leftover excluded)\n"
         "6. Assert Lunch consumption > All Meals consumption"
     ),
+    key="FQL-68",
 )
 @pytest.mark.regression
 def test_lunch_filter_excludes_dinner_leftover_from_consumption(logged_in_page, seeded_cross_period_scans):
@@ -550,6 +562,7 @@ def test_lunch_filter_excludes_dinner_leftover_from_consumption(logged_in_page, 
         "3. Read all rows across all pages\n"
         "4. Assert every visible Menu Item belongs to the Fruits category"
     ),
+    key="FQL-69",
 )
 @pytest.mark.regression
 def test_category_fruits_filter_shows_only_fruits_items(logged_in_page, seeded_basic_scans):
@@ -586,6 +599,7 @@ def test_category_fruits_filter_shows_only_fruits_items(logged_in_page, seeded_b
         "3. If no data, assert table is empty and pass\n"
         "4. For each row assert Production == Consumption + Overproduction (tolerance 0.01)"
     ),
+    key="FQL-70",
 )
 @pytest.mark.regression
 def test_category_fruits_math_invariant(logged_in_page, seeded_basic_scans):
@@ -625,6 +639,7 @@ def test_category_fruits_math_invariant(logged_in_page, seeded_basic_scans):
         "3. Compute expected Consumption for Fruits items from seeded payloads\n"
         "4. Assert UI Consumption matches expected per item (tolerance 0.01)"
     ),
+    key="FQL-71",
 )
 @pytest.mark.regression
 def test_category_fruits_consumption_matches_seeded_data(logged_in_page, seeded_basic_scans):
@@ -656,6 +671,7 @@ def test_category_fruits_consumption_matches_seeded_data(logged_in_page, seeded_
         "3. Compute expected Overproduction for Fruits items from seeded payloads\n"
         "4. Assert UI Overproduction matches expected per item (tolerance 0.01)"
     ),
+    key="FQL-72",
 )
 @pytest.mark.regression
 def test_category_fruits_overproduction_matches_seeded_data(logged_in_page, seeded_basic_scans):
@@ -687,6 +703,7 @@ def test_category_fruits_overproduction_matches_seeded_data(logged_in_page, seed
         "3. For each summary row click to drill down\n"
         "4. Sum detail Production values and assert equals summary value (tolerance 0.01)"
     ),
+    key="FQL-73",
 )
 @pytest.mark.regression
 def test_category_fruits_production_sums_match_summary(logged_in_page, seeded_basic_scans):
@@ -722,6 +739,7 @@ def test_category_fruits_production_sums_match_summary(logged_in_page, seeded_ba
         "3. Read all rows across all pages\n"
         "4. Assert every visible Menu Item belongs to the Vegetables category"
     ),
+    key="FQL-74",
 )
 @pytest.mark.regression
 def test_category_vegetables_filter_shows_only_vegetables_items(logged_in_page, seeded_basic_scans):
@@ -758,6 +776,7 @@ def test_category_vegetables_filter_shows_only_vegetables_items(logged_in_page, 
         "3. If no data, assert table is empty and pass\n"
         "4. For each row assert Production == Consumption + Overproduction (tolerance 0.01)"
     ),
+    key="FQL-75",
 )
 @pytest.mark.regression
 def test_category_vegetables_math_invariant(logged_in_page, seeded_basic_scans):
@@ -797,6 +816,7 @@ def test_category_vegetables_math_invariant(logged_in_page, seeded_basic_scans):
         "3. Compute expected Consumption for Vegetables items from seeded payloads\n"
         "4. Assert UI Consumption matches expected per item (tolerance 0.01)"
     ),
+    key="FQL-76",
 )
 @pytest.mark.regression
 def test_category_vegetables_consumption_matches_seeded_data(logged_in_page, seeded_basic_scans):
@@ -828,6 +848,7 @@ def test_category_vegetables_consumption_matches_seeded_data(logged_in_page, see
         "3. Compute expected Overproduction for Vegetables items from seeded payloads\n"
         "4. Assert UI Overproduction matches expected per item (tolerance 0.01)"
     ),
+    key="FQL-77",
 )
 @pytest.mark.regression
 def test_category_vegetables_overproduction_matches_seeded_data(logged_in_page, seeded_basic_scans):
@@ -859,6 +880,7 @@ def test_category_vegetables_overproduction_matches_seeded_data(logged_in_page, 
         "3. For each summary row click to drill down\n"
         "4. Sum detail Production values and assert equals summary value (tolerance 0.01)"
     ),
+    key="FQL-78",
 )
 @pytest.mark.regression
 def test_category_vegetables_production_sums_match_summary(logged_in_page, seeded_basic_scans):
@@ -894,6 +916,7 @@ def test_category_vegetables_production_sums_match_summary(logged_in_page, seede
         "3. Read all rows across all pages\n"
         "4. Assert every visible Menu Item belongs to the Kitchen Waste category"
     ),
+    key="FQL-79",
 )
 @pytest.mark.regression
 def test_category_kitchen_waste_filter_shows_only_kitchen_waste_items(logged_in_page, seeded_basic_scans):
@@ -931,6 +954,7 @@ def test_category_kitchen_waste_filter_shows_only_kitchen_waste_items(logged_in_
         "4. For each row assert Production == Overproduction (tolerance 0.01)\n"
         "5. For each row assert Consumption == 0"
     ),
+    key="FQL-80",
 )
 @pytest.mark.regression
 def test_category_kitchen_waste_production_equals_overproduction(logged_in_page, seeded_basic_scans):
@@ -975,6 +999,7 @@ def test_category_kitchen_waste_production_equals_overproduction(logged_in_page,
         "3. Read all rows across all pages\n"
         "4. Assert every visible Menu Item belongs to the Post-Consumer category"
     ),
+    key="FQL-81",
 )
 @pytest.mark.regression
 def test_category_post_consumer_filter_shows_only_post_consumer_items(logged_in_page, seeded_basic_scans):
@@ -1012,6 +1037,7 @@ def test_category_post_consumer_filter_shows_only_post_consumer_items(logged_in_
         "4. For each row assert Production == Overproduction (tolerance 0.01)\n"
         "5. For each row assert Consumption == 0"
     ),
+    key="FQL-82",
 )
 @pytest.mark.regression
 def test_category_post_consumer_production_equals_overproduction(logged_in_page, seeded_basic_scans):
@@ -1057,6 +1083,7 @@ def test_category_post_consumer_production_equals_overproduction(logged_in_page,
         "4. If no data for combination, assert table is empty and pass\n"
         "5. For each row assert Production == Consumption + Overproduction (tolerance 0.01)"
     ),
+    key="FQL-83",
 )
 @pytest.mark.regression
 def test_combined_fruits_lunch_math_invariant(logged_in_page, seeded_basic_scans):
@@ -1102,6 +1129,7 @@ def test_combined_fruits_lunch_math_invariant(logged_in_page, seeded_basic_scans
         "4. If no data for combination, assert table is empty and pass\n"
         "5. For each row assert Production == Consumption + Overproduction (tolerance 0.01)"
     ),
+    key="FQL-84",
 )
 @pytest.mark.regression
 def test_combined_vegetables_dinner_math_invariant(logged_in_page, seeded_basic_scans):
@@ -1147,6 +1175,7 @@ def test_combined_vegetables_dinner_math_invariant(logged_in_page, seeded_basic_
         "4. Assert meal filter still shows Lunch\n"
         "5. Assert table reloads with Fruits + Lunch data"
     ),
+    key="FQL-85",
 )
 @pytest.mark.regression
 def test_category_change_preserves_meal_filter(logged_in_page, seeded_basic_scans):
@@ -1186,6 +1215,7 @@ def test_category_change_preserves_meal_filter(logged_in_page, seeded_basic_scan
         "4. Assert category filter still shows Fruits\n"
         "5. Assert table reloads with Fruits + Dinner data"
     ),
+    key="FQL-86",
 )
 @pytest.mark.regression
 def test_meal_change_preserves_category_filter(logged_in_page, seeded_basic_scans):
@@ -1230,6 +1260,7 @@ def test_meal_change_preserves_category_filter(logged_in_page, seeded_basic_scan
         "5. Read all rows across all pages\n"
         "6. Assert both venue names appear in the Venue column"
     ),
+    key="FQL-87",
 )
 @pytest.mark.regression
 def test_all_venues_shows_rows_from_both_venues(logged_in_page, seeded_basic_scans):
@@ -1266,6 +1297,7 @@ def test_all_venues_shows_rows_from_both_venues(logged_in_page, seeded_basic_sca
         "3. Apply meal=All, category=All, default date range\n"
         "4. For each row assert Production == Consumption + Overproduction (tolerance 0.01)"
     ),
+    key="FQL-88",
 )
 @pytest.mark.regression
 def test_all_venues_math_invariant(logged_in_page, seeded_basic_scans):
@@ -1314,6 +1346,7 @@ def test_all_venues_math_invariant(logged_in_page, seeded_basic_scans):
         "7. Read all detail rows across all pages\n"
         "8. Assert every detail row's Venue matches the venue from step 5"
     ),
+    key="FQL-89",
 )
 @pytest.mark.regression
 @pytest.mark.xfail(
@@ -1401,6 +1434,7 @@ def test_all_venues_drill_down_scopes_to_row_venue(logged_in_page, seeded_basic_
         "5. Read all rows across all pages\n"
         "6. Assert every row's Venue column equals 'Stuffing Venue'"
     ),
+    key="FQL-90",
 )
 @pytest.mark.regression
 def test_second_venue_filter_shows_only_stuffing_venue(logged_in_page, seeded_basic_scans):
@@ -1438,6 +1472,7 @@ def test_second_venue_filter_shows_only_stuffing_venue(logged_in_page, seeded_ba
         "3. Apply meal=All, category=All, default date range\n"
         "4. For each row assert Production == Consumption + Overproduction (tolerance 0.01)"
     ),
+    key="FQL-91",
 )
 @pytest.mark.regression
 def test_second_venue_math_invariant(logged_in_page, seeded_basic_scans):
@@ -1482,6 +1517,7 @@ def test_second_venue_math_invariant(logged_in_page, seeded_basic_scans):
         "3. For each item in summary rows, count unique CapturedAt dates in seeded payloads\n"
         "4. Assert Days Served in UI equals unique date count (tolerance 0)"
     ),
+    key="FQL-92",
 )
 @pytest.mark.regression
 def test_days_served_equals_unique_dates_in_seeded_data(logged_in_page, seeded_basic_scans):
@@ -1543,6 +1579,7 @@ _SEARCHABLE_ITEMS = {mi.name for mi in RESTAURANT_A.menu_items.values() if mi.ca
         "2. Navigate to Consumption Summary\n"
         "3. Assert the search icon button is visible"
     ),
+    key="FQL-93",
 )
 @pytest.mark.smoke
 @pytest.mark.regression
@@ -1572,6 +1609,7 @@ def test_search_button_visible_in_header(logged_in_page, seeded_basic_scans):
         "4. Click search button — assert Menu Items select appears and icon becomes arrow\n"
         "5. Click minimize button — assert Menu Items select disappears and icon reverts to search"
     ),
+    key="FQL-94",
 )
 @pytest.mark.regression
 def test_search_button_toggles_menu_item_select(logged_in_page, seeded_basic_scans):
@@ -1619,6 +1657,7 @@ def test_search_button_toggles_menu_item_select(logged_in_page, seeded_basic_sca
         "4. Open search, select that item\n"
         "5. Assert every row in the table shows only the selected item"
     ),
+    key="FQL-95",
 )
 @pytest.mark.regression
 def test_search_single_item_filters_table(logged_in_page, seeded_basic_scans):
@@ -1661,6 +1700,7 @@ def test_search_single_item_filters_table(logged_in_page, seeded_basic_scans):
         "4. Open search, select both items\n"
         "5. Assert only rows for the two selected items appear"
     ),
+    key="FQL-96",
 )
 @pytest.mark.regression
 def test_search_multiple_items_shows_all_selected(logged_in_page, seeded_basic_scans):
@@ -1712,6 +1752,7 @@ def test_search_multiple_items_shows_all_selected(logged_in_page, seeded_basic_s
         "5. Click the clear (X) icon on the search select\n"
         "6. Assert row count returns to the unfiltered value"
     ),
+    key="FQL-97",
 )
 @pytest.mark.regression
 def test_search_clear_restores_all_rows(logged_in_page, seeded_basic_scans):
@@ -1761,6 +1802,7 @@ def test_search_clear_restores_all_rows(logged_in_page, seeded_basic_scans):
         "4. Open search and select that item\n"
         "5. Assert every visible row shows only that item"
     ),
+    key="FQL-98",
 )
 @pytest.mark.regression
 def test_search_combined_with_meal_filter(logged_in_page, seeded_basic_scans):
@@ -1814,6 +1856,7 @@ def test_search_combined_with_meal_filter(logged_in_page, seeded_basic_scans):
         "4. Parse the CSV and read row 3 (header row)\n"
         "5. Assert headers == Page.EXPORT_HEADERS"
     ),
+    key="FQL-99",
 )
 @pytest.mark.smoke
 @pytest.mark.regression
@@ -1845,6 +1888,7 @@ def test_export_headers_are_correct(logged_in_page, seeded_basic_scans):
         "4. Click export and parse CSV\n"
         "5. Assert len(csv rows) == UI row count"
     ),
+    key="FQL-100",
 )
 @pytest.mark.regression
 def test_export_row_count_matches_ui(logged_in_page, seeded_basic_scans):
@@ -1881,6 +1925,7 @@ def test_export_row_count_matches_ui(logged_in_page, seeded_basic_scans):
         "4. Click export and parse CSV\n"
         "5. For each CSV row find the matching UI row and compare Consumption (lb) within 0.01 tolerance"
     ),
+    key="FQL-101",
 )
 @pytest.mark.regression
 def test_export_values_match_ui(logged_in_page, seeded_basic_scans):
@@ -1930,6 +1975,7 @@ def test_export_values_match_ui(logged_in_page, seeded_basic_scans):
         "3. Click export and parse CSV\n"
         "4. Assert csv['title'] contains start date and end date in YYYY-MM-DD format"
     ),
+    key="FQL-102",
 )
 @pytest.mark.regression
 def test_export_title_contains_date_range(logged_in_page, seeded_basic_scans):
@@ -1964,6 +2010,7 @@ def test_export_title_contains_date_range(logged_in_page, seeded_basic_scans):
         "4. Click export and parse CSV\n"
         "5. Assert CSV item names == UI item names"
     ),
+    key="FQL-103",
 )
 @pytest.mark.regression
 def test_export_respects_meal_filter(logged_in_page, seeded_basic_scans):
@@ -2004,6 +2051,7 @@ def test_export_respects_meal_filter(logged_in_page, seeded_basic_scans):
         "4. Click export and parse CSV\n"
         "5. Assert headers == Page.EXPORT_HEADERS and len(rows) == 0"
     ),
+    key="FQL-104",
 )
 @pytest.mark.regression
 def test_export_empty_table_has_headers_only(logged_in_page, seeded_basic_scans):

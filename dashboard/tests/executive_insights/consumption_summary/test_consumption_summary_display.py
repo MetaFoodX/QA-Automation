@@ -39,6 +39,7 @@ from dashboard.tests.executive_insights.consumption_summary._helpers import (
         "4. Assert Menu Item, Venue, Production (lb), Consumption (lb), Overproduction (lb), and Days Served columns are all present\n"
         "5. Assert no expected column is missing"
     ),
+    key="FQL-105",
 )
 @pytest.mark.smoke
 @pytest.mark.regression
@@ -74,6 +75,7 @@ def test_all_expected_columns_present(logged_in_page):
         "3. Apply default filters\n"
         "4. Verify Production, Consumption, and Overproduction headers all display '(lb)'"
     ),
+    key="FQL-19",
 )
 @pytest.mark.smoke
 @pytest.mark.regression
@@ -101,6 +103,7 @@ def test_weight_view_shows_lb_unit(logged_in_page, seeded_basic_scans):
         "4. Click the cost view toggle button\n"
         "5. Verify Production, Consumption, and Overproduction headers all display '($)'"
     ),
+    key="FQL-20",
 )
 @pytest.mark.smoke
 @pytest.mark.regression
@@ -132,6 +135,7 @@ def test_cost_view_shows_dollar_unit(logged_in_page, seeded_basic_scans):
         "6. Click the cost view toggle again to switch back\n"
         "7. Assert Production, Consumption, and Overproduction headers all show (lb) unit"
     ),
+    key="FQL-21",
 )
 @pytest.mark.regression
 def test_toggle_cost_back_to_weight(logged_in_page):
@@ -166,6 +170,7 @@ def test_toggle_cost_back_to_weight(logged_in_page):
         "4. Read all summary rows\n"
         "5. For each row, assert Production == Consumption + Overproduction (tolerance 0.01)"
     ),
+    key="FQL-22",
 )
 @pytest.mark.smoke
 @pytest.mark.regression
@@ -218,6 +223,7 @@ def test_production_equals_consumption_plus_overproduction(logged_in_page, seede
         "6. For each row, assert Production ($) == Consumption ($) + Overproduction ($) (tolerance 0.01)\n"
         "7. Report all violations"
     ),
+    key="FQL-23",
 )
 @pytest.mark.regression
 def test_cost_view_production_equals_consumption_plus_overproduction(logged_in_page, seeded_basic_scans):
@@ -267,6 +273,7 @@ def test_cost_view_production_equals_consumption_plus_overproduction(logged_in_p
         "5. For each row, assert Production >= Consumption (tolerance 0.01)\n"
         "6. Report all violations"
     ),
+    key="FQL-24",
 )
 @pytest.mark.regression
 def test_production_always_gte_consumption(logged_in_page, seeded_basic_scans):
@@ -302,6 +309,7 @@ def test_production_always_gte_consumption(logged_in_page, seeded_basic_scans):
         "5. For each row, assert Production >= Overproduction (tolerance 0.01)\n"
         "6. Report all violations"
     ),
+    key="FQL-25",
 )
 @pytest.mark.regression
 def test_production_always_gte_overproduction(logged_in_page, seeded_basic_scans):
@@ -342,6 +350,7 @@ def test_production_always_gte_overproduction(logged_in_page, seeded_basic_scans
         "6. Assert the sum equals the summary row's Production value (tolerance 0.01)\n"
         "7. Navigate back to summary and repeat for next item"
     ),
+    key="FQL-26",
 )
 @pytest.mark.smoke
 @pytest.mark.regression
@@ -372,6 +381,7 @@ def test_production_sums_match_summary(logged_in_page, seeded_basic_scans):
         "6. Assert the sum equals the summary Consumption value (tolerance 0.01)\n"
         "7. Navigate back to summary and repeat"
     ),
+    key="FQL-27",
 )
 @pytest.mark.smoke
 @pytest.mark.regression
@@ -402,6 +412,7 @@ def test_consumption_sums_match_summary(logged_in_page, seeded_basic_scans):
         "6. Assert the sum equals the summary row's Overproduction value (tolerance 0.01)\n"
         "7. Navigate back to summary and repeat for next item"
     ),
+    key="FQL-28",
 )
 @pytest.mark.regression
 def test_overproduction_sums_match_summary(logged_in_page, seeded_basic_scans):
@@ -430,6 +441,7 @@ def test_overproduction_sums_match_summary(logged_in_page, seeded_basic_scans):
         "5. Read UI rows and assert the Consumption column matches computed value per item (tolerance 0.01)\n"
         "6. Session fixture cleans up inserted scans at end"
     ),
+    key="FQL-29",
 )
 @pytest.mark.regression
 def test_consumption_matches_seeded_data(logged_in_page, seeded_basic_scans):
@@ -457,6 +469,7 @@ def test_consumption_matches_seeded_data(logged_in_page, seeded_basic_scans):
         "4. From seed JSON, sum weights where Type != 1 per menu item; convert oz to lb\n"
         "5. Read UI rows and assert the Overproduction column matches computed value per item (tolerance 0.01)"
     ),
+    key="FQL-30",
 )
 @pytest.mark.regression
 def test_overproduction_matches_seeded_data(logged_in_page, seeded_basic_scans):
@@ -484,6 +497,7 @@ def test_overproduction_matches_seeded_data(logged_in_page, seeded_basic_scans):
         "4. From seed JSON, sum all weights per menu item regardless of Type; convert oz to lb\n"
         "5. Read UI rows and assert the Production column matches computed value per item (tolerance 0.01)"
     ),
+    key="FQL-31",
 )
 @pytest.mark.regression
 def test_production_matches_seeded_data(logged_in_page, seeded_basic_scans):
@@ -512,6 +526,7 @@ def test_production_matches_seeded_data(logged_in_page, seeded_basic_scans):
         "5. For each row, assert the Menu Item column is non-empty and non-whitespace\n"
         "6. Report any blank Menu Item rows"
     ),
+    key="FQL-32",
 )
 @pytest.mark.regression
 def test_all_rows_have_non_empty_menu_item(logged_in_page, seeded_basic_scans):
@@ -552,6 +567,7 @@ def test_all_rows_have_non_empty_menu_item(logged_in_page, seeded_basic_scans):
         "6. Assert every row's Venue column matches the selected venue\n"
         "7. Report any rows from unexpected venues"
     ),
+    key="FQL-33",
 )
 @pytest.mark.regression
 def test_venue_filter_shows_only_selected_venue(logged_in_page, seeded_basic_scans):
@@ -586,6 +602,7 @@ def test_venue_filter_shows_only_selected_venue(logged_in_page, seeded_basic_sca
         "4. Assert get_rows() returns 0 rows\n"
         "5. (Optional) Verify 'No data available' message is visible"
     ),
+    key="FQL-34",
 )
 @pytest.mark.regression
 def test_no_data_for_out_of_range_dates(logged_in_page, seeded_basic_scans):
@@ -621,6 +638,7 @@ def test_no_data_for_out_of_range_dates(logged_in_page, seeded_basic_scans):
         "4. Assert the breadcrumb text contains 'Consumption Summary'\n"
         "5. Assert no error or unexpected page is shown"
     ),
+    key="FQL-35",
 )
 @pytest.mark.smoke
 @pytest.mark.regression
@@ -653,6 +671,7 @@ def test_breadcrumb_shows_correct_text(logged_in_page):
         "7. Assert Date and Day columns are still visible (day toggle preserved)\n"
         "8. Assert the venue filter still shows the selected venue"
     ),
+    key="FQL-36",
 )
 @pytest.mark.regression
 def test_breadcrumb_preserves_filters_and_day_toggle(logged_in_page, seeded_basic_scans):
@@ -691,6 +710,7 @@ def test_breadcrumb_preserves_filters_and_day_toggle(logged_in_page, seeded_basi
         "6. Assert 'Date' column is present\n"
         "7. Assert 'Day' column is present"
     ),
+    key="FQL-37",
 )
 @pytest.mark.regression
 def test_clicking_menu_item_enables_day_toggle(logged_in_page, seeded_basic_scans):
@@ -723,6 +743,7 @@ def test_clicking_menu_item_enables_day_toggle(logged_in_page, seeded_basic_scan
         "6. Assert 'Date' column is present\n"
         "7. Assert 'Day' column is present"
     ),
+    key="FQL-38",
 )
 @pytest.mark.regression
 def test_day_toggle_shows_date_and_day_columns(logged_in_page, seeded_basic_scans):
@@ -755,6 +776,7 @@ def test_day_toggle_shows_date_and_day_columns(logged_in_page, seeded_basic_scan
         "7. Assert 'Date' column is NOT present\n"
         "8. Assert 'Day' column is NOT present"
     ),
+    key="FQL-39",
 )
 @pytest.mark.regression
 def test_day_toggle_back_hides_date_and_day_columns(logged_in_page, seeded_basic_scans):
@@ -795,6 +817,7 @@ def _get_breadcrumb_links(page: Page) -> list[str]:
         "4. Assert 'Consumption Summary' is present\n"
         "5. Assert no menu item name appears alongside it"
     ),
+    key="FQL-40",
 )
 @pytest.mark.regression
 def test_breadcrumb_has_consumption_summary_on_load(logged_in_page):
@@ -827,6 +850,7 @@ def test_breadcrumb_has_consumption_summary_on_load(logged_in_page):
         "4. Read breadcrumb texts\n"
         "5. Assert 'Consumption Summary' is still the last meaningful item — no item name appended"
     ),
+    key="FQL-41",
 )
 @pytest.mark.regression
 def test_breadcrumb_unchanged_after_applying_filters(logged_in_page, seeded_basic_scans):
@@ -862,6 +886,7 @@ def test_breadcrumb_unchanged_after_applying_filters(logged_in_page, seeded_basi
         "6. Assert 'Consumption Summary' is still present\n"
         "7. Assert the clicked item's name appears as the last breadcrumb level"
     ),
+    key="FQL-42",
 )
 @pytest.mark.regression
 def test_breadcrumb_adds_item_name_after_drill_down(logged_in_page, seeded_basic_scans):
@@ -911,6 +936,7 @@ def test_breadcrumb_adds_item_name_after_drill_down(logged_in_page, seeded_basic
         "4. Read all detail rows across all pages\n"
         "5. Parse each Date value and assert it falls within [DEFAULT_DATE_START, DEFAULT_DATE_END]"
     ),
+    key="FQL-43",
 )
 @pytest.mark.regression
 def test_detail_view_dates_within_selected_range(logged_in_page, seeded_basic_scans):
@@ -964,6 +990,7 @@ def test_detail_view_dates_within_selected_range(logged_in_page, seeded_basic_sc
         "4. For each row, parse the Date value and derive the expected weekday (e.g. Monday)\n"
         "5. Assert the Day column value matches the expected weekday"
     ),
+    key="FQL-44",
 )
 @pytest.mark.regression
 def test_detail_view_day_column_matches_date(logged_in_page, seeded_basic_scans):
@@ -1012,6 +1039,7 @@ def test_detail_view_day_column_matches_date(logged_in_page, seeded_basic_scans)
         "4. Collect all Date values across all pages\n"
         "5. Assert no date appears more than once"
     ),
+    key="FQL-45",
 )
 @pytest.mark.regression
 def test_detail_view_no_duplicate_dates(logged_in_page, seeded_basic_scans):
@@ -1057,6 +1085,7 @@ def test_detail_view_no_duplicate_dates(logged_in_page, seeded_basic_scans):
         "5. Click the first menu item again and assert visible dates <= original count\n"
         "6. Assert all visible dates fall within the narrower range"
     ),
+    key="FQL-46",
 )
 @pytest.mark.regression
 def test_narrowing_date_range_reduces_detail_dates(logged_in_page, seeded_basic_scans):
@@ -1118,6 +1147,7 @@ def test_narrowing_date_range_reduces_detail_dates(logged_in_page, seeded_basic_
         "6. Assert the list is sorted A-Z (case-insensitive)\n"
         "7. Report the actual vs expected order if not sorted"
     ),
+    key="FQL-47",
 )
 @pytest.mark.regression
 def test_default_sort_is_alphabetical_by_menu_item(logged_in_page, seeded_basic_scans):
@@ -1157,6 +1187,7 @@ def test_default_sort_is_alphabetical_by_menu_item(logged_in_page, seeded_basic_
         "6. Extract Production values\n"
         "7. Assert values are sorted in ascending order"
     ),
+    key="FQL-48",
 )
 @pytest.mark.regression
 def test_production_sort_ascending(logged_in_page, seeded_basic_scans):
@@ -1190,6 +1221,7 @@ def test_production_sort_ascending(logged_in_page, seeded_basic_scans):
         "6. Extract Production values\n"
         "7. Assert values are sorted in descending order"
     ),
+    key="FQL-49",
 )
 @pytest.mark.regression
 def test_production_sort_descending(logged_in_page, seeded_basic_scans):
@@ -1224,6 +1256,7 @@ def test_production_sort_descending(logged_in_page, seeded_basic_scans):
         "6. Extract Consumption values\n"
         "7. Assert values are sorted in ascending order"
     ),
+    key="FQL-50",
 )
 @pytest.mark.regression
 def test_consumption_sort_ascending(logged_in_page, seeded_basic_scans):
@@ -1257,6 +1290,7 @@ def test_consumption_sort_ascending(logged_in_page, seeded_basic_scans):
         "6. Extract Consumption values\n"
         "7. Assert values are sorted in descending order"
     ),
+    key="FQL-51",
 )
 @pytest.mark.regression
 def test_consumption_sort_descending(logged_in_page, seeded_basic_scans):
@@ -1291,6 +1325,7 @@ def test_consumption_sort_descending(logged_in_page, seeded_basic_scans):
         "6. Extract Overproduction values\n"
         "7. Assert values are sorted in ascending order"
     ),
+    key="FQL-52",
 )
 @pytest.mark.regression
 def test_overproduction_sort_ascending(logged_in_page, seeded_basic_scans):
@@ -1324,6 +1359,7 @@ def test_overproduction_sort_ascending(logged_in_page, seeded_basic_scans):
         "6. Extract Overproduction values\n"
         "7. Assert values are sorted in descending order"
     ),
+    key="FQL-53",
 )
 @pytest.mark.regression
 def test_overproduction_sort_descending(logged_in_page, seeded_basic_scans):
@@ -1358,6 +1394,7 @@ def test_overproduction_sort_descending(logged_in_page, seeded_basic_scans):
         "6. Extract Days Served values\n"
         "7. Assert values are sorted in ascending order"
     ),
+    key="FQL-54",
 )
 @pytest.mark.regression
 def test_days_served_sort_ascending(logged_in_page, seeded_basic_scans):
@@ -1392,6 +1429,7 @@ def test_days_served_sort_ascending(logged_in_page, seeded_basic_scans):
         "6. Extract Days Served values\n"
         "7. Assert values are sorted in descending order"
     ),
+    key="FQL-55",
 )
 @pytest.mark.regression
 def test_days_served_sort_descending(logged_in_page, seeded_basic_scans):
@@ -1428,6 +1466,7 @@ def test_days_served_sort_descending(logged_in_page, seeded_basic_scans):
         "7. Read the visible rows\n"
         "8. Assert Production values are still sorted descending"
     ),
+    key="FQL-56",
 )
 @pytest.mark.regression
 def test_sort_persists_after_filter_change(logged_in_page, seeded_basic_scans):

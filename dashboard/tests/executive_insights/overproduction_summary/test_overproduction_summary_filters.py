@@ -39,6 +39,7 @@ from shared.data.test_constants import *  # noqa: F401, F403
         "3. Apply default filters with All Destinations\n"
         "4. Assert Reuse, Donation, and Compostable columns are all present"
     ),
+    key="FQL-137",
 )
 @pytest.mark.smoke
 @pytest.mark.regression
@@ -70,6 +71,7 @@ def test_destination_all_shows_all_columns(logged_in_page, seeded_basic_scans):
         "5. Assert Reuse (lb) column is present\n"
         "6. Assert Donation and Compostable columns are absent"
     ),
+    key="FQL-138",
 )
 @pytest.mark.regression
 def test_destination_reuse_shows_only_reuse_column(logged_in_page, seeded_basic_scans):
@@ -105,6 +107,7 @@ def test_destination_reuse_shows_only_reuse_column(logged_in_page, seeded_basic_
         "5. Assert Donation (lb) column is present\n"
         "6. Assert Reuse and Compostable columns are absent"
     ),
+    key="FQL-139",
 )
 @pytest.mark.regression
 def test_destination_donation_shows_only_donation_column(logged_in_page, seeded_basic_scans):
@@ -140,6 +143,7 @@ def test_destination_donation_shows_only_donation_column(logged_in_page, seeded_
         "5. Assert Compostable (lb) column is present\n"
         "6. Assert Reuse and Donation columns are absent"
     ),
+    key="FQL-140",
 )
 @pytest.mark.regression
 def test_destination_compostable_shows_only_compostable_column(logged_in_page, seeded_basic_scans):
@@ -174,6 +178,7 @@ def test_destination_compostable_shows_only_compostable_column(logged_in_page, s
         "4. Set destination to 'Reuse'\n"
         "5. Assert every row has Reuse (lb) > 0"
     ),
+    key="FQL-141",
 )
 @pytest.mark.regression
 def test_destination_reuse_rows_have_nonzero_reuse(logged_in_page, seeded_basic_scans):
@@ -216,6 +221,7 @@ def test_destination_reuse_rows_have_nonzero_reuse(logged_in_page, seeded_basic_
         "4. Set destination to 'Donation'\n"
         "5. Assert every row has Donation (lb) > 0"
     ),
+    key="FQL-142",
 )
 @pytest.mark.regression
 def test_destination_donation_rows_have_nonzero_donation(logged_in_page, seeded_basic_scans):
@@ -258,6 +264,7 @@ def test_destination_donation_rows_have_nonzero_donation(logged_in_page, seeded_
         "4. Set destination to 'Compostable'\n"
         "5. Assert every row has Compostable (lb) > 0"
     ),
+    key="FQL-143",
 )
 @pytest.mark.regression
 def test_destination_compostable_rows_have_nonzero_compostable(logged_in_page, seeded_basic_scans):
@@ -301,6 +308,7 @@ def test_destination_compostable_rows_have_nonzero_compostable(logged_in_page, s
         "5. Set destination back to 'All Destinations'\n"
         "6. Assert Reuse, Donation, and Compostable columns all present"
     ),
+    key="FQL-144",
 )
 @pytest.mark.regression
 def test_destination_back_to_all_restores_columns(logged_in_page, seeded_basic_scans):
@@ -338,6 +346,7 @@ def test_destination_back_to_all_restores_columns(logged_in_page, seeded_basic_s
         "4. Switch to venue B\n"
         "5. Assert table data changes (different set of items or different values)"
     ),
+    key="FQL-145",
 )
 @pytest.mark.regression
 def test_venue_filter_changes_data(logged_in_page, seeded_basic_scans):
@@ -383,6 +392,7 @@ def test_venue_filter_changes_data(logged_in_page, seeded_basic_scans):
         "4. Compute expected totals from seeded payloads for venue A only\n"
         "5. Assert UI values match expected (tolerance 0.01 lb)"
     ),
+    key="FQL-146",
 )
 @pytest.mark.regression
 def test_venue_a_data_matches_seeded(logged_in_page, seeded_basic_scans):
@@ -420,6 +430,7 @@ def test_venue_a_data_matches_seeded(logged_in_page, seeded_basic_scans):
         "4. Compute expected totals from seeded payloads for venue B only\n"
         "5. Assert UI values match expected (tolerance 0.01 lb)"
     ),
+    key="FQL-147",
 )
 @pytest.mark.regression
 def test_venue_b_data_matches_seeded(logged_in_page, seeded_basic_scans):
@@ -461,6 +472,7 @@ def test_venue_b_data_matches_seeded(logged_in_page, seeded_basic_scans):
         "4. If no seeded data for Lunch, assert table is empty and pass\n"
         "5. For each row assert Total == Reuse + Donation + Compostable (tolerance 0.01)"
     ),
+    key="FQL-148",
 )
 @pytest.mark.regression
 def test_meal_lunch_math_invariant(logged_in_page, seeded_basic_scans):
@@ -508,6 +520,7 @@ def test_meal_lunch_math_invariant(logged_in_page, seeded_basic_scans):
         "4. If no seeded data for Dinner, assert table is empty and pass\n"
         "5. For each row assert Total == Reuse + Donation + Compostable (tolerance 0.01)"
     ),
+    key="FQL-149",
 )
 @pytest.mark.regression
 def test_meal_dinner_math_invariant(logged_in_page, seeded_basic_scans):
@@ -555,6 +568,7 @@ def test_meal_dinner_math_invariant(logged_in_page, seeded_basic_scans):
         "4. Compute expected totals from seeded Lunch payloads\n"
         "5. Assert UI values match expected (tolerance 0.01 lb)"
     ),
+    key="FQL-150",
 )
 @pytest.mark.regression
 def test_meal_lunch_data_accuracy(logged_in_page, seeded_basic_scans):
@@ -590,6 +604,7 @@ def test_meal_lunch_data_accuracy(logged_in_page, seeded_basic_scans):
         "4. Compute expected totals from seeded Dinner payloads\n"
         "5. Assert UI values match expected (tolerance 0.01 lb)"
     ),
+    key="FQL-151",
 )
 @pytest.mark.regression
 def test_meal_dinner_data_accuracy(logged_in_page, seeded_basic_scans):
@@ -628,6 +643,7 @@ def test_meal_dinner_data_accuracy(logged_in_page, seeded_basic_scans):
         "3. Apply default filters with Vegetables category\n"
         "4. Assert all visible rows contain only Vegetables menu items"
     ),
+    key="FQL-152",
 )
 @pytest.mark.regression
 def test_category_vegetables_shows_only_vegetables(logged_in_page, seeded_basic_scans):
@@ -672,6 +688,7 @@ def test_category_vegetables_shows_only_vegetables(logged_in_page, seeded_basic_
         "3. Apply default filters with Fruits category\n"
         "4. Assert all visible rows contain only Fruits menu items"
     ),
+    key="FQL-153",
 )
 @pytest.mark.regression
 def test_category_fruits_shows_only_fruits(logged_in_page, seeded_basic_scans):
@@ -717,6 +734,7 @@ def test_category_fruits_shows_only_fruits(logged_in_page, seeded_basic_scans):
         "4. Compute expected totals from seeded Vegetables payloads\n"
         "5. Assert UI values match expected (tolerance 0.01 lb)"
     ),
+    key="FQL-154",
 )
 @pytest.mark.regression
 def test_category_vegetables_data_accuracy(logged_in_page, seeded_basic_scans):
@@ -752,6 +770,7 @@ def test_category_vegetables_data_accuracy(logged_in_page, seeded_basic_scans):
         "4. Compute expected totals from seeded Fruits payloads\n"
         "5. Assert UI values match expected (tolerance 0.01 lb)"
     ),
+    key="FQL-155",
 )
 @pytest.mark.regression
 def test_category_fruits_data_accuracy(logged_in_page, seeded_basic_scans):
@@ -791,6 +810,7 @@ def test_category_fruits_data_accuracy(logged_in_page, seeded_basic_scans):
         "4. Open menu item search and select the first seeded item with overproduction\n"
         "5. Assert table shows only that menu item"
     ),
+    key="FQL-156",
 )
 @pytest.mark.regression
 def test_menu_item_search_filters_to_single_item(logged_in_page, seeded_basic_scans):
@@ -835,6 +855,7 @@ def test_menu_item_search_filters_to_single_item(logged_in_page, seeded_basic_sc
         "5. Clear the search\n"
         "6. Assert table returns to original row count"
     ),
+    key="FQL-157",
 )
 @pytest.mark.regression
 def test_clearing_menu_item_search_restores_all_rows(logged_in_page, seeded_basic_scans):
@@ -890,6 +911,7 @@ def test_clearing_menu_item_search_restores_all_rows(logged_in_page, seeded_basi
         "3. Apply default filters with seeded data\n"
         "4. Assert export button is enabled"
     ),
+    key="FQL-158",
 )
 @pytest.mark.smoke
 @pytest.mark.regression
@@ -921,6 +943,7 @@ def test_export_button_enabled_with_data(logged_in_page, seeded_basic_scans):
         "4. Click the export button\n"
         "5. Assert a file download starts and the file is non-empty"
     ),
+    key="FQL-159",
 )
 @pytest.mark.regression
 def test_export_downloads_csv_file(logged_in_page, seeded_basic_scans):
@@ -953,6 +976,7 @@ def test_export_downloads_csv_file(logged_in_page, seeded_basic_scans):
         "4. Export CSV\n"
         "5. Parse downloaded file and assert 'Menu Item' and 'Venue' columns are present"
     ),
+    key="FQL-160",
 )
 @pytest.mark.regression
 def test_export_csv_has_expected_headers(logged_in_page, seeded_basic_scans):
@@ -992,6 +1016,7 @@ def test_export_csv_has_expected_headers(logged_in_page, seeded_basic_scans):
         "4. Export CSV\n"
         "5. Parse downloaded file and assert it has >= 1 data rows"
     ),
+    key="FQL-161",
 )
 @pytest.mark.regression
 def test_export_csv_has_data_rows(logged_in_page, seeded_basic_scans):
@@ -1033,6 +1058,7 @@ def test_export_csv_has_data_rows(logged_in_page, seeded_basic_scans):
         "6. Click again\n"
         "7. Assert values are in descending order"
     ),
+    key="FQL-162",
 )
 @pytest.mark.regression
 def test_sort_total_overproduction_ascending_then_descending(logged_in_page, seeded_basic_scans):
@@ -1080,6 +1106,7 @@ def test_sort_total_overproduction_ascending_then_descending(logged_in_page, see
         "5. Set destination to Reuse\n"
         "6. Assert Date column is present and Reuse column is present"
     ),
+    key="FQL-163",
 )
 @pytest.mark.regression
 def test_day_view_with_reuse_destination(logged_in_page, seeded_basic_scans):
@@ -1110,6 +1137,7 @@ def test_day_view_with_reuse_destination(logged_in_page, seeded_basic_scans):
         "4. Enable Day view\n"
         "5. Assert total row count >= non-day view row count (day view splits by date)"
     ),
+    key="FQL-164",
 )
 @pytest.mark.regression
 def test_day_view_shows_more_rows_than_combined_view(logged_in_page, seeded_basic_scans):
@@ -1148,6 +1176,7 @@ def test_day_view_shows_more_rows_than_combined_view(logged_in_page, seeded_basi
         "3. Apply Lunch meal filter\n"
         "4. Assert only items with Lunch overproduction scans appear"
     ),
+    key="FQL-165",
 )
 @pytest.mark.regression
 def test_meal_lunch_shows_only_lunch_items(logged_in_page, seeded_basic_scans):
@@ -1185,6 +1214,7 @@ def test_meal_lunch_shows_only_lunch_items(logged_in_page, seeded_basic_scans):
         "3. Apply Dinner meal filter\n"
         "4. Assert only items with Dinner overproduction scans appear"
     ),
+    key="FQL-166",
 )
 @pytest.mark.regression
 def test_meal_dinner_shows_only_dinner_items(logged_in_page, seeded_basic_scans):
@@ -1222,6 +1252,7 @@ def test_meal_dinner_shows_only_dinner_items(logged_in_page, seeded_basic_scans)
         "3. Apply All Day meal filter\n"
         "4. Assert only items with All Day overproduction scans appear"
     ),
+    key="FQL-167",
 )
 @pytest.mark.regression
 def test_meal_all_day_shows_only_all_day_items(logged_in_page, seeded_basic_scans):
@@ -1259,6 +1290,7 @@ def test_meal_all_day_shows_only_all_day_items(logged_in_page, seeded_basic_scan
         "3. Apply All Day meal filter\n"
         "4. For each row assert Total == Reuse + Donation + Compostable (tolerance 0.01)"
     ),
+    key="FQL-168",
 )
 @pytest.mark.regression
 def test_meal_all_day_math_invariant(logged_in_page, seeded_basic_scans):
@@ -1303,6 +1335,7 @@ def test_meal_all_day_math_invariant(logged_in_page, seeded_basic_scans):
         "3. Apply All Day meal filter\n"
         "4. Assert UI values match expected (tolerance 0.01 lb)"
     ),
+    key="FQL-169",
 )
 @pytest.mark.regression
 def test_meal_all_day_data_accuracy(logged_in_page, seeded_basic_scans):
@@ -1341,6 +1374,7 @@ def test_meal_all_day_data_accuracy(logged_in_page, seeded_basic_scans):
         "3. Apply Fruits category filter\n"
         "4. For each row assert Total == Reuse + Donation + Compostable (tolerance 0.01)"
     ),
+    key="FQL-170",
 )
 @pytest.mark.regression
 def test_category_fruits_math_invariant(logged_in_page, seeded_basic_scans):
@@ -1385,6 +1419,7 @@ def test_category_fruits_math_invariant(logged_in_page, seeded_basic_scans):
         "3. Apply Vegetables category filter\n"
         "4. For each row assert Total == Reuse + Donation + Compostable (tolerance 0.01)"
     ),
+    key="FQL-171",
 )
 @pytest.mark.regression
 def test_category_vegetables_math_invariant(logged_in_page, seeded_basic_scans):
@@ -1429,6 +1464,7 @@ def test_category_vegetables_math_invariant(logged_in_page, seeded_basic_scans):
         "3. Apply Kitchen Waste category filter\n"
         "4. Assert all rows contain only Kitchen Waste menu items"
     ),
+    key="FQL-172",
 )
 @pytest.mark.regression
 def test_category_kitchen_waste_shows_only_kw_items(logged_in_page, seeded_basic_scans):
@@ -1468,6 +1504,7 @@ def test_category_kitchen_waste_shows_only_kw_items(logged_in_page, seeded_basic
         "3. Apply Post Consumer category filter\n"
         "4. Assert all rows contain only Post Consumer menu items"
     ),
+    key="FQL-173",
 )
 @pytest.mark.regression
 def test_category_post_consumer_shows_only_pc_items(logged_in_page, seeded_basic_scans):
@@ -1511,6 +1548,7 @@ def test_category_post_consumer_shows_only_pc_items(logged_in_page, seeded_basic
         "3. Apply Fruits category filter and Lunch meal filter\n"
         "4. For each row assert Total == Reuse + Donation + Compostable"
     ),
+    key="FQL-174",
 )
 @pytest.mark.regression
 def test_combined_fruits_lunch_math_invariant(logged_in_page, seeded_basic_scans):
@@ -1559,6 +1597,7 @@ def test_combined_fruits_lunch_math_invariant(logged_in_page, seeded_basic_scans
         "3. Apply Vegetables category filter and Dinner meal filter\n"
         "4. For each row assert Total == Reuse + Donation + Compostable"
     ),
+    key="FQL-175",
 )
 @pytest.mark.regression
 def test_combined_vegetables_dinner_math_invariant(logged_in_page, seeded_basic_scans):
@@ -1608,6 +1647,7 @@ def test_combined_vegetables_dinner_math_invariant(logged_in_page, seeded_basic_
         "4. Change category to Fruits\n"
         "5. Assert meal filter still shows Lunch as selected"
     ),
+    key="FQL-176",
 )
 @pytest.mark.regression
 def test_category_change_preserves_meal_filter(logged_in_page, seeded_basic_scans):
@@ -1639,6 +1679,7 @@ def test_category_change_preserves_meal_filter(logged_in_page, seeded_basic_scan
         "4. Change meal to Dinner\n"
         "5. Assert category filter still shows Fruits as selected"
     ),
+    key="FQL-177",
 )
 @pytest.mark.regression
 def test_meal_change_preserves_category_filter(logged_in_page, seeded_basic_scans):
@@ -1673,6 +1714,7 @@ def test_meal_change_preserves_category_filter(logged_in_page, seeded_basic_scan
         "3. Select All Venues filter\n"
         "4. Assert Venue column contains entries from both venue A and venue B"
     ),
+    key="FQL-178",
 )
 @pytest.mark.regression
 def test_all_venues_shows_rows_from_both_venues(logged_in_page, seeded_basic_scans):
@@ -1712,6 +1754,7 @@ def test_all_venues_shows_rows_from_both_venues(logged_in_page, seeded_basic_sca
         "2. Select All Venues\n"
         "3. For each row assert Total == Reuse + Donation + Compostable"
     ),
+    key="FQL-179",
 )
 @pytest.mark.regression
 def test_all_venues_math_invariant(logged_in_page, seeded_basic_scans):
@@ -1753,6 +1796,7 @@ def test_all_venues_math_invariant(logged_in_page, seeded_basic_scans):
         "2. Select venue B filter\n"
         "3. Assert every row's Venue column equals venue B's name"
     ),
+    key="FQL-180",
 )
 @pytest.mark.regression
 def test_second_venue_shows_only_that_venue(logged_in_page, seeded_basic_scans):
@@ -1787,6 +1831,7 @@ def test_second_venue_shows_only_that_venue(logged_in_page, seeded_basic_scans):
         "2. Select venue B\n"
         "3. For each row assert Total == Reuse + Donation + Compostable"
     ),
+    key="FQL-181",
 )
 @pytest.mark.regression
 def test_second_venue_math_invariant(logged_in_page, seeded_basic_scans):
@@ -1832,6 +1877,7 @@ def test_second_venue_math_invariant(logged_in_page, seeded_basic_scans):
         "2. Navigate to Overproduction Summary\n"
         "3. Assert the search/filter icon button is visible in the header"
     ),
+    key="FQL-182",
 )
 @pytest.mark.regression
 def test_search_button_visible_in_header(logged_in_page):
@@ -1858,6 +1904,7 @@ def test_search_button_visible_in_header(logged_in_page):
         "5. Click the minimize button\n"
         "6. Assert menu item select disappears"
     ),
+    key="FQL-183",
 )
 @pytest.mark.regression
 def test_search_button_toggles_menu_item_select(logged_in_page):
@@ -1887,6 +1934,7 @@ def test_search_button_toggles_menu_item_select(logged_in_page):
         "4. Open menu item search and select two items\n"
         "5. Assert table shows exactly those two items"
     ),
+    key="FQL-184",
 )
 @pytest.mark.regression
 def test_search_multiple_items_shows_all_selected(logged_in_page, seeded_basic_scans):
@@ -1929,6 +1977,7 @@ def test_search_multiple_items_shows_all_selected(logged_in_page, seeded_basic_s
         "4. Open menu item search and select one item\n"
         "5. Assert table shows only that item"
     ),
+    key="FQL-185",
 )
 @pytest.mark.regression
 def test_search_combined_with_meal_filter(logged_in_page, seeded_basic_scans):
@@ -1979,6 +2028,7 @@ def test_search_combined_with_meal_filter(logged_in_page, seeded_basic_scans):
         "5. Export CSV\n"
         "6. Assert CSV data rows count matches table rows count"
     ),
+    key="FQL-186",
 )
 @pytest.mark.regression
 def test_export_row_count_matches_ui(logged_in_page, seeded_basic_scans):
@@ -2014,6 +2064,7 @@ def test_export_row_count_matches_ui(logged_in_page, seeded_basic_scans):
         "4. Record Menu Item names from the UI table\n"
         "5. Export CSV and assert Menu Item names match"
     ),
+    key="FQL-187",
 )
 @pytest.mark.regression
 def test_export_menu_items_match_ui(logged_in_page, seeded_basic_scans):
@@ -2055,6 +2106,7 @@ def test_export_menu_items_match_ui(logged_in_page, seeded_basic_scans):
         "4. Export CSV\n"
         "5. Assert CSV first row (title) contains the start and end dates"
     ),
+    key="FQL-188",
 )
 @pytest.mark.regression
 def test_export_title_contains_date_range(logged_in_page, seeded_basic_scans):
@@ -2093,6 +2145,7 @@ def test_export_title_contains_date_range(logged_in_page, seeded_basic_scans):
         "4. Export CSV\n"
         "5. Assert CSV data rows are fewer than or equal to unfiltered export"
     ),
+    key="FQL-189",
 )
 @pytest.mark.regression
 def test_export_respects_meal_filter(logged_in_page, seeded_basic_scans):

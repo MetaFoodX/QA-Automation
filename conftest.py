@@ -56,6 +56,7 @@ def pytest_runtest_makereport(item, call):
             })
 
 
+@pytest.hookimpl(trylast=True)  # run after junitxml writes reports/junit.xml, which Xray reporting reads
 def pytest_sessionfinish(session, exitstatus):  # noqa: ARG001
     if not _run_timestamp:
         return
@@ -107,6 +108,26 @@ def pytest_sessionfinish(session, exitstatus):  # noqa: ARG001
             wb.save(str(run_dir / "test_results.xlsx"))
         except ImportError:
             pass
+
+    # Xray Cloud — report results for tests already onboarded (never creates a Test).
+    # Skipped entirely if credentials aren't set, so local dev without them is unaffected.
+    if os.environ.get("XRAY_CLIENT_ID") and os.environ.get("XRAY_CLIENT_SECRET"):
+        try:
+            import sys
+            sys.path.insert(0, str(Path(__file__).parent / "scripts"))
+            from xray_common import push_execution_results
+            from xray_report import build_entries
+
+            keyed, skipped = build_entries()
+            if keyed:
+                build = os.environ.get("BUILD_NUMBER", "Local Execution")
+                execution = push_execution_results(keyed, build)
+                print(f"Xray: reported {len(keyed)} result(s) -> {execution['key']}")
+            if skipped:
+                print(f"Xray: {len(skipped)} test(s) ran without a key, skipped reporting — "
+                      f"run scripts/xray_onboard.py to onboard them: {', '.join(skipped)}")
+        except Exception as exc:
+            print(f"Xray: reporting failed, non-fatal ({exc})")
 
 
 load_dotenv(Path(__file__).parent / ".env")

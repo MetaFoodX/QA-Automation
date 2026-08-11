@@ -39,6 +39,7 @@ from shared.data.test_constants import *  # noqa: F401, F403
         "Donation (lb), and Compostable (lb) columns are all present\n"
         "5. Assert no expected column is missing"
     ),
+    key="FQL-105",
 )
 @pytest.mark.smoke
 @pytest.mark.regression
@@ -74,6 +75,7 @@ def test_all_expected_columns_present(logged_in_page):
         "3. Apply default filters\n"
         "4. Verify Total Overproduction, Reuse, Donation, and Compostable headers all display '(lb)'"
     ),
+    key="FQL-106",
 )
 @pytest.mark.smoke
 @pytest.mark.regression
@@ -101,6 +103,7 @@ def test_weight_view_shows_lb_unit(logged_in_page, seeded_basic_scans):
         "4. Click the cost view toggle button\n"
         "5. Verify Total Overproduction, Reuse, Donation, Compostable headers all display '($)'"
     ),
+    key="FQL-107",
 )
 @pytest.mark.smoke
 @pytest.mark.regression
@@ -132,6 +135,7 @@ def test_cost_view_shows_dollar_unit(logged_in_page, seeded_basic_scans):
         "6. Click the cost view toggle again to switch back\n"
         "7. Assert all destination headers show (lb) unit"
     ),
+    key="FQL-108",
 )
 @pytest.mark.regression
 def test_toggle_cost_back_to_weight(logged_in_page, seeded_basic_scans):
@@ -162,6 +166,7 @@ def test_toggle_cost_back_to_weight(logged_in_page, seeded_basic_scans):
         "4. Click the cost view toggle\n"
         "5. Assert all four cost columns are present in the table headers"
     ),
+    key="FQL-109",
 )
 @pytest.mark.regression
 def test_cost_view_all_columns_present(logged_in_page, seeded_basic_scans):
@@ -201,6 +206,7 @@ def test_cost_view_all_columns_present(logged_in_page, seeded_basic_scans):
         "4. Click the Breakdown toggle\n"
         "5. Assert Served Total Overproduction and Not Served Total Overproduction columns appear"
     ),
+    key="FQL-110",
 )
 @pytest.mark.regression
 def test_breakdown_view_shows_served_columns(logged_in_page, seeded_basic_scans):
@@ -237,6 +243,7 @@ def test_breakdown_view_shows_served_columns(logged_in_page, seeded_basic_scans)
         "5. Click Breakdown toggle again to disable\n"
         "6. Assert Served Total Overproduction column is no longer in headers"
     ),
+    key="FQL-111",
 )
 @pytest.mark.regression
 def test_breakdown_toggle_off_removes_served_columns(logged_in_page, seeded_basic_scans):
@@ -273,6 +280,7 @@ def test_breakdown_toggle_off_removes_served_columns(logged_in_page, seeded_basi
         "4. Click the Day toggle button\n"
         "5. Assert Date and Day columns appear in the table headers"
     ),
+    key="FQL-112",
 )
 @pytest.mark.regression
 def test_day_view_shows_date_and_day_columns(logged_in_page, seeded_basic_scans):
@@ -303,6 +311,7 @@ def test_day_view_shows_date_and_day_columns(logged_in_page, seeded_basic_scans)
         "5. Click Day toggle again to disable\n"
         "6. Assert Date and Day columns are no longer in headers"
     ),
+    key="FQL-113",
 )
 @pytest.mark.regression
 def test_day_view_toggle_off_removes_date_columns(logged_in_page, seeded_basic_scans):
@@ -342,6 +351,7 @@ def test_day_view_toggle_off_removes_date_columns(logged_in_page, seeded_basic_s
         "4. Read all summary rows\n"
         "5. For each row assert Total Overproduction == Reuse + Donation + Compostable (tolerance 0.01)"
     ),
+    key="FQL-114",
 )
 @pytest.mark.smoke
 @pytest.mark.regression
@@ -391,6 +401,7 @@ def test_total_equals_reuse_plus_donation_plus_compostable(logged_in_page, seede
         "4. Click the cost view toggle\n"
         "5. For each row assert Total Overproduction ($) == Reuse ($) + Donation ($) + Compostable ($)"
     ),
+    key="FQL-116",
 )
 @pytest.mark.regression
 def test_cost_view_total_equals_destinations(logged_in_page, seeded_basic_scans):
@@ -439,6 +450,7 @@ def test_cost_view_total_equals_destinations(logged_in_page, seeded_basic_scans)
         "4. Read all rows across all pages\n"
         "5. Assert Total Overproduction >= 0 for every row"
     ),
+    key="FQL-117",
 )
 @pytest.mark.regression
 def test_total_overproduction_always_non_negative(logged_in_page, seeded_basic_scans):
@@ -473,6 +485,7 @@ def test_total_overproduction_always_non_negative(logged_in_page, seeded_basic_s
         "4. Read all rows\n"
         "5. Assert Reuse, Donation, and Compostable are all >= 0 for every row"
     ),
+    key="FQL-118",
 )
 @pytest.mark.regression
 def test_destination_columns_always_non_negative(logged_in_page, seeded_basic_scans):
@@ -510,6 +523,7 @@ def test_destination_columns_always_non_negative(logged_in_page, seeded_basic_sc
         "4. Enable breakdown view\n"
         "5. For each row assert Served Total + Not Served Total == Total Overproduction (tolerance 0.01)"
     ),
+    key="FQL-119",
 )
 @pytest.mark.regression
 def test_breakdown_served_plus_not_served_equals_total(logged_in_page, seeded_basic_scans):
@@ -565,6 +579,7 @@ def test_breakdown_served_plus_not_served_equals_total(logged_in_page, seeded_ba
         "3. Compute expected total overproduction from seeded payloads\n"
         "4. For each seeded menu item assert UI value matches expected (tolerance 0.01 lb)"
     ),
+    key="FQL-120",
 )
 @pytest.mark.regression
 def test_total_overproduction_matches_seeded_data(logged_in_page, seeded_basic_scans):
@@ -598,6 +613,7 @@ def test_total_overproduction_matches_seeded_data(logged_in_page, seeded_basic_s
         "3. Compute expected reuse from seeded payloads (types 4 and 9)\n"
         "4. For each seeded menu item assert UI Reuse value matches expected (tolerance 0.01 lb)"
     ),
+    key="FQL-121",
 )
 @pytest.mark.regression
 def test_reuse_matches_seeded_data(logged_in_page, seeded_basic_scans):
@@ -631,6 +647,7 @@ def test_reuse_matches_seeded_data(logged_in_page, seeded_basic_scans):
         "3. Compute expected donation from seeded payloads (types 3 and 8)\n"
         "4. For each seeded menu item assert UI Donation value matches expected (tolerance 0.01 lb)"
     ),
+    key="FQL-122",
 )
 @pytest.mark.regression
 def test_donation_matches_seeded_data(logged_in_page, seeded_basic_scans):
@@ -664,6 +681,7 @@ def test_donation_matches_seeded_data(logged_in_page, seeded_basic_scans):
         "3. Compute expected compostable from seeded payloads (types 2 and 7)\n"
         "4. For each seeded menu item assert UI Compostable value matches expected (tolerance 0.01 lb)"
     ),
+    key="FQL-123",
 )
 @pytest.mark.regression
 def test_compostable_matches_seeded_data(logged_in_page, seeded_basic_scans):
@@ -705,6 +723,7 @@ def test_compostable_matches_seeded_data(logged_in_page, seeded_basic_scans):
         "3. Locate the breadcrumb element\n"
         "4. Assert the breadcrumb text contains 'Overproduction Summary'"
     ),
+    key="FQL-124",
 )
 @pytest.mark.smoke
 @pytest.mark.regression
@@ -739,6 +758,7 @@ def test_breadcrumb_shows_correct_text(logged_in_page):
         "4. Read all rows across all pages\n"
         "5. Assert no row has an empty or whitespace-only Menu Item value"
     ),
+    key="FQL-125",
 )
 @pytest.mark.regression
 def test_all_rows_have_non_empty_menu_item(logged_in_page, seeded_basic_scans):
@@ -771,6 +791,7 @@ def test_all_rows_have_non_empty_menu_item(logged_in_page, seeded_basic_scans):
         "4. Set date range\n"
         "5. Assert every row's Venue column equals venue A's name"
     ),
+    key="FQL-126",
 )
 @pytest.mark.regression
 def test_venue_filter_shows_only_selected_venue(logged_in_page, seeded_basic_scans):
@@ -811,6 +832,7 @@ def test_venue_filter_shows_only_selected_venue(logged_in_page, seeded_basic_sca
         "4. Read Menu Item column values\n"
         "5. Assert they are in alphabetical (case-insensitive) ascending order"
     ),
+    key="FQL-127",
 )
 @pytest.mark.regression
 def test_default_sort_is_alphabetical_by_menu_item(logged_in_page, seeded_basic_scans):
@@ -844,6 +866,7 @@ def test_default_sort_is_alphabetical_by_menu_item(logged_in_page, seeded_basic_
         "4. Click Reuse column header\n"
         "5. Assert Reuse values are in ascending order"
     ),
+    key="FQL-128",
 )
 @pytest.mark.regression
 def test_reuse_sort_ascending(logged_in_page, seeded_basic_scans):
@@ -878,6 +901,7 @@ def test_reuse_sort_ascending(logged_in_page, seeded_basic_scans):
         "4. Click Reuse column header twice\n"
         "5. Assert Reuse values are in descending order"
     ),
+    key="FQL-129",
 )
 @pytest.mark.regression
 def test_reuse_sort_descending(logged_in_page, seeded_basic_scans):
@@ -913,6 +937,7 @@ def test_reuse_sort_descending(logged_in_page, seeded_basic_scans):
         "4. Click Donation column header\n"
         "5. Assert Donation values are in ascending order"
     ),
+    key="FQL-130",
 )
 @pytest.mark.regression
 def test_donation_sort_ascending(logged_in_page, seeded_basic_scans):
@@ -947,6 +972,7 @@ def test_donation_sort_ascending(logged_in_page, seeded_basic_scans):
         "4. Click Donation column header twice\n"
         "5. Assert Donation values are in descending order"
     ),
+    key="FQL-131",
 )
 @pytest.mark.regression
 def test_donation_sort_descending(logged_in_page, seeded_basic_scans):
@@ -982,6 +1008,7 @@ def test_donation_sort_descending(logged_in_page, seeded_basic_scans):
         "4. Click Compostable column header\n"
         "5. Assert Compostable values are in ascending order"
     ),
+    key="FQL-132",
 )
 @pytest.mark.regression
 def test_compostable_sort_ascending(logged_in_page, seeded_basic_scans):
@@ -1016,6 +1043,7 @@ def test_compostable_sort_ascending(logged_in_page, seeded_basic_scans):
         "4. Click Compostable column header twice\n"
         "5. Assert Compostable values are in descending order"
     ),
+    key="FQL-133",
 )
 @pytest.mark.regression
 def test_compostable_sort_descending(logged_in_page, seeded_basic_scans):
@@ -1052,6 +1080,7 @@ def test_compostable_sort_descending(logged_in_page, seeded_basic_scans):
         "5. Change meal filter to Lunch\n"
         "6. Assert Total Overproduction column is still in ascending order"
     ),
+    key="FQL-134",
 )
 @pytest.mark.regression
 def test_sort_persists_after_filter_change(logged_in_page, seeded_basic_scans):
@@ -1095,6 +1124,7 @@ def test_sort_persists_after_filter_change(logged_in_page, seeded_basic_scans):
         "4. Apply venue, meal, category, and date filters\n"
         "5. Assert breadcrumb still shows 'Overproduction Summary'"
     ),
+    key="FQL-135",
 )
 @pytest.mark.regression
 def test_breadcrumb_unchanged_after_applying_filters(logged_in_page, seeded_basic_scans):
@@ -1125,6 +1155,7 @@ def test_breadcrumb_unchanged_after_applying_filters(logged_in_page, seeded_basi
         "4. Toggle day view on\n"
         "5. Assert breadcrumb still shows 'Overproduction Summary'"
     ),
+    key="FQL-136",
 )
 @pytest.mark.regression
 def test_breadcrumb_unchanged_after_day_toggle(logged_in_page, seeded_basic_scans):

@@ -29,6 +29,8 @@ API_PASSWORD=$(echo "$SECRET"      | jq -r '.["api-password"]')
 UI_EMAIL=$(echo "$SECRET"          | jq -r '.["ui-email"]')
 UI_PASSWORD=$(echo "$SECRET"       | jq -r '.["ui-password"]')
 JENKINS_CREDS=$(echo "$SECRET"     | jq -r '.["jenkins-branch-token"]')
+XRAY_CLIENT_ID=$(echo "$SECRET"     | jq -r '.["xray-client-id"] // ""')
+XRAY_CLIENT_SECRET=$(echo "$SECRET" | jq -r '.["xray-client-secret"] // ""')
 
 echo "==> Fetching deployed branch"
 DEPLOYED_BRANCH=$(curl -sf -u "$JENKINS_CREDS" \
@@ -58,6 +60,9 @@ CID=$(docker create \
     -e SKOOPIN_KITCHEN_SAPNA_EMAIL="$UI_EMAIL" \
     -e SKOOPIN_KITCHEN_SAPNA_PASSWORD="$UI_PASSWORD" \
     -e DEPLOYED_BRANCH="$DEPLOYED_BRANCH" \
+    -e XRAY_CLIENT_ID="$XRAY_CLIENT_ID" \
+    -e XRAY_CLIENT_SECRET="$XRAY_CLIENT_SECRET" \
+    -e BUILD_NUMBER="$BUILD_NUMBER" \
     $ECR_URI:latest \
     bash -c "pytest dashboard/tests/ --ignore=dashboard/tests/test_seed.py -s $MARKER_FLAG --alluredir=allure-results --clean-alluredir; exit \$?")
 
