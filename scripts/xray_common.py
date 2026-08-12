@@ -4,6 +4,7 @@ from source, reading pytest's junit.xml, and authenticating against Xray Cloud.
 import ast
 import os
 import xml.etree.ElementTree as ET
+from datetime import date
 from pathlib import Path
 
 import requests
@@ -101,16 +102,22 @@ def authenticate():
 
 
 def build_summary(build):
-    """'Dashboard Regression - Build 24 - main @ 23d609f3', trimmed down to just
-    the build number when DEPLOYED_BRANCH/DEPLOYED_COMMIT aren't set (local runs)."""
-    summary = f"Dashboard Regression - Build {build}"
+    """'Dashboard Regression - Build 24 - 2026-08-12'. Branch/commit live in the
+    description instead (build_description), to keep the title short."""
+    return f"Dashboard Regression - Build {build} - {date.today().isoformat()}"
+
+
+def build_description():
+    """Branch/commit for the run, or '' if DEPLOYED_BRANCH/DEPLOYED_COMMIT
+    aren't set (local runs) — omitted from the payload entirely in that case."""
     branch = os.environ.get("DEPLOYED_BRANCH")
     commit = os.environ.get("DEPLOYED_COMMIT")
+    lines = []
     if branch and branch != "unknown":
-        summary += f" - {branch}"
+        lines.append(f"Branch: {branch}")
     if commit and commit != "unknown":
-        summary += f" @ {commit}"
-    return summary
+        lines.append(f"Commit: {commit}")
+    return "\n".join(lines)
 
 
 def push_execution_results(entries, build):
@@ -122,11 +129,13 @@ def push_execution_results(entries, build):
         {"status": e["status"], "testKey": e["key"], **({"comment": e["comment"]} if e.get("comment") else {})}
         for e in entries
     ]
+    description = build_description()
     payload = {
         "info": {
             "project": PROJECT_KEY,
             "summary": build_summary(build),
             "revision": str(build),
+            **({"description": description} if description else {}),
         },
         "tests": payload_tests,
     }
