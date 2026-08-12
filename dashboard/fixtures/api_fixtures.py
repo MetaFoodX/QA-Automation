@@ -144,4 +144,4 @@ def seeded_basic_scans(scan_client) -> list[dict]:
     log.info("Seed data saved → %s", json_path)
 
     yield inserted
-    # seeder.cleanup_concurrent()
+    seeder.cleanup_concurrent()
