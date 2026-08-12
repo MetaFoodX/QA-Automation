@@ -100,6 +100,19 @@ def authenticate():
     return resp.text.strip('"')
 
 
+def build_summary(build):
+    """'Dashboard Regression - Build 24 - main @ 23d609f3', trimmed down to just
+    the build number when DEPLOYED_BRANCH/DEPLOYED_COMMIT aren't set (local runs)."""
+    summary = f"Dashboard Regression - Build {build}"
+    branch = os.environ.get("DEPLOYED_BRANCH")
+    commit = os.environ.get("DEPLOYED_COMMIT")
+    if branch and branch != "unknown":
+        summary += f" - {branch}"
+    if commit and commit != "unknown":
+        summary += f" @ {commit}"
+    return summary
+
+
 def push_execution_results(entries, build):
     """entries: list of {"key": str, "status": str, "comment": str (optional)}.
     Never creates a Test — every entry must already carry a real Xray key.
@@ -112,7 +125,7 @@ def push_execution_results(entries, build):
     payload = {
         "info": {
             "project": PROJECT_KEY,
-            "summary": f"Dashboard Regression - Build {build}",
+            "summary": build_summary(build),
             "revision": str(build),
         },
         "tests": payload_tests,

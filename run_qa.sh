@@ -10,6 +10,8 @@ ECR_REPO="qa-automation-ci"
 SECRET_ID="qa/staging/credentials"
 S3_BUCKET="skoopin-mercato-stg-us-west-2"
 BUILD_NUMBER=${4:-$(date +%Y%m%d%H%M%S)}
+DEPLOYED_BRANCH=${5:-unknown}
+DEPLOYED_COMMIT=${6:-unknown}
 
 # Resolve ECR URI dynamically
 ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text --region $AWS_REGION)
@@ -28,19 +30,8 @@ API_USERNAME=$(echo "$SECRET"      | jq -r '.["api-username"]')
 API_PASSWORD=$(echo "$SECRET"      | jq -r '.["api-password"]')
 UI_EMAIL=$(echo "$SECRET"          | jq -r '.["ui-email"]')
 UI_PASSWORD=$(echo "$SECRET"       | jq -r '.["ui-password"]')
-JENKINS_CREDS=$(echo "$SECRET"     | jq -r '.["jenkins-branch-token"]')
 XRAY_CLIENT_ID=$(echo "$SECRET"     | jq -r '.["xray-client-id"] // ""')
 XRAY_CLIENT_SECRET=$(echo "$SECRET" | jq -r '.["xray-client-secret"] // ""')
-
-echo "==> Fetching deployed branch"
-DEPLOYED_BRANCH=$(curl -sf -u "$JENKINS_CREDS" \
-    'http://localhost:8080/job/Build%20Staging%20Skoopin%20Server%20New/lastSuccessfulBuild/api/json?tree=actions%5Bparameters%5Bname%2Cvalue%5D%5D' \
-    2>/dev/null | python3 -c "
-import sys, json
-data = json.load(sys.stdin)
-params = [p for a in data.get('actions', []) for p in a.get('parameters', []) if p.get('name') == 'BRANCH_NAME']
-print(params[0]['value'].replace('origin/', '') if params else 'unknown')
-" 2>/dev/null || echo "unknown")
 
 MARKER_FLAG=""
 if [ "$TEST_SUITE" != "all" ]; then
@@ -60,6 +51,7 @@ CID=$(docker create \
     -e SKOOPIN_KITCHEN_SAPNA_EMAIL="$UI_EMAIL" \
     -e SKOOPIN_KITCHEN_SAPNA_PASSWORD="$UI_PASSWORD" \
     -e DEPLOYED_BRANCH="$DEPLOYED_BRANCH" \
+    -e DEPLOYED_COMMIT="$DEPLOYED_COMMIT" \
     -e XRAY_CLIENT_ID="$XRAY_CLIENT_ID" \
     -e XRAY_CLIENT_SECRET="$XRAY_CLIENT_SECRET" \
     -e BUILD_NUMBER="$BUILD_NUMBER" \
