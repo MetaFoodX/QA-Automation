@@ -102,9 +102,10 @@ def authenticate():
 
 
 def build_summary(build):
-    """'Dashboard Regression - Build 24 - 2026-08-12'. Branch/commit live in the
+    """'2026-08-12 - Dashboard Regression - Build 24' — date first, so a list of
+    Test Executions sorts chronologically by title. Branch/commit live in the
     description instead (build_description), to keep the title short."""
-    return f"Dashboard Regression - Build {build} - {date.today().isoformat()}"
+    return f"{date.today().isoformat()} - Dashboard Regression - Build {build}"
 
 
 def build_description():
