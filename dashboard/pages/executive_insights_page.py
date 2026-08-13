@@ -85,7 +85,7 @@ class ExecutiveInsightsPage(BasePage):
         self.page.locator(L.DAY_TOGGLE_BUTTON).click()
         self._wait_for_table_to_settle()
 
-        self.page.locator(L.BREADCRUMB_PAGE_LINK).click()
+        self.page.locator(L.BREADCRUMB_RESET_LINK).click()
         self._wait_for_table_to_settle()
 
 

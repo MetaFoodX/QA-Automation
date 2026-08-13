@@ -20,6 +20,7 @@ from dashboard.tests.executive_insights.consumption_summary._helpers import (
     _assert_column_matches, _check_column_sum_matches,
     _is_sorted_ascending, _is_sorted_descending,
     _assert_headers_have_unit, _get_breadcrumb_links,
+    _get_category_dropdown_options,
     _parse_export_csv,
 )
 
@@ -920,23 +921,30 @@ def test_category_vegetables_production_sums_match_summary(logged_in_page, seede
 )
 @pytest.mark.regression
 def test_category_kitchen_waste_filter_shows_only_kitchen_waste_items(logged_in_page, seeded_basic_scans):
-    kw_items = {mi.name for mi in RESTAURANT_A.menu_items.values() if mi.category == CATEGORY_KITCHEN_WASTE}
+    # kw_items = {mi.name for mi in RESTAURANT_A.menu_items.values() if mi.category == CATEGORY_KITCHEN_WASTE}
+    #
+    # page = Page(logged_in_page)
+    # page.open_via_nav()
+    # _apply_filters(page, category=CATEGORY_KITCHEN_WASTE)
+    #
+    # all_rows = page.get_all_rows()
+    # if not all_rows:
+    #     print(NO_DATA_AVAILABLE)
+    #     return
+    #
+    # failures = [
+    #     f"'{r[Page.COL_MENU_ITEM]}' is not a Kitchen Waste item"
+    #     for r in all_rows
+    #     if r[Page.COL_MENU_ITEM] not in kw_items
+    # ]
+    # assert not failures, "Non-Kitchen-Waste items visible with Kitchen Waste filter:\n  " + "\n  ".join(failures)
 
     page = Page(logged_in_page)
     page.open_via_nav()
-    _apply_filters(page, category=CATEGORY_KITCHEN_WASTE)
-
-    all_rows = page.get_all_rows()
-    if not all_rows:
-        print(NO_DATA_AVAILABLE)
-        return
-
-    failures = [
-        f"'{r[Page.COL_MENU_ITEM]}' is not a Kitchen Waste item"
-        for r in all_rows
-        if r[Page.COL_MENU_ITEM] not in kw_items
-    ]
-    assert not failures, "Non-Kitchen-Waste items visible with Kitchen Waste filter:\n  " + "\n  ".join(failures)
+    options = _get_category_dropdown_options(page)
+    assert CATEGORY_KITCHEN_WASTE not in options, (
+        f"'{CATEGORY_KITCHEN_WASTE}' unexpectedly present in category dropdown: {options}"
+    )
 
 
 @allure.epic("Consumption Summary")
@@ -958,27 +966,34 @@ def test_category_kitchen_waste_filter_shows_only_kitchen_waste_items(logged_in_
 )
 @pytest.mark.regression
 def test_category_kitchen_waste_production_equals_overproduction(logged_in_page, seeded_basic_scans):
+    # page = Page(logged_in_page)
+    # page.open_via_nav()
+    # _apply_filters(page, category=CATEGORY_KITCHEN_WASTE)
+    #
+    # summary_rows = page.get_rows()
+    # if not summary_rows:
+    #     print(NO_DATA_AVAILABLE)
+    #     return
+    #
+    # failures = []
+    # for row in summary_rows:
+    #     item           = row[Page.COL_MENU_ITEM]
+    #     production     = _to_float(row[Page.COL_PRODUCTION])
+    #     consumption    = _to_float(row[Page.COL_CONSUMPTION])
+    #     overproduction = _to_float(row[Page.COL_OVERPRODUCTION])
+    #     if abs(production - overproduction) > 0.01:
+    #         failures.append(f"'{item}': Production={production}, Overproduction={overproduction}")
+    #     if consumption != 0:
+    #         failures.append(f"'{item}': expected Consumption=0, got {consumption}")
+    #
+    # assert not failures, "Kitchen Waste invariant violations:\n  " + "\n  ".join(failures)
+
     page = Page(logged_in_page)
     page.open_via_nav()
-    _apply_filters(page, category=CATEGORY_KITCHEN_WASTE)
-
-    summary_rows = page.get_rows()
-    if not summary_rows:
-        print(NO_DATA_AVAILABLE)
-        return
-
-    failures = []
-    for row in summary_rows:
-        item           = row[Page.COL_MENU_ITEM]
-        production     = _to_float(row[Page.COL_PRODUCTION])
-        consumption    = _to_float(row[Page.COL_CONSUMPTION])
-        overproduction = _to_float(row[Page.COL_OVERPRODUCTION])
-        if abs(production - overproduction) > 0.01:
-            failures.append(f"'{item}': Production={production}, Overproduction={overproduction}")
-        if consumption != 0:
-            failures.append(f"'{item}': expected Consumption=0, got {consumption}")
-
-    assert not failures, "Kitchen Waste invariant violations:\n  " + "\n  ".join(failures)
+    options = _get_category_dropdown_options(page)
+    assert CATEGORY_KITCHEN_WASTE not in options, (
+        f"'{CATEGORY_KITCHEN_WASTE}' unexpectedly present in category dropdown: {options}"
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -1003,23 +1018,30 @@ def test_category_kitchen_waste_production_equals_overproduction(logged_in_page,
 )
 @pytest.mark.regression
 def test_category_post_consumer_filter_shows_only_post_consumer_items(logged_in_page, seeded_basic_scans):
-    pc_items = {mi.name for mi in RESTAURANT_A.menu_items.values() if mi.category == CATEGORY_POST_CONSUMER}
+    # pc_items = {mi.name for mi in RESTAURANT_A.menu_items.values() if mi.category == CATEGORY_POST_CONSUMER}
+    #
+    # page = Page(logged_in_page)
+    # page.open_via_nav()
+    # _apply_filters(page, category=CATEGORY_POST_CONSUMER)
+    #
+    # all_rows = page.get_all_rows()
+    # if not all_rows:
+    #     print(NO_DATA_AVAILABLE)
+    #     return
+    #
+    # failures = [
+    #     f"'{r[Page.COL_MENU_ITEM]}' is not a Post-Consumer item"
+    #     for r in all_rows
+    #     if r[Page.COL_MENU_ITEM] not in pc_items
+    # ]
+    # assert not failures, "Non-Post-Consumer items visible with Post-Consumer filter:\n  " + "\n  ".join(failures)
 
     page = Page(logged_in_page)
     page.open_via_nav()
-    _apply_filters(page, category=CATEGORY_POST_CONSUMER)
-
-    all_rows = page.get_all_rows()
-    if not all_rows:
-        print(NO_DATA_AVAILABLE)
-        return
-
-    failures = [
-        f"'{r[Page.COL_MENU_ITEM]}' is not a Post-Consumer item"
-        for r in all_rows
-        if r[Page.COL_MENU_ITEM] not in pc_items
-    ]
-    assert not failures, "Non-Post-Consumer items visible with Post-Consumer filter:\n  " + "\n  ".join(failures)
+    options = _get_category_dropdown_options(page)
+    assert CATEGORY_POST_CONSUMER not in options, (
+        f"'{CATEGORY_POST_CONSUMER}' unexpectedly present in category dropdown: {options}"
+    )
 
 
 @allure.epic("Consumption Summary")
@@ -1041,27 +1063,34 @@ def test_category_post_consumer_filter_shows_only_post_consumer_items(logged_in_
 )
 @pytest.mark.regression
 def test_category_post_consumer_production_equals_overproduction(logged_in_page, seeded_basic_scans):
+    # page = Page(logged_in_page)
+    # page.open_via_nav()
+    # _apply_filters(page, category=CATEGORY_POST_CONSUMER)
+    #
+    # summary_rows = page.get_rows()
+    # if not summary_rows:
+    #     print(NO_DATA_AVAILABLE)
+    #     return
+    #
+    # failures = []
+    # for row in summary_rows:
+    #     item           = row[Page.COL_MENU_ITEM]
+    #     production     = _to_float(row[Page.COL_PRODUCTION])
+    #     consumption    = _to_float(row[Page.COL_CONSUMPTION])
+    #     overproduction = _to_float(row[Page.COL_OVERPRODUCTION])
+    #     if abs(production - overproduction) > 0.01:
+    #         failures.append(f"'{item}': Production={production}, Overproduction={overproduction}")
+    #     if consumption != 0:
+    #         failures.append(f"'{item}': expected Consumption=0, got {consumption}")
+    #
+    # assert not failures, "Post-Consumer invariant violations:\n  " + "\n  ".join(failures)
+
     page = Page(logged_in_page)
     page.open_via_nav()
-    _apply_filters(page, category=CATEGORY_POST_CONSUMER)
-
-    summary_rows = page.get_rows()
-    if not summary_rows:
-        print(NO_DATA_AVAILABLE)
-        return
-
-    failures = []
-    for row in summary_rows:
-        item           = row[Page.COL_MENU_ITEM]
-        production     = _to_float(row[Page.COL_PRODUCTION])
-        consumption    = _to_float(row[Page.COL_CONSUMPTION])
-        overproduction = _to_float(row[Page.COL_OVERPRODUCTION])
-        if abs(production - overproduction) > 0.01:
-            failures.append(f"'{item}': Production={production}, Overproduction={overproduction}")
-        if consumption != 0:
-            failures.append(f"'{item}': expected Consumption=0, got {consumption}")
-
-    assert not failures, "Post-Consumer invariant violations:\n  " + "\n  ".join(failures)
+    options = _get_category_dropdown_options(page)
+    assert CATEGORY_POST_CONSUMER not in options, (
+        f"'{CATEGORY_POST_CONSUMER}' unexpectedly present in category dropdown: {options}"
+    )
 
 
 # ---------------------------------------------------------------------------

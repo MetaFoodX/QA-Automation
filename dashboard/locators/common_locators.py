@@ -22,9 +22,16 @@ LOADING_TEXT = "Loading data"
 # From PortionTable.jsx, dayRange is buttons[0], rendered first after RangePicker.
 DAY_TOGGLE_BUTTON = ".ant-picker-range + button.ant-btn"
 
-# Breadcrumb page link (href='#' calls reloadPage to clear filter).
+# Breadcrumb page-name crumb — always "Consumption/Overproduction Summary".
+# It's the SECOND li: BreadCrumbs always renders a hidden, empty home crumb (<Link to="/">) first.
+# Renders as plain text normally, or as an <a> when drilled into an item (see below).
 # Anchored to .custom-breadcrumb (Header.jsx wrapper) to scope away from sidebar links.
-BREADCRUMB_PAGE_LINK = ".custom-breadcrumb a[href='#']"
+BREADCRUMB_PAGE_LINK = ".custom-breadcrumb li:nth-child(2)"
+
+# Breadcrumb reset link — only rendered as a real <a href="#"> while drilled into an
+# item; onClick calls closeMenuItemDrillDown to clear just the drill-down selection.
+# Use this (not BREADCRUMB_PAGE_LINK) to click back out of a drill-down.
+BREADCRUMB_RESET_LINK = ".custom-breadcrumb a[href='#']"
 
 # Breadcrumb item text nodes (span.ant-breadcrumb-link inside .custom-breadcrumb).
 BREADCRUMB_ITEM_LINK = ".custom-breadcrumb .ant-breadcrumb-link"

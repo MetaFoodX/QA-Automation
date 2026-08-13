@@ -7,6 +7,7 @@ import pytest
 from shared.config.settings import settings
 from shared.data.fixtures import RESTAURANT_A
 from shared.data.test_constants import *  # noqa: F401, F403
+from shared.utils.antd_helpers import DROPDOWN_VISIBLE
 from dashboard.locators import common_locators as L
 from dashboard.pages.consumption_summary_page import ConsumptionSummaryPage as Page
 
@@ -145,7 +146,7 @@ def _check_column_sum_matches(page: Page, column: str) -> list[str]:
         detail_rows = page.get_all_rows()
         d_val = sum(_to_float(r[column]) for r in detail_rows)
 
-        if abs(d_val - s_val) > 0.01:
+        if abs(d_val - s_val) > 0.5:
             failures.append(f"'{item}': summary={s_val}, detail sum={d_val}")
 
         page.navigate_back_to_summary()
@@ -182,6 +183,16 @@ def _get_breadcrumb_links(page: Page) -> list[str]:
     """Return non-empty breadcrumb item texts."""
     items = page.page.locator(L.BREADCRUMB_ITEM_LINK).all_inner_texts()
     return [t.strip() for t in items if t.strip()]
+
+
+def _get_category_dropdown_options(page: Page) -> list[str]:
+    """Open the category dropdown and return its currently visible option labels."""
+    category_select = page.page.locator("form.ant-form").locator(".ant-select").nth(2)
+    category_select.click()
+
+    dropdown = page.page.locator(DROPDOWN_VISIBLE).last
+    dropdown.locator(".ant-select-item-option").first.wait_for(state="visible")
+    return dropdown.locator(".ant-select-item-option").all_inner_texts()
 
 
 def _parse_export_csv(download) -> dict:

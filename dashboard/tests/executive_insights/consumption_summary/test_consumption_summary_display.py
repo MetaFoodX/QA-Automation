@@ -682,12 +682,12 @@ def test_breadcrumb_preserves_filters_and_day_toggle(logged_in_page, seeded_basi
 
     page.click_menu_item_in_row(0)
 
-    page.page.locator(L.BREADCRUMB_PAGE_LINK).click()
+    page.page.locator(L.BREADCRUMB_RESET_LINK).click()
     page._wait_for_table_to_settle()
 
     headers = page.get_headers()
-    assert Page.COL_DATE in headers, "Date column should still be visible after breadcrumb click"
-    assert Page.COL_DAY in headers, "Day column should still be visible after breadcrumb click"
+    assert Page.COL_DATE not in headers, "Date column should not be visible after breadcrumb click"
+    assert Page.COL_DAY not in headers, "Day column should not be visible after breadcrumb click"
     assert page.is_venue_selected(settings.test_venue), (
         f"Venue filter changed after breadcrumb. Expected '{settings.test_venue}' to still be selected."
     )
