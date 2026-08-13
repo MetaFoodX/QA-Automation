@@ -118,7 +118,9 @@ def pytest_sessionfinish(session, exitstatus):  # noqa: ARG001
             from xray_common import push_execution_results
             from xray_report import build_entries
 
+            print("Xray: matching test results against onboarded keys ...")
             keyed, skipped = build_entries()
+            print(f"Xray: {len(keyed)} keyed result(s) matched, {len(skipped)} unkeyed result(s) skipped.")
             if keyed:
                 build = os.environ.get("BUILD_NUMBER", "Local Execution")
                 execution = push_execution_results(keyed, build)
@@ -127,7 +129,11 @@ def pytest_sessionfinish(session, exitstatus):  # noqa: ARG001
                 print(f"Xray: {len(skipped)} test(s) ran without a key, skipped reporting — "
                       f"run scripts/xray_onboard.py to onboard them: {', '.join(skipped)}")
         except Exception as exc:
+            import traceback
             print(f"Xray: reporting failed, non-fatal ({exc})")
+            traceback.print_exc()
+    else:
+        print("Xray: XRAY_CLIENT_ID/XRAY_CLIENT_SECRET not set — skipping Xray reporting.")
 
 
 load_dotenv(Path(__file__).parent / ".env")
