@@ -142,6 +142,7 @@ def get_execution_test_count(token, issue_id):
         headers={"Authorization": f"Bearer {token}"},
         json={"query": query, "variables": {"issueId": issue_id}},
     )
+    print(f"Xray: verification query raw response body: {resp.text}")
     resp.raise_for_status()
     data = resp.json()
     if data.get("errors"):
@@ -149,37 +150,55 @@ def get_execution_test_count(token, issue_id):
     return data["data"]["getTestExecution"]["tests"]["total"]
 
 
-def push_execution_results(entries, build):
+IMPORT_CHUNK_SIZE = 50
+
+
+def push_execution_results(entries, build, existing_key=None):
     """entries: list of {"key": str, "status": str, "comment": str (optional)}.
     Never creates a Test — every entry must already carry a real Xray key.
-    Creates one new Test Execution tagged with `build` (a real Jenkins build
-    number in CI, or a human-readable label for a manual run)."""
+
+    Sent in chunks of IMPORT_CHUNK_SIZE rather than one giant request: Xray
+    Cloud's bulk import has been observed to silently under-link results on
+    large single-request payloads (~175 tests) while small payloads (~30,
+    e.g. the smoke suite) import cleanly every time. The first chunk creates
+    the Test Execution (or targets `existing_key` if given); every later
+    chunk targets that same issue via info.testExecutionKey so results
+    accumulate on one issue instead of spawning a new one per chunk.
+
+    Pass existing_key (e.g. "FQL-199") to fill an already-created execution
+    that ended up empty/partial, instead of creating a brand new issue."""
     payload_tests = [
         {"status": e["status"], "testKey": e["key"], **({"comment": e["comment"]} if e.get("comment") else {})}
         for e in entries
     ]
     description = build_description()
-    payload = {
-        "info": {
-            "project": PROJECT_KEY,
-            "summary": build_summary(build),
-            "revision": str(build),
-            **({"description": description} if description else {}),
-        },
-        "tests": payload_tests,
-    }
 
     print("Xray: authenticating against Xray Cloud ...")
     token = authenticate()
     print("Xray: authenticated.")
 
-    print(f"Xray: importing {len(payload_tests)} test result(s) to project {PROJECT_KEY} "
-          f"(summary: '{payload['info']['summary']}') ...")
-    resp = requests.post(IMPORT_URL, headers={"Authorization": f"Bearer {token}"}, json=payload)
-    print(f"Xray: import call returned HTTP {resp.status_code}")
-    resp.raise_for_status()
-    execution = resp.json()
-    print(f"Xray: import accepted -> {execution.get('key')} (issueId={execution.get('id')})")
+    execution = {"key": existing_key} if existing_key else None
+    if existing_key:
+        print(f"Xray: targeting existing execution {existing_key} — no new issue will be created.")
+    chunks = [payload_tests[i:i + IMPORT_CHUNK_SIZE] for i in range(0, len(payload_tests), IMPORT_CHUNK_SIZE)]
+    for i, chunk in enumerate(chunks, start=1):
+        payload = {"tests": chunk}
+        if execution is not None:
+            payload["testExecutionKey"] = execution["key"]
+        else:
+            payload["info"] = {
+                "project": PROJECT_KEY,
+                "summary": build_summary(build),
+                "revision": str(build),
+                **({"description": description} if description else {}),
+            }
+
+        print(f"Xray: importing chunk {i}/{len(chunks)} ({len(chunk)} test result(s)) ...")
+        resp = requests.post(IMPORT_URL, headers={"Authorization": f"Bearer {token}"}, json=payload)
+        print(f"Xray: chunk {i}/{len(chunks)} import call returned HTTP {resp.status_code}")
+        print(f"Xray: chunk {i}/{len(chunks)} raw response body: {resp.text}")
+        resp.raise_for_status()
+        execution = resp.json()
 
     try:
         linked_count = get_execution_test_count(token, execution["id"])
@@ -187,9 +206,9 @@ def push_execution_results(entries, build):
         print(f"Xray: WARNING — could not verify linked test count for {execution.get('key')}: {exc}")
     else:
         if linked_count != len(payload_tests):
-            print(f"Xray: WARNING — sent {len(payload_tests)} result(s) but {execution.get('key')} "
-                  f"only shows {linked_count} linked test(s) right now. This may be Xray's async "
-                  f"processing lag, or a real partial failure — check the issue directly if it "
+            print(f"Xray: WARNING — sent {len(payload_tests)} result(s) across {len(chunks)} chunk(s) but "
+                  f"{execution.get('key')} only shows {linked_count} linked test(s) right now. This may be "
+                  f"Xray's async processing lag, or a real partial failure — check the issue directly if it "
                   f"doesn't resolve on refresh.")
         else:
             print(f"Xray: verified — {linked_count}/{len(payload_tests)} test(s) linked to {execution.get('key')}.")

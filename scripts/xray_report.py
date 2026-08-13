@@ -10,6 +10,7 @@ Usage:
     python scripts/xray_report.py --build local --dry-run           # preview, sends nothing
     python scripts/xray_report.py --build local                     # actually push
     python scripts/xray_report.py --build $BUILD_NUMBER              # from Jenkins
+    python scripts/xray_report.py --build 36 --execution-key FQL-199 # fill an existing execution
 """
 import argparse
 import json
@@ -44,6 +45,8 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--build", default="Local Execution")
     parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument("--execution-key", default=None,
+                         help="Fill an existing Test Execution (e.g. FQL-199) instead of creating a new one")
     args = parser.parse_args()
 
     keyed, skipped_unkeyed = build_entries()
@@ -65,7 +68,7 @@ def main():
         print("Dry run only — wrote reports/xray_report_payload.json, nothing sent to Xray.")
         return
 
-    execution = push_execution_results(keyed, args.build)
+    execution = push_execution_results(keyed, args.build, existing_key=args.execution_key)
     print(f"Reported. Test Execution: {execution['key']}")
 
 
