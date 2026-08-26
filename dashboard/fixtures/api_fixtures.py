@@ -17,6 +17,7 @@ from shared.api.auth_client import get_access_token
 from shared.config.settings import settings
 from shared.api.scan_client import ScanClient
 from shared.api.scan_seeder import ScanSeeder
+from shared.api.menu_item_client import MenuItemClient
 
 USERS_FILE = Path(__file__).parent.parent.parent / "shared" / "data" / "users.yaml"
 ENV_VAR_PATTERN = re.compile(r"\$\{([A-Za-z_][A-Za-z0-9_]*)\}")
@@ -51,6 +52,12 @@ def access_token() -> str:
 def scan_client(access_token) -> ScanClient:
     """Session-scoped scan API client (auth token attached)."""
     return ScanClient(access_token=access_token)
+
+
+@pytest.fixture(scope="session")
+def menu_item_client(access_token) -> MenuItemClient:
+    """Session-scoped menu item API client (auth token attached)."""
+    return MenuItemClient(access_token=access_token)
 
 
 from shared.data.test_constants import (

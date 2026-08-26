@@ -42,6 +42,36 @@ echo "==> Running tests (suite: $TEST_SUITE, env: $ENV)"
 WORKDIR="/tmp/qa-run-$BUILD_NUMBER"
 mkdir -p $WORKDIR
 
+# One Jenkins trigger, two sequential pytest runs inside it. Reason: the
+# Weekly Service Line Report file (test_weekly_service_line_report.py)
+# contains the AI Ranking data tests, which need EXACT, uncontaminated
+# overproduction weights for a fixed set of named menu items (Bananas,
+# Cherries, Corn, Nuts, etc.) — the same pool seeded_basic_scans draws from
+# for the whole Consumption/Overproduction Summary suite. seeded_basic_scans
+# is session-scoped, so its cleanup only fires when its pytest process
+# exits, not when the "last" test using it finishes — meaning that data
+# would still be live during AI Ranking's run if everything shared one
+# invocation. Running the second pytest call only after the first's process
+# has fully exited guarantees that cleanup has already happened, without
+# needing to touch seeded_basic_scans (still one shared seed, no duplicate
+# insertion) or restructure any test directories.
+#
+# Both runs execute regardless of whether the first has failures — a bug in
+# Consumption Summary shouldn't silently skip the AI Ranking run — but the
+# overall script exits non-zero if either run failed.
+PYTEST_CMD=$(cat <<EOF
+pytest dashboard/tests/ --ignore=dashboard/tests/test_seed.py \
+  --ignore=dashboard/tests/executive_insights/reports/test_weekly_service_line_report.py \
+  -s $MARKER_FLAG --alluredir=allure-results --clean-alluredir
+EXIT1=\$?
+pytest dashboard/tests/executive_insights/reports/test_weekly_service_line_report.py \
+  -s $MARKER_FLAG --alluredir=allure-results
+EXIT2=\$?
+if [ \$EXIT1 -ne 0 ]; then exit \$EXIT1; fi
+exit \$EXIT2
+EOF
+)
+
 CID=$(docker create \
     -e ENV="$ENV" \
     -e BASE_URL="$BASE_URL" \
@@ -56,7 +86,7 @@ CID=$(docker create \
     -e XRAY_CLIENT_SECRET="$XRAY_CLIENT_SECRET" \
     -e BUILD_NUMBER="$BUILD_NUMBER" \
     $ECR_URI:latest \
-    bash -c "pytest dashboard/tests/ --ignore=dashboard/tests/test_seed.py -s $MARKER_FLAG --alluredir=allure-results --clean-alluredir; exit \$?")
+    bash -c "$PYTEST_CMD")
 
 docker start $CID
 EXIT=$(docker wait $CID)
