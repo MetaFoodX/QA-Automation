@@ -23,12 +23,15 @@ env/
 .env.*.local
 
 # === Test outputs ===
-reports/
+/reports/
+context/
 logs/
 playwright-report/
 test-results/
 trace.zip
 allure-results/
+junit.xml
+report.html
 
 # === IDE / editor ===
 .vscode/

@@ -48,11 +48,12 @@ def pytest_runtest_makereport(item, call):
         marker = item.get_closest_marker("testcase")
         if marker:
             _test_results.append({
-                "component":   marker.kwargs.get("component", ""),
-                "type":        marker.kwargs.get("type", ""),
-                "description": marker.kwargs.get("description", ""),
-                "steps":       marker.kwargs.get("steps", ""),
-                "status":      report.outcome.upper(),
+                "component":    marker.kwargs.get("component", ""),
+                "type":         marker.kwargs.get("type", ""),
+                "description":  marker.kwargs.get("description", ""),
+                "steps":        marker.kwargs.get("steps", ""),
+                "status":       report.outcome.upper(),
+                "error_detail": report.longreprtext if report.failed else "",
             })
 
 
@@ -70,6 +71,25 @@ def pytest_sessionfinish(session, exitstatus):  # noqa: ARG001
         check=False,
     )
 
+    # AI triage for failures — reads context/tickets.json built ahead of time by
+    # scripts/build_context.py. Skipped (not guessed) if that context doesn't exist.
+    failed_results = [r for r in _test_results if r["status"] == "FAILED"]
+    if failed_results:
+        import sys
+        sys.path.insert(0, str(Path(__file__).parent / "scripts"))
+        from failure_triage import analyze_failure, load_release_context
+
+        release_context = load_release_context()
+        if release_context is None:
+            print("AI triage: context/tickets.json not found — run scripts/build_context.py "
+                  "with this release's ticket keys first. Skipping AI analysis.")
+        else:
+            print(f"AI triage: classifying {len(failed_results)} failure(s) ...")
+            for result in failed_results:
+                result["ai"] = analyze_failure(result, release_context)
+                print(f"AI triage: {result['description'][:60]!r} -> "
+                      f"{result['ai']['verdict']} (confidence {result['ai']['confidence']:.2f})")
+
     # Excel report
     if _test_results:
         try:
@@ -80,30 +100,45 @@ def pytest_sessionfinish(session, exitstatus):  # noqa: ARG001
             ws = wb.active
             ws.title = "Test Results"
 
-            ws.append(["Component", "Type", "Description", "Steps", "Status"])
+            ws.append(["Component", "Type", "Description", "Steps", "Status",
+                       "AI Verdict", "Confidence", "Matched Ticket", "AI Reasoning"])
             for cell in ws[1]:
                 cell.font = Font(bold=True)
 
             status_colors = {"PASSED": "92D050", "FAILED": "FF4C4C", "ERROR": "FFA500"}
+            verdict_colors = {"bug": "FF4C4C", "suite_improvement": "FFD966", "needs_review": "D9D9D9"}
 
             for result in _test_results:
+                ai = result.get("ai")
                 ws.append([
                     result["component"],
                     result["type"],
                     result["description"],
                     result["steps"],
                     result["status"],
+                    ai["verdict"] if ai else "",
+                    round(ai["confidence"], 2) if ai else "",
+                    ai["matched_ticket"] if ai else "",
+                    ai["reasoning"] if ai else "",
                 ])
                 last_row = ws.max_row
                 color = status_colors.get(result["status"], "FFFFFF")
                 ws.cell(last_row, 5).fill = PatternFill(start_color=color, end_color=color, fill_type="solid")
                 ws.cell(last_row, 4).alignment = Alignment(wrap_text=True)
+                if ai:
+                    v_color = verdict_colors.get(ai["verdict"], "FFFFFF")
+                    ws.cell(last_row, 6).fill = PatternFill(start_color=v_color, end_color=v_color, fill_type="solid")
+                    ws.cell(last_row, 9).alignment = Alignment(wrap_text=True)
 
             ws.column_dimensions["A"].width = 15
             ws.column_dimensions["B"].width = 20
             ws.column_dimensions["C"].width = 55
             ws.column_dimensions["D"].width = 60
             ws.column_dimensions["E"].width = 12
+            ws.column_dimensions["F"].width = 18
+            ws.column_dimensions["G"].width = 12
+            ws.column_dimensions["H"].width = 16
+            ws.column_dimensions["I"].width = 60
 
             wb.save(str(run_dir / "test_results.xlsx"))
         except ImportError:
