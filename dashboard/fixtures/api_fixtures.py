@@ -9,6 +9,7 @@ from collections import Counter
 from datetime import datetime, timedelta
 from pathlib import Path
 from uuid import uuid4
+from zoneinfo import ZoneInfo
 
 import pytest
 import yaml
@@ -142,6 +143,20 @@ def seeded_cross_period_scans(scan_client) -> list[dict]:
 ROLLUP_SETTLE_TIMEOUT_SECONDS = 300
 ROLLUP_SETTLE_POLL_INTERVAL_SECONDS = 15
 
+# The rollup API buckets/returns data by the restaurant's own local calendar
+# day (Pacific), regardless of what timezone the machine running this code is
+# in. CapturedAt is stored as a real UTC instant, so it must be converted to
+# Pacific to know which calendar day the backend will actually file it under
+# -- comparing raw UTC calendar dates against Pacific-bucketed data silently
+# drops a day's worth of scans whenever UTC's calendar has already advanced
+# past midnight while Pacific hasn't (any run between ~00:00-07:00 UTC).
+_ROLLUP_RESTAURANT_TIMEZONE = ZoneInfo("America/Los_Angeles")
+
+
+def _captured_at_local_date(captured_at: str):
+    utc_dt = datetime.strptime(captured_at, "%Y-%m-%dT%H:%M:%S.000Z").replace(tzinfo=ZoneInfo("UTC"))
+    return utc_dt.astimezone(_ROLLUP_RESTAURANT_TIMEZONE).date()
+
 
 def _wait_for_rollups_to_reflect_all_scans(scan_client, inserted: list[dict]) -> None:
     """Called from seeded_basic_scans right after seeding, before yield. The
@@ -149,6 +164,7 @@ def _wait_for_rollups_to_reflect_all_scans(scan_client, inserted: list[dict]) ->
     backend adding each scan to it one at a time, not atomically with
     insert_scan returning success -- polls GET /stats/{RestaurantID}/rollups
     per restaurant until the sum of TotalScans across every returned row
+    (restricted to the restaurant-local calendar dates we actually seeded)
     equals how many scans we actually got a success response for (not a
     hardcoded count, so a partial seed failure is checked against correctly
     too). A plain scan count, not a value/weight match -- TotalScans is
@@ -158,9 +174,23 @@ def _wait_for_rollups_to_reflect_all_scans(scan_client, inserted: list[dict]) ->
     if not inserted:
         return
 
-    expected_by_restaurant = Counter(scan["RestaurantID"] for scan in inserted)
-    end_date = datetime.now().date()
-    start_date = end_date - timedelta(days=7)  # matches ScanSeeder's own 8-day spread
+    expected_count_by_restaurant = Counter(scan["RestaurantID"] for scan in inserted)
+    expected_dates_by_restaurant: dict[int, set] = {}
+    for scan in inserted:
+        expected_dates_by_restaurant.setdefault(scan["RestaurantID"], set()).add(
+            _captured_at_local_date(scan["CapturedAt"])
+        )
+
+    # Query a day wider on each side than the actual expected dates -- avoids
+    # any risk of the API's own StartDate/EndDate interpretation cutting off
+    # a boundary day. We filter precisely afterward using each row's own
+    # Date field against the real expected set, so padding can't overcount.
+    all_expected_dates = {d for dates in expected_dates_by_restaurant.values() for d in dates}
+    query_start = min(all_expected_dates) - timedelta(days=1)
+    query_end = max(all_expected_dates) + timedelta(days=1)
+    expected_date_strings_by_restaurant = {
+        rid: {d.isoformat() for d in dates} for rid, dates in expected_dates_by_restaurant.items()
+    }
 
     start_time = time.monotonic()
     deadline = start_time + ROLLUP_SETTLE_TIMEOUT_SECONDS
@@ -170,13 +200,13 @@ def _wait_for_rollups_to_reflect_all_scans(scan_client, inserted: list[dict]) ->
     while time.monotonic() < deadline:
         attempt += 1
         actual_by_restaurant = {}
-        for restaurant_id in expected_by_restaurant:
+        for restaurant_id, expected_date_strings in expected_date_strings_by_restaurant.items():
             url = f"{settings.base_url}/api/v1/stats/{restaurant_id}/rollups"
             params = {
                 "TimeFrame": "day",
                 "MenuItemCategoryID": "",
-                "StartDate": start_date.isoformat(),
-                "EndDate": end_date.isoformat(),
+                "StartDate": query_start.isoformat(),
+                "EndDate": query_end.isoformat(),
                 "VenueID": "",
                 "ServicePeriodID": "",
                 "WithMenuItem": "true",
@@ -185,11 +215,13 @@ def _wait_for_rollups_to_reflect_all_scans(scan_client, inserted: list[dict]) ->
             resp = scan_client.session.get(url, params=params, timeout=30)
             resp.raise_for_status()
             rows = resp.json().get("data", [])
-            actual_by_restaurant[restaurant_id] = sum(row["RollUp"]["TotalScans"] for row in rows)
+            actual_by_restaurant[restaurant_id] = sum(
+                row["RollUp"]["TotalScans"] for row in rows if row.get("Date") in expected_date_strings
+            )
 
         mismatches = {
             rid: (expected, actual_by_restaurant.get(rid, 0))
-            for rid, expected in expected_by_restaurant.items()
+            for rid, expected in expected_count_by_restaurant.items()
             if actual_by_restaurant.get(rid, 0) != expected
         }
         if not mismatches:
