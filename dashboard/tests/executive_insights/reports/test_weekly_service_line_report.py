@@ -68,6 +68,7 @@ def _parse_week_label(label: str) -> tuple[datetime, datetime]:
         "3. Assert the Report Start Day and Date fields are visible\n"
         "4. Assert Venue, Meal Period, Date Mode, Detail Level, Report Format, and See More Options are all absent"
     ),
+    key="FQL-205",
 )
 @pytest.mark.smoke
 @pytest.mark.regression
@@ -98,6 +99,7 @@ def test_weekly_service_line_report_shows_only_start_day_and_date_fields(logged_
         "3. Assert 'Weekly Service Line Report' is present\n"
         "4. Assert 'Weekly Catering Report' is absent"
     ),
+    key="FQL-206",
 )
 @pytest.mark.regression
 def test_report_type_label_for_regular_restaurant(logged_in_page):
@@ -124,6 +126,7 @@ def test_report_type_label_for_regular_restaurant(logged_in_page):
         "4. Assert the Date field again offers 'Week of ...' options\n"
         "5. Assert Venue is still hidden"
     ),
+    key="FQL-207",
 )
 @pytest.mark.regression
 def test_switching_away_and_back_restores_week_field(logged_in_page):
@@ -158,6 +161,7 @@ def test_switching_away_and_back_restores_week_field(logged_in_page):
         "2. Read the selected Date value\n"
         "3. Assert it matches the 'Week of YYYY-MM-DD - YYYY-MM-DD' format"
     ),
+    key="FQL-208",
 )
 @pytest.mark.smoke
 @pytest.mark.regression
@@ -184,6 +188,7 @@ def test_default_week_is_preselected(logged_in_page):
         "3. Assert there are at most 13\n"
         "4. For each, assert end date = start date + 6 days"
     ),
+    key="FQL-209",
 )
 @pytest.mark.regression
 def test_week_options_span_seven_days_each(logged_in_page):
@@ -217,6 +222,7 @@ def test_week_options_span_seven_days_each(logged_in_page):
         "2. Read all week options (newest first)\n"
         "3. If there are at least 2, assert each consecutive pair's start dates differ by exactly 7 days"
     ),
+    key="FQL-210",
 )
 @pytest.mark.regression
 def test_week_options_are_contiguous(logged_in_page):
@@ -251,6 +257,7 @@ def test_week_options_are_contiguous(logged_in_page):
         "3. If more than one option exists, select the last (oldest) option\n"
         "4. Assert the selected value changed"
     ),
+    key="FQL-211",
 )
 @pytest.mark.regression
 def test_selecting_a_different_week_updates_selection(logged_in_page):
@@ -311,6 +318,7 @@ def restore_report_start_day(logged_in_page):
         "spanning a full 7 days\n"
         "5. Restore the original Report Start Day"
     ),
+    key="FQL-212",
 )
 @pytest.mark.regression
 def test_editing_report_start_day_shifts_week_options(logged_in_page, restore_report_start_day):
@@ -370,6 +378,7 @@ def test_editing_report_start_day_shifts_week_options(logged_in_page, restore_re
         "3. Assert the PDF generation modal appears\n"
         "4. Poll until the typewriter text finishes and assert it reads the standard generating message"
     ),
+    key="FQL-213",
 )
 @pytest.mark.smoke
 @pytest.mark.regression
@@ -413,6 +422,7 @@ def test_download_opens_pdf_modal_directly(logged_in_page):
         "4. Assert the modal is no longer visible\n"
         "5. Assert the Download button is still present and clickable"
     ),
+    key="FQL-214",
 )
 @pytest.mark.regression
 def test_pdf_modal_cancel_closes_modal(logged_in_page):
@@ -443,6 +453,7 @@ def test_pdf_modal_cancel_closes_modal(logged_in_page):
         "4. Assert the filename matches 'Weekly Service Line Report-<start>-<end>.pdf'\n"
         "5. Assert the downloaded file is non-empty"
     ),
+    key="FQL-215",
 )
 @pytest.mark.regression
 @pytest.mark.slow
@@ -1261,10 +1272,7 @@ def seeded_boundary_tie_pair(scan_client, menu_item_client, browser, kitchen_sap
     description=(
         "When a venue has zero overproduction scans for the report week, the AI Ranking "
         "('Top 5 Menu Items Ranked By AI-Estimated Overproduction Cost') section must not "
-        "appear anywhere in that venue's pages of the PDF — not even an empty shell. Relies on "
-        "the target week naturally being at zero for Mexican Venue: every other AI Ranking test "
-        "in this file cleans up its own seeded scans before the next test runs, and Test Kitchen "
-        "has no real ambient activity of its own."
+        "appear anywhere in that venue's pages of the PDF — not even an empty shell."
     ),
     steps=(
         "1. For a given venue and week, make sure there are zero overproduction scans recorded at all\n"
@@ -1273,8 +1281,12 @@ def seeded_boundary_tie_pair(scan_client, menu_item_client, browser, kitchen_sap
         "4. Confirm the 'Top 5 Menu Items Ranked By AI-Estimated Overproduction Cost' heading does "
         "not appear anywhere in that venue's section of the PDF"
     ),
+    key="FQL-216",
 )
 @pytest.mark.regression
+# Relies on the target week naturally being at zero for Mexican Venue: every other AI Ranking
+# test in this file cleans up its own seeded scans before the next test runs, and Test Kitchen
+# has no real ambient activity of its own.
 def test_no_overproduction_hides_ai_ranking_section(logged_in_page):
     page = Page(logged_in_page)
     page.open_via_nav()
@@ -1297,11 +1309,8 @@ def test_no_overproduction_hides_ai_ranking_section(logged_in_page):
     component="reports",
     type="regression",
     description=(
-        "When a venue has zero scans of any kind (no overproduction, no consumption) for the "
-        "report week, its entire page in the PDF shows the 'no data available' fallback state — "
-        "not a populated overview with charts/tables and an empty AI Ranking section underneath. "
-        "Broader than A-03: this checks the whole-page fallback template, not just the AI Ranking "
-        "sub-section's own skip condition."
+        "When a venue has zero scans of any kind for the report week, its entire page in the PDF "
+        "shows the 'no data available' fallback state, not populated charts/tables"
     ),
     steps=(
         "1. For a given venue and week, make sure there are zero scans of any kind recorded — "
@@ -1313,8 +1322,11 @@ def test_no_overproduction_hides_ai_ranking_section(logged_in_page):
         "5. Confirm the 'Top 5 Menu Items Ranked By AI-Estimated Overproduction Cost' section is "
         "also absent from that page"
     ),
+    key="FQL-217",
 )
 @pytest.mark.regression
+# Broader than the zero-overproduction-only test above: this checks the whole-page fallback
+# template, not just the AI Ranking sub-section's own skip condition.
 def test_no_data_at_all_shows_empty_state(logged_in_page):
     page = Page(logged_in_page)
     page.open_via_nav()
@@ -1370,6 +1382,7 @@ def test_no_data_at_all_shows_empty_state(logged_in_page):
         "score = lb x CostPerLb from live data and confirm the PDF's rank order matches that computation, "
         "and C-03 confirms a cost change produces an observable rank change"
     ),
+    key="FQL-218",
 )
 @pytest.mark.skip(
     reason="Cost impact is never persisted or exposed anywhere observable (DB or API) — only the resulting "
@@ -1388,9 +1401,8 @@ def test_cost_impact_formula():
     type="regression",
     description=(
         "The AI Ranking section's top-5 order matches overproduction_lb x CostPerLb, computed "
-        "from the actual seeded scan weights and live-fetched CostPerLb values — independent of "
-        "the report under test — and the top-ranked item's day-by-day breakdown matches the "
-        "actual seeded per-day weights"
+        "independently from seeded scan weights and live CostPerLb — and the #1 item's day-by-day "
+        "breakdown matches the actual seeded per-day weights"
     ),
     steps=(
         "1. In Menu Items management, ensure at least 6-8 menu items each have a distinct, known Cost Per Lb\n"
@@ -1405,6 +1417,7 @@ def test_cost_impact_formula():
         "7. For the #1 ranked item, compare its day-by-day overproduction shown in the PDF's table against "
         "the actual scanned weight recorded for each corresponding day"
     ),
+    key="FQL-219",
 )
 @pytest.mark.regression
 def test_top5_ranked_by_cost_impact(logged_in_page, menu_item_client, seeded_ai_ranking_scans):
@@ -1501,6 +1514,7 @@ def test_top5_ranked_by_cost_impact(logged_in_page, menu_item_client, seeded_ai_
         "6. For each of the 5 items, confirm its day-by-day table is complete and matches what was actually "
         "scanned, even if that item's block happens to fall across a page break"
     ),
+    key="FQL-220",
 )
 @pytest.mark.regression
 def test_ai_ranking_survives_pagination(logged_in_page, seeded_ai_ranking_scans):
@@ -1555,6 +1569,7 @@ def test_ai_ranking_survives_pagination(logged_in_page, seeded_ai_ranking_scans)
         "4. In the AI Ranking section, find that item's day-by-day table\n"
         "5. Confirm each day's overproduction value matches what was actually scanned that day"
     ),
+    key="FQL-221",
 )
 @pytest.mark.regression
 def test_daily_breakdown_matches_scanned_data(logged_in_page, seeded_ai_ranking_scans):
@@ -1603,6 +1618,7 @@ def test_daily_breakdown_matches_scanned_data(logged_in_page, seeded_ai_ranking_
         "4. Time how long it takes from clicking Download to the PDF finishing generation and downloading\n"
         "5. Confirm it completes within 60 seconds rather than hanging"
     ),
+    key="FQL-222",
 )
 @pytest.mark.regression
 @pytest.mark.slow
@@ -1640,8 +1656,7 @@ def test_report_generates_within_acceptable_time(logged_in_page, seeded_ai_ranki
     type="regression",
     description=(
         "Generating the Weekly Service Line Report for the same week multiple times, with no data or "
-        "cost changes in between, produces an identical AI Ranking order each time — the cost used for a "
-        "given week is locked in, not recomputed differently on every generation"
+        "cost changes in between, produces an identical AI Ranking order each time"
     ),
     steps=(
         "1. With overproduction scans already recorded for a week, go to Executive Insights > Reports, "
@@ -1651,8 +1666,10 @@ def test_report_generates_within_acceptable_time(logged_in_page, seeded_ai_ranki
         "week and open the newly generated PDF\n"
         "4. Confirm the AI Ranking section's order in the second PDF is identical to the first"
     ),
+    key="FQL-223",
 )
 @pytest.mark.regression
+# The cost used for a given week is locked in, not recomputed differently on every generation.
 def test_regenerating_same_week_report_produces_same_ranking(logged_in_page, seeded_ai_ranking_scans):
     page = Page(logged_in_page)
     page.open_via_nav()
@@ -1689,9 +1706,7 @@ def test_regenerating_same_week_report_produces_same_ranking(logged_in_page, see
     type="regression",
     description=(
         "Changing a menu item's Cost Per Lb today does not retroactively re-rank a report already "
-        "generated for a past (already-completed) week — re-downloading that same week's report still "
-        "shows the same ranking order, not something recomputed from today's live cost on every "
-        "generation. Regression check for FX-4831 (closed)."
+        "generated for a past week — re-downloading it still shows the same ranking. FX-4831 (closed)."
     ),
     steps=(
         "1. With overproduction scans already recorded for a completed past week, go to Executive "
@@ -1704,6 +1719,7 @@ def test_regenerating_same_week_report_produces_same_ranking(logged_in_page, see
         "cost change\n"
         "5. Restore the item's original Cost Per Lb"
     ),
+    key="FQL-224",
 )
 @pytest.mark.regression
 def test_past_week_ranking_unaffected_by_later_cost_change(
@@ -1769,6 +1785,7 @@ def test_past_week_ranking_unaffected_by_later_cost_change(
         "confirm exactly those 2-4 items appear (in any order) and no others — the list should not be "
         "padded out to 5 with zero-overproduction items"
     ),
+    key="FQL-225",
 )
 @pytest.mark.regression
 def test_fewer_than_5_items_shows_all_available(logged_in_page, seeded_ai_ranking_scans_partial):
@@ -1824,6 +1841,7 @@ def test_fewer_than_5_items_shows_all_available(logged_in_page, seeded_ai_rankin
         "somewhere in that venue's pages\n"
         "5. Compare the shown item's day-by-day overproduction against what was actually scanned"
     ),
+    key="FQL-226",
 )
 @pytest.mark.smoke
 @pytest.mark.regression
@@ -1875,6 +1893,7 @@ def test_ai_ranking_page_present_in_pdf(logged_in_page, seeded_ai_ranking_scans_
         "3. Confirm the 'Top 5 Menu Items Ranked By AI-Estimated Overproduction Cost' section is present "
         "in the attached PDF, same as it would be in a manual download"
     ),
+    key="FQL-227",
 )
 @pytest.mark.skip(
     reason="No email-inbox checking tooling in this suite yet — requires either a real mailbox integration "
@@ -1907,6 +1926,7 @@ def test_ai_ranking_page_present_in_emailed_report():
         "section, while the item with actual overproduction does\n"
         "6. Compare the shown item's day-by-day overproduction against what was actually scanned"
     ),
+    key="FQL-228",
 )
 @pytest.mark.regression
 def test_consumption_only_item_excluded_from_ranking(logged_in_page, seed_scans):
@@ -1955,10 +1975,7 @@ def test_consumption_only_item_excluded_from_ranking(logged_in_page, seed_scans)
     type="regression",
     description=(
         "For an item shown in the AI Ranking section, a day where consumption occurred but "
-        "overproduction was zero still shows a real 'this cycle' consumption value for that day — "
-        "consumption data isn't dropped just because overproduction happened to be zero that day. "
-        "(Overproduction itself still renders as 'N/A' at zero, same as any other zero-overproduction "
-        "day — that part is expected, established behavior, not what this test checks.)"
+        "overproduction was zero still shows a real 'this cycle' consumption value for that day"
     ),
     steps=(
         "1. Using the scanning device, record overproduction (leftover) scans for one menu item on at "
@@ -1970,8 +1987,11 @@ def test_consumption_only_item_excluded_from_ranking(logged_in_page, seed_scans)
         "5. In that item's day-by-day table, confirm the consumption-only day shows a real 'this cycle' "
         "consumption number, not N/A"
     ),
+    key="FQL-229",
 )
 @pytest.mark.regression
+# Overproduction itself still renders as 'N/A' at zero, same as any other zero-overproduction day
+# -- that part is expected, established behavior, not what this test checks.
 def test_zero_overproduction_day_still_shows_consumption(logged_in_page, seed_scans):
     item = random.choice(AI_RANKING_ITEMS)
     zero_day_offset = 2  # Wednesday — consumption-only, no overproduction
@@ -2024,9 +2044,7 @@ def test_zero_overproduction_day_still_shows_consumption(logged_in_page, seed_sc
     type="regression",
     description=(
         "For each day in an item's row, the 'last cycle -> this cycle' consumption comparison reflects "
-        "actual recorded consumption on each side independently: both cycles with data show two real "
-        "numbers, only the previous cycle having data shows 'real -> N/A', and neither cycle having data "
-        "shows 'N/A -> N/A'"
+        "actual recorded consumption independently on each side of the arrow"
     ),
     steps=(
         "1. Using the scanning device, record a Refill (consumption) scan for one menu item on Monday AND "
@@ -2042,6 +2060,7 @@ def test_zero_overproduction_day_still_shows_consumption(logged_in_page, seed_sc
         "(last cycle and this cycle both had consumption), Tuesday shows a real number -> N/A (only last "
         "cycle had consumption), and Wednesday shows N/A -> N/A (neither cycle had any consumption)"
     ),
+    key="FQL-230",
 )
 @pytest.mark.regression
 @pytest.mark.skip(reason="Needs presetup/investigation before re-enabling")
@@ -2135,6 +2154,7 @@ def test_consumption_last_cycle_vs_this_cycle_per_day(logged_in_page, seed_scans
         "current week — it now falls in the previous week\n"
         "6. Restore the original Report Start Day"
     ),
+    key="FQL-231",
 )
 @pytest.mark.regression
 def test_shifting_report_start_day_excludes_data_from_previous_week(
@@ -2208,6 +2228,7 @@ def test_shifting_report_start_day_excludes_data_from_previous_week(
         "6. Compare the higher-ranked item's day-by-day overproduction shown in the PDF against what was "
         "actually scanned"
     ),
+    key="FQL-232",
 )
 @pytest.mark.regression
 def test_tie_score_broken_by_cost_per_lb(logged_in_page, seeded_tie_break_scores):
@@ -2271,6 +2292,7 @@ def test_tie_score_broken_by_cost_per_lb(logged_in_page, seeded_tie_break_scores
         "6. Confirm the AI Ranking section shows all 4 higher-scoring items plus exactly ONE of the two "
         "tied items — 5 total, not 6, not 4"
     ),
+    key="FQL-244",
 )
 @pytest.mark.regression
 def test_exact_tie_at_rank_boundary_shows_exactly_one(logged_in_page, seeded_boundary_tie_pair):
@@ -2366,6 +2388,7 @@ def test_exact_tie_at_rank_boundary_shows_exactly_one(logged_in_page, seeded_bou
         "3. Confirm the user-set item uses its user-set cost, the cached-only item uses its cached DB "
         "value, and the item with neither triggers a fresh AI-generated cost"
     ),
+    key="FQL-242",
 )
 @pytest.mark.skip(
     reason="Which cost source was actually used for a given item is not exposed anywhere observable "
@@ -2393,6 +2416,7 @@ def test_cost_source_priority_user_over_db_over_ai():
         "3. Confirm AI generation was triggered only for the items that had no existing cost, and not for "
         "the ones that already had one"
     ),
+    key="FQL-239",
 )
 @pytest.mark.skip(
     reason="Whether the AI generation step was invoked for a given item is not exposed anywhere "
@@ -2420,6 +2444,7 @@ def test_ai_generation_only_called_for_missing_costs():
         "3. Confirm the second generation reuses the same AI-generated cost from step 1, and does not "
         "invoke AI generation a second time"
     ),
+    key="FQL-236",
 )
 @pytest.mark.skip(
     reason="Whether AI generation was invoked again on a second run is not exposed anywhere observable "
@@ -2457,6 +2482,7 @@ def test_same_week_reuses_ai_cost_without_recalling_ai():
         "2. Generate the Weekly Service Line Report for this week\n"
         "3. Confirm the next week's Menu Cycle details are visible on the report"
     ),
+    key="FQL-237",
 )
 @pytest.mark.skip(reason="Menu Cycle setup for a venue not yet investigated (API vs dashboard-only) — revisit later")
 def test_next_menu_cycle_visible_when_configured():
@@ -2480,6 +2506,7 @@ def test_next_menu_cycle_visible_when_configured():
         "2. Generate the Weekly Service Line Report for that week\n"
         "3. Confirm the next Menu Cycle's details are NOT visible on the report"
     ),
+    key="FQL-240",
 )
 @pytest.mark.skip(reason="Menu Cycle setup for a venue not yet investigated (API vs dashboard-only) — revisit later")
 def test_next_menu_cycle_not_shown_when_current_cycle_changes_midweek():
@@ -2503,6 +2530,7 @@ def test_next_menu_cycle_not_shown_when_current_cycle_changes_midweek():
         "3. Generate the Weekly Service Line Report for that week\n"
         "4. Confirm the next Menu Cycle's details are NOT visible on the report"
     ),
+    key="FQL-245",
 )
 @pytest.mark.skip(reason="Menu Cycle setup for a venue not yet investigated (API vs dashboard-only) — revisit later")
 def test_next_menu_cycle_not_shown_when_none_existed_at_week_start():

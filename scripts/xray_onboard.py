@@ -60,6 +60,25 @@ def main():
         print(f"{total_unkeyed} tests need onboarding — capping this run at {len(unkeyed)} "
               f"(the key-lookup query maxes out at 100 per batch). Re-run after this to onboard the rest.")
 
+    # Jira's issue Summary field can't exceed 255 characters. Rather than
+    # silently truncating a test's description (which would make the Jira
+    # title diverge from the source), refuse to onboard anything until every
+    # description in this batch fits -- shorten the offending description= in
+    # source and re-run.
+    SUMMARY_MAX_LEN = 255
+    too_long = [
+        (e["function"], len(e["description"] or e["function"]))
+        for e in unkeyed
+        if len(e["description"] or e["function"]) > SUMMARY_MAX_LEN
+    ]
+    if too_long:
+        print(f"ABORTING — {len(too_long)} test(s) have a description longer than "
+              f"{SUMMARY_MAX_LEN} characters (Jira's Summary field limit). Shorten these in source, "
+              f"then re-run:")
+        for name, length in too_long:
+            print(f"  - {name} ({length} chars)")
+        return
+
     payload_tests = []
     for e in unkeyed:
         status, message = junit_results[(e["classname"], e["function"])]
@@ -94,10 +113,35 @@ def main():
         return
 
     token = authenticate()
+
+    # Snapshot every test key that exists in the project BEFORE sending anything,
+    # so after the import we can tell for certain whether each linked test is a
+    # key we've never seen (genuinely created) or one that already existed
+    # (Xray reused/overwrote an existing Test instead of creating a new one).
+    print("Snapshotting existing test keys before import ...")
+    pre_query = """
+    query($jql: String!) {
+      getTests(jql: $jql, limit: 100) {
+        total
+        results { jira(fields: ["key", "created"]) }
+      }
+    }
+    """
+    pre_resp = requests.post(
+        GRAPHQL_URL,
+        headers={"Authorization": f"Bearer {token}"},
+        json={"query": pre_query, "variables": {"jql": f"project = {PROJECT_KEY}"}},
+    )
+    pre_resp.raise_for_status()
+    pre_data = pre_resp.json()["data"]["getTests"]
+    keys_before = {t["jira"]["key"]: t["jira"]["created"] for t in pre_data["results"]}
+    print(f"Snapshot: {len(keys_before)} test(s) already exist in {PROJECT_KEY} before this run.")
+
     resp = requests.post(IMPORT_URL, headers={"Authorization": f"Bearer {token}"}, json=payload)
     if not resp.ok:
-        print(f"Xray rejected the push ({resp.status_code}):")
-        print(resp.text)
+        print(f"Xray rejected the push: HTTP {resp.status_code} {resp.reason}")
+        print(f"Response headers: {dict(resp.headers)}")
+        print(f"Response body (full, {len(resp.content)} bytes): {resp.text}")
         resp.raise_for_status()
     execution = resp.json()
     print(f"Created Test Execution {execution['key']} with {len(unkeyed)} new test(s).")
@@ -127,6 +171,25 @@ def main():
 
     linked = gresp.json()["data"]["getTestExecution"]["tests"]["results"]
     summary_to_key = {t["jira"]["summary"]: t["jira"]["key"] for t in linked}
+
+    print(f"\n--- Reuse check: {len(linked)} test(s) linked to {execution['key']} ---")
+    reused_count = 0
+    for t in linked:
+        key = t["jira"]["key"]
+        summary = t["jira"]["summary"]
+        if key in keys_before:
+            reused_count += 1
+            print(f"  REUSED existing ticket {key} (already existed since {keys_before[key]}) "
+                  f"-- now holds: {summary[:70]!r}")
+        else:
+            print(f"  created FRESH: {key} -- {summary[:70]!r}")
+    if reused_count:
+        print(f"WARNING: {reused_count}/{len(linked)} test(s) in this run REUSED an existing ticket "
+              f"instead of creating a new one. Whatever test used to live at that key has now "
+              f"lost its ticket -- check for it and re-onboard it separately.")
+    else:
+        print("All linked tests were freshly created. No existing tickets were touched.")
+    print("--- end reuse check ---\n")
 
     by_file = {}
     stamped = 0
