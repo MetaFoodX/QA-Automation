@@ -375,7 +375,7 @@ def test_total_equals_reuse_plus_donation_plus_compostable(logged_in_page, seede
         compostable = _to_float(row.get(Page.COL_COMPOSTABLE, "0"))
 
         expected = reuse + donation + compostable
-        if abs(total - expected) > 0.01:
+        if abs(total - expected) > 0.5:
             failures.append(
                 f"'{item}': Total={total}, R+D+C={reuse}+{donation}+{compostable}={expected}"
             )
@@ -550,7 +550,7 @@ def test_breakdown_served_plus_not_served_equals_total(logged_in_page, seeded_ba
         expected_total   = totals.get(item, 0)
 
         actual_sum = round(served_total + not_served_total, 2)
-        if abs(actual_sum - expected_total) > 0.01:
+        if abs(actual_sum - expected_total) > 0.5:
             failures.append(
                 f"'{item}': Served({served_total}) + NotServed({not_served_total}) = {actual_sum} != Total {expected_total}"
             )

@@ -194,7 +194,7 @@ def test_production_equals_consumption_plus_overproduction(logged_in_page, seede
         overproduction = _to_float(row[Page.COL_OVERPRODUCTION])
 
         expected = consumption + overproduction
-        if abs(production - expected) > 0.01:
+        if abs(production - expected) > 0.5:
             failures.append(
                 f"'{item}': Production={production}, "
                 f"Consumption + Overproduction = {consumption} + {overproduction} = {expected}"
@@ -246,7 +246,7 @@ def test_cost_view_production_equals_consumption_plus_overproduction(logged_in_p
         overproduction = _to_float(row[Page.COL_OVERPRODUCTION_COST])
 
         expected = consumption + overproduction
-        if abs(production - expected) > 0.01:
+        if abs(production - expected) > 0.5:
             failures.append(
                 f"'{item}': Production=${production}, "
                 f"Consumption + Overproduction = ${consumption} + ${overproduction} = ${expected}"

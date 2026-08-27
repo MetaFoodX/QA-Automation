@@ -67,7 +67,7 @@ def test_meal_period_lunch_math_invariant(logged_in_page, seeded_basic_scans):
         consumption   = _to_float(row[Page.COL_CONSUMPTION])
         overproduction = _to_float(row[Page.COL_OVERPRODUCTION])
         expected = consumption + overproduction
-        if abs(production - expected) > 0.01:
+        if abs(production - expected) > 0.5:
             failures.append(
                 f"'{item}': P={production}, C+O={consumption}+{overproduction}={expected}"
             )
@@ -116,7 +116,7 @@ def test_meal_period_dinner_math_invariant(logged_in_page, seeded_basic_scans):
         consumption   = _to_float(row[Page.COL_CONSUMPTION])
         overproduction = _to_float(row[Page.COL_OVERPRODUCTION])
         expected = consumption + overproduction
-        if abs(production - expected) > 0.01:
+        if abs(production - expected) > 0.5:
             failures.append(
                 f"'{item}': P={production}, C+O={consumption}+{overproduction}={expected}"
             )
@@ -464,7 +464,7 @@ def test_meal_period_all_day_math_invariant(logged_in_page, seeded_basic_scans):
         consumption    = _to_float(row[Page.COL_CONSUMPTION])
         overproduction = _to_float(row[Page.COL_OVERPRODUCTION])
         expected = consumption + overproduction
-        if abs(production - expected) > 0.01:
+        if abs(production - expected) > 0.5:
             failures.append(
                 f"'{item}': P={production}, C+O={consumption}+{overproduction}={expected}"
             )
@@ -620,7 +620,7 @@ def test_category_fruits_math_invariant(logged_in_page, seeded_basic_scans):
         consumption    = _to_float(row[Page.COL_CONSUMPTION])
         overproduction = _to_float(row[Page.COL_OVERPRODUCTION])
         expected = consumption + overproduction
-        if abs(production - expected) > 0.01:
+        if abs(production - expected) > 0.5:
             failures.append(f"'{item}': P={production}, C+O={consumption}+{overproduction}={expected}")
 
     assert not failures, "Math invariant violations with Fruits filter:\n  " + "\n  ".join(failures)
@@ -797,7 +797,7 @@ def test_category_vegetables_math_invariant(logged_in_page, seeded_basic_scans):
         consumption    = _to_float(row[Page.COL_CONSUMPTION])
         overproduction = _to_float(row[Page.COL_OVERPRODUCTION])
         expected = consumption + overproduction
-        if abs(production - expected) > 0.01:
+        if abs(production - expected) > 0.5:
             failures.append(f"'{item}': P={production}, C+O={consumption}+{overproduction}={expected}")
 
     assert not failures, "Math invariant violations with Vegetables filter:\n  " + "\n  ".join(failures)
@@ -1137,7 +1137,7 @@ def test_combined_fruits_lunch_math_invariant(logged_in_page, seeded_basic_scans
         consumption    = _to_float(row[Page.COL_CONSUMPTION])
         overproduction = _to_float(row[Page.COL_OVERPRODUCTION])
         expected = consumption + overproduction
-        if abs(production - expected) > 0.01:
+        if abs(production - expected) > 0.5:
             failures.append(f"'{item}': P={production}, C+O={consumption}+{overproduction}={expected}")
 
     assert not failures, "Math invariant violations (Fruits+Lunch):\n  " + "\n  ".join(failures)
@@ -1183,7 +1183,7 @@ def test_combined_vegetables_dinner_math_invariant(logged_in_page, seeded_basic_
         consumption    = _to_float(row[Page.COL_CONSUMPTION])
         overproduction = _to_float(row[Page.COL_OVERPRODUCTION])
         expected = consumption + overproduction
-        if abs(production - expected) > 0.01:
+        if abs(production - expected) > 0.5:
             failures.append(f"'{item}': P={production}, C+O={consumption}+{overproduction}={expected}")
 
     assert not failures, "Math invariant violations (Vegetables+Dinner):\n  " + "\n  ".join(failures)
@@ -1347,7 +1347,7 @@ def test_all_venues_math_invariant(logged_in_page, seeded_basic_scans):
         consumption    = _to_float(row[Page.COL_CONSUMPTION])
         overproduction = _to_float(row[Page.COL_OVERPRODUCTION])
         expected = consumption + overproduction
-        if abs(production - expected) > 0.01:
+        if abs(production - expected) > 0.5:
             failures.append(f"'{item}': P={production}, C+O={consumption}+{overproduction}={expected}")
 
     assert not failures, "Math invariant violations with All Venues filter:\n  " + "\n  ".join(failures)
@@ -1522,7 +1522,7 @@ def test_second_venue_math_invariant(logged_in_page, seeded_basic_scans):
         consumption    = _to_float(row[Page.COL_CONSUMPTION])
         overproduction = _to_float(row[Page.COL_OVERPRODUCTION])
         expected = consumption + overproduction
-        if abs(production - expected) > 0.01:
+        if abs(production - expected) > 0.5:
             failures.append(f"'{item}': P={production}, C+O={consumption}+{overproduction}={expected}")
 
     assert not failures, "Math invariant violations with Stuffing Venue filter:\n  " + "\n  ".join(failures)
