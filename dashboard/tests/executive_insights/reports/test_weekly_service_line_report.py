@@ -1558,11 +1558,6 @@ def test_ai_ranking_survives_pagination(logged_in_page, seeded_ai_ranking_scans)
 )
 @pytest.mark.regression
 def test_daily_breakdown_matches_scanned_data(logged_in_page, seeded_ai_ranking_scans):
-    scan_counts = {}
-    for scan in seeded_ai_ranking_scans:
-        scan_counts[scan["MenuItemName"]] = scan_counts.get(scan["MenuItemName"], 0) + 1
-    target_item = max(scan_counts, key=scan_counts.get)  # most scans -> richest day-by-day dataset to check
-
     page = Page(logged_in_page)
     page.open_via_nav()
     page.set_report_type(Page.REPORT_TYPE_WEEKLY_SERVICE_LINE)
@@ -1572,8 +1567,12 @@ def test_daily_breakdown_matches_scanned_data(logged_in_page, seeded_ai_ranking_
     section = _extract_ai_ranking_section(download.path(), AI_RANKING_VENUE)
     assert section, f"AI Ranking section not found for {AI_RANKING_VENUE}"
 
+    # Pick whichever item is actually ranked #1 -- not "most scans", which
+    # has no guaranteed relation to the cost-weighted ranking and can pick
+    # an item that isn't even in the top 5.
     actual_order = _get_ranked_item_order(section, [item.name for item in AI_RANKING_ITEMS])
-    assert target_item in actual_order, f"'{target_item}' (most-scanned item) expected in the ranking, got {actual_order}"
+    assert actual_order, "Expected at least one ranked item in the AI Ranking section"
+    target_item = actual_order[0]
 
     other_names = [name for name in actual_order if name != target_item]
     week_start, _ = _target_week_range()

@@ -73,22 +73,25 @@ def pytest_sessionfinish(session, exitstatus):  # noqa: ARG001
 
     # AI triage for failures — reads context/tickets.json built ahead of time by
     # scripts/build_context.py. Skipped (not guessed) if that context doesn't exist.
-    failed_results = [r for r in _test_results if r["status"] == "FAILED"]
-    if failed_results:
-        import sys
-        sys.path.insert(0, str(Path(__file__).parent / "scripts"))
-        from failure_triage import analyze_failure, load_release_context
-
-        release_context = load_release_context()
-        if release_context is None:
-            print("AI triage: context/tickets.json not found — run scripts/build_context.py "
-                  "with this release's ticket keys first. Skipping AI analysis.")
-        else:
-            print(f"AI triage: classifying {len(failed_results)} failure(s) ...")
-            for result in failed_results:
-                result["ai"] = analyze_failure(result, release_context)
-                print(f"AI triage: {result['description'][:60]!r} -> "
-                      f"{result['ai']['verdict']} (confidence {result['ai']['confidence']:.2f})")
+    # Commented out: scripts/failure_triage.py isn't committed yet, so this crashed
+    # pytest_sessionfinish (and everything after it in this function, incl. Xray
+    # reporting) with ModuleNotFoundError on every run with a failure.
+    # failed_results = [r for r in _test_results if r["status"] == "FAILED"]
+    # if failed_results:
+    #     import sys
+    #     sys.path.insert(0, str(Path(__file__).parent / "scripts"))
+    #     from failure_triage import analyze_failure, load_release_context
+    #
+    #     release_context = load_release_context()
+    #     if release_context is None:
+    #         print("AI triage: context/tickets.json not found — run scripts/build_context.py "
+    #               "with this release's ticket keys first. Skipping AI analysis.")
+    #     else:
+    #         print(f"AI triage: classifying {len(failed_results)} failure(s) ...")
+    #         for result in failed_results:
+    #             result["ai"] = analyze_failure(result, release_context)
+    #             print(f"AI triage: {result['description'][:60]!r} -> "
+    #                   f"{result['ai']['verdict']} (confidence {result['ai']['confidence']:.2f})")
 
     # Excel report
     if _test_results:
