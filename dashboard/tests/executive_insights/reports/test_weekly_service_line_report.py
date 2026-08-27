@@ -1238,18 +1238,20 @@ def seeded_boundary_tie_pair(scan_client, menu_item_client, browser, kitchen_sap
         pytest.skip("No two items in the pool currently share the same CostPerLb — can't build a same-cost-and-weight tie")
     item_a, item_b, shared_cost = found
 
-    shared_weight = random.randint(*AI_RANKING_WEIGHT_RANGE_LB)
-    tied_score = shared_weight * shared_cost
+    # Tied pair gets the smallest weight in the normal range; fillers get a
+    # large flat weight regardless of their own cost. Deriving filler weight
+    # backwards from cost (weight = target_score / cost) used to produce
+    # fragile, tiny weights for high-cost items (e.g. a $1000/lb item), where
+    # ordinary rounding could erase the intended safety margin. A flat, large
+    # filler weight sidesteps that entirely -- no division, nothing fragile.
+    shared_weight = AI_RANKING_WEIGHT_RANGE_LB[0]
+    FILLER_WEIGHT_LB = 100
 
     fillers = [item for item in AI_RANKING_ITEMS if item.name not in (item_a.name, item_b.name)][:4]
-    filler_costs = {
-        item.name: menu_item_client.get_cost_per_lb(item.name, restaurant_id=RESTAURANT_A.id)
-        for item in fillers
-    }
 
     item_weights = {item_a: shared_weight, item_b: shared_weight}
     for filler in fillers:
-        item_weights[filler] = (tied_score * 2) / filler_costs[filler.name]
+        item_weights[filler] = FILLER_WEIGHT_LB
 
     inserted = _seed_exact_scans(scan_client, item_weights)
     try:

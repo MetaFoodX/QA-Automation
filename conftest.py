@@ -161,7 +161,29 @@ def pytest_sessionfinish(session, exitstatus):  # noqa: ARG001
             print(f"Xray: {len(keyed)} keyed result(s) matched, {len(skipped)} unkeyed result(s) skipped.")
             if keyed:
                 build = os.environ.get("BUILD_NUMBER", "Local Execution")
-                execution = push_execution_results(keyed, build)
+                # run_qa.sh runs pytest twice (main suite, then the weekly-report
+                # file, as separate processes) so they don't share seeded data --
+                # but both should report into the SAME Xray Test Execution rather
+                # than creating two. Whichever pass runs first creates it and
+                # drops "<build>\n<key>" here; the second pass reads it and
+                # targets the same execution instead of creating a new one. The
+                # stored build number is checked against this run's own build so
+                # a stale file left over from a different/earlier run (e.g. two
+                # separate local runs) is never mistaken for this run's execution.
+                # Only ever fills an existing key we created ourselves this run --
+                # never touches an unrelated Test, unlike the onboarding (create) path.
+                # Restricted to real Jenkins builds: local runs with no BUILD_NUMBER
+                # all fall back to the same "Local Execution" label, so two
+                # unrelated local runs would otherwise look like the same build.
+                execution_key_file = Path("reports/xray_execution_key.txt")
+                existing_key = None
+                if os.environ.get("BUILD_NUMBER") and execution_key_file.exists():
+                    stored_build, _, stored_key = execution_key_file.read_text().strip().partition("\n")
+                    if stored_build == build and stored_key:
+                        existing_key = stored_key
+                execution = push_execution_results(keyed, build, existing_key=existing_key)
+                execution_key_file.parent.mkdir(parents=True, exist_ok=True)
+                execution_key_file.write_text(f"{build}\n{execution['key']}")
                 print(f"Xray: reported {len(keyed)} result(s) -> {execution['key']}")
             if skipped:
                 print(f"Xray: {len(skipped)} test(s) ran without a key, skipped reporting — "

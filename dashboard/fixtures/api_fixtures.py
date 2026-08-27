@@ -139,6 +139,47 @@ def seeded_cross_period_scans(scan_client) -> list[dict]:
         except Exception as e:
             log.warning("Failed to delete cross-period scan %s: %s", scan["ID"], e)
 
+    # delete_scan succeeding doesn't mean the rollup has actually dropped this
+    # item yet -- same async-processing lag as insertion, just on the way out.
+    # Without this, "Corn in a Basket" (deliberately absent from
+    # RESTAURANT_A.menu_items, see CROSS_PERIOD_ITEM_NAME) can still show up
+    # as a live row in whichever test runs right after this one, and get
+    # flagged as an unrecognized/wrong-category item.
+    expected_date_string = _captured_at_local_date(captured_at).isoformat()
+    deadline = time.monotonic() + ROLLUP_SETTLE_TIMEOUT_SECONDS
+    while time.monotonic() < deadline:
+        url = f"{settings.base_url}/api/v1/stats/{RESTAURANT_A.id}/rollups"
+        params = {
+            "TimeFrame": "day",
+            "MenuItemCategoryID": "",
+            "StartDate": expected_date_string,
+            "EndDate": expected_date_string,
+            "VenueID": "",
+            "ServicePeriodID": "",
+            "WithMenuItem": "true",
+            "excludeWasteVenues": "true",
+        }
+        resp = scan_client.session.get(url, params=params, timeout=30)
+        resp.raise_for_status()
+        rows = resp.json().get("data", [])
+        remaining = sum(
+            row["RollUp"]["TotalScans"] for row in rows
+            if row.get("MenuItemID") == CROSS_PERIOD_ITEM_ID and row.get("Date") == expected_date_string
+        )
+        if remaining == 0:
+            log.info("[seeded_cross_period_scans] %s cleared from the rollup after delete", CROSS_PERIOD_ITEM_NAME)
+            break
+        print(f"[seeded_cross_period_scans] {CROSS_PERIOD_ITEM_NAME} still shows {remaining} scan(s) "
+              f"in the rollup after delete, ~{deadline - time.monotonic():.0f}s left — "
+              f"retrying in {ROLLUP_SETTLE_POLL_INTERVAL_SECONDS}s")
+        time.sleep(ROLLUP_SETTLE_POLL_INTERVAL_SECONDS)
+    else:
+        log.warning(
+            "[seeded_cross_period_scans] %s still showed up in the rollup %ds after delete — "
+            "a later test may see it as a stray row",
+            CROSS_PERIOD_ITEM_NAME, ROLLUP_SETTLE_TIMEOUT_SECONDS,
+        )
+
 
 ROLLUP_SETTLE_TIMEOUT_SECONDS = 300
 ROLLUP_SETTLE_POLL_INTERVAL_SECONDS = 15
@@ -251,6 +292,82 @@ def _wait_for_rollups_to_reflect_all_scans(scan_client, inserted: list[dict]) ->
     )
 
 
+def _wait_for_rollups_to_clear_scans(scan_client, scans: list[dict]) -> None:
+    """Called from seeded_basic_scans' teardown, right after cleanup_concurrent()
+    deletes everything. Same async-processing lag as insertion, just on the way
+    out -- delete_scan succeeding doesn't mean the rollup has actually dropped
+    these scans yet. Polls until every affected restaurant's rollup, for the
+    restaurant-local calendar dates these scans actually landed on, reads back
+    down to zero. Gives up after ROLLUP_SETTLE_TIMEOUT_SECONDS -- logs a
+    warning rather than raising, since this runs after the real tests already
+    finished; failing the session here wouldn't undo their results.
+    """
+    if not scans:
+        return
+
+    dates_by_restaurant: dict[int, set] = {}
+    for scan in scans:
+        dates_by_restaurant.setdefault(scan["RestaurantID"], set()).add(
+            _captured_at_local_date(scan["CapturedAt"])
+        )
+    date_strings_by_restaurant = {
+        rid: {d.isoformat() for d in dates} for rid, dates in dates_by_restaurant.items()
+    }
+    query_range_by_restaurant = {
+        rid: (min(dates) - timedelta(days=1), max(dates) + timedelta(days=1))
+        for rid, dates in dates_by_restaurant.items()
+    }
+
+    start_time = time.monotonic()
+    deadline = start_time + ROLLUP_SETTLE_TIMEOUT_SECONDS
+    attempt = 0
+    leftovers = {}
+
+    while time.monotonic() < deadline:
+        attempt += 1
+        leftovers = {}
+        for restaurant_id, date_strings in date_strings_by_restaurant.items():
+            query_start, query_end = query_range_by_restaurant[restaurant_id]
+            url = f"{settings.base_url}/api/v1/stats/{restaurant_id}/rollups"
+            params = {
+                "TimeFrame": "day",
+                "MenuItemCategoryID": "",
+                "StartDate": query_start.isoformat(),
+                "EndDate": query_end.isoformat(),
+                "VenueID": "",
+                "ServicePeriodID": "",
+                "WithMenuItem": "true",
+                "excludeWasteVenues": "true",
+            }
+            resp = scan_client.session.get(url, params=params, timeout=30)
+            resp.raise_for_status()
+            rows = resp.json().get("data", [])
+            remaining = sum(
+                row["RollUp"]["TotalScans"] for row in rows if row.get("Date") in date_strings
+            )
+            if remaining:
+                leftovers[restaurant_id] = remaining
+
+        if not leftovers:
+            elapsed = time.monotonic() - start_time
+            log.info(
+                "[seeded_basic_scans] Rollups fully cleared after %d attempt(s) (~%.0fs)",
+                attempt, elapsed,
+            )
+            return
+
+        remaining_time = deadline - time.monotonic()
+        summary = ", ".join(f"restaurant {rid}: {count} scan(s) still showing" for rid, count in leftovers.items())
+        print(f"[seeded_basic_scans] rollup clear-check attempt {attempt}: {summary}, "
+              f"~{remaining_time:.0f}s left — retrying in {ROLLUP_SETTLE_POLL_INTERVAL_SECONDS}s")
+        time.sleep(ROLLUP_SETTLE_POLL_INTERVAL_SECONDS)
+
+    log.warning(
+        "[seeded_basic_scans] Rollups did not fully clear within %ds: %s",
+        ROLLUP_SETTLE_TIMEOUT_SECONDS, leftovers,
+    )
+
+
 @pytest.fixture(scope="session")
 def seeded_basic_scans(scan_client) -> list[dict]:
     """Seed scans once per session, yield payloads, clean up at end."""
@@ -274,3 +391,6 @@ def seeded_basic_scans(scan_client) -> list[dict]:
 
     yield inserted
     seeder.cleanup_concurrent()
+    failed_ids = {s["ID"] for s in seeder.inserted_payloads}
+    deleted = [s for s in inserted if s["ID"] not in failed_ids]
+    _wait_for_rollups_to_clear_scans(scan_client, deleted)
