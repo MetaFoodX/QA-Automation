@@ -1592,8 +1592,8 @@ def test_daily_breakdown_matches_scanned_data(logged_in_page, seeded_ai_ranking_
     component="reports",
     type="regression",
     description=(
-        f"Downloading the Weekly Service Line Report for a week with a fully populated AI Ranking "
-        f"section (8 items competing for the top 5) completes within {AI_RANKING_MAX_GENERATION_SECONDS}s"
+        "Downloading the Weekly Service Line Report for a week with a fully populated AI Ranking "
+        "section (8 items competing for the top 5) completes within 60s"
     ),
     steps=(
         "1. Using the scanning device, record overproduction scans across the week for several menu items "
@@ -1601,7 +1601,7 @@ def test_daily_breakdown_matches_scanned_data(logged_in_page, seeded_ai_ranking_
         "2. Go to Executive Insights > Reports, set Report Type = Weekly Service Line Report\n"
         "3. Select that week and click Download\n"
         "4. Time how long it takes from clicking Download to the PDF finishing generation and downloading\n"
-        f"5. Confirm it completes within {AI_RANKING_MAX_GENERATION_SECONDS} seconds rather than hanging"
+        "5. Confirm it completes within 60 seconds rather than hanging"
     ),
 )
 @pytest.mark.regression
