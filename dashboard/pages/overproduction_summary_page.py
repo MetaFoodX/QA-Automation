@@ -50,6 +50,29 @@ class OverproductionSummaryPage(ExecutiveInsightsPage):
     _BTN_COST      = 2
     _BTN_EXPORT    = 3
 
+    def click_menu_item_in_row(self, row_index: int):
+        """Drill in. Overrides the base method: it waits for a 'Days Served' header
+        as its settle-check, but Overproduction Summary never renders that column
+        (it's Consumption-only) — that wait would hang until timeout. Waits on
+        'Total Overproduction' instead, which is always present here.
+        """
+        self.page.locator("th", has_text=self.COL_TOTAL_OVERPRODUCTION_BASE).wait_for(state="visible")
+
+        # Wait for the requested row to be present
+        self.page.locator(L.TABLE_BODY_ROW).nth(row_index).wait_for(state="visible")
+
+        rows = self.page.locator(L.TABLE_BODY_ROW).all()
+        if row_index >= len(rows):
+            raise IndexError(f"Row {row_index} out of range ({len(rows)} rows)")
+
+        target_item = rows[row_index].locator("a").first.inner_text().strip()
+        rows[row_index].locator("a").first.click()
+
+        self.page.locator("th", has_text=self.COL_DATE).wait_for(state="visible")
+        self.page.wait_for_load_state("networkidle")
+        self.page.locator(L.TABLE_BODY_ROW, has_text=target_item).first.wait_for(state="visible")
+        self._wait_for_rows_to_match_item(target_item)
+
     def set_destination(self, destination: str):
         """Set the destination filter (All Destinations, Reuse, Donation, Compostable)."""
         self._select_filter_dropdown(position=3, option=destination)

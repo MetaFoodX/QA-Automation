@@ -77,6 +77,182 @@ class ExecutiveInsightsPage(BasePage):
         self.page.wait_for_load_state("networkidle")
         self.page.locator(L.TABLE_BODY_ROW, has_text=target_item).first.wait_for(state="visible")
         self._wait_for_rows_to_match_item(target_item)
+        # The by-day column headers (and their 'View' buttons) render before the
+        # real per-day rows replace the stale summary rows underneath them —
+        # confirmed live: row count/pagination visibly changes shortly after
+        # _wait_for_rows_to_match_item already passes. Wait for that to settle
+        # too before returning, so callers never act on a still-transitioning table.
+        self._wait_for_table_to_settle()
+
+    def get_breadcrumb_texts(self) -> list[str]:
+        """Non-empty breadcrumb crumb texts, in DOM order (hidden home crumb excluded)."""
+        items = self.page.locator(L.BREADCRUMB_ITEM_LINK).all_inner_texts()
+        return [t.strip() for t in items if t.strip()]
+
+    def is_breadcrumb_parent_clickable(self) -> bool:
+        """True if the page-name crumb (e.g. 'Consumption Summary') is a real link —
+        only the case while drilled into a menu item."""
+        return self.page.locator(L.BREADCRUMB_PAGE_LINK).locator("a").count() > 0
+
+    def is_breadcrumb_venue_clickable(self) -> bool:
+        """True if the venue crumb contains a link. Expected to always be False —
+        breadCrumbParent2 is rendered as plain text, never a Link."""
+        return self.page.locator(L.BREADCRUMB_VENUE_ITEM).locator("a").count() > 0
+
+    def is_breadcrumb_item_clickable(self) -> bool:
+        """True if the menu-item-name crumb contains a link. Expected to always be
+        False — breadCrumbActive is rendered as plain text, never a Link."""
+        return self.page.locator(L.BREADCRUMB_ITEM_CRUMB).locator("a").count() > 0
+
+    def click_breadcrumb_parent(self):
+        """Click the page-name breadcrumb crumb to return to the parent view.
+
+        Unlike navigate_back_to_summary(), this does NOT toggle day view off first —
+        closeMenuItemDrillDown() in the app restores whatever day-view state
+        (parentWasDailyView) was active before the drill-down on its own.
+        """
+        self.page.locator(L.BREADCRUMB_RESET_LINK).click()
+        self._wait_for_table_to_settle()
+
+    def has_scan_images_column(self) -> bool:
+        """True if the 'Scan Images' column header is present — only rendered
+        inside a standard menu-item drill-down while in the by-day view."""
+        return any("Scan Images" in h for h in self.get_headers())
+
+    def click_view_scans_in_row(self, row_index: int):
+        """Click the 'View' button in the given data-by-dates row to expand its
+        scan gallery. Waits for the gallery to mount before returning."""
+        rows = self.page.locator(L.TABLE_BODY_ROW).all()
+        if row_index >= len(rows):
+            raise IndexError(f"Row {row_index} out of range ({len(rows)} rows)")
+        rows[row_index].locator(L.SCAN_GALLERY_VIEW_BUTTON).click()
+        self.page.locator(L.SCAN_GALLERY).first.wait_for(state="visible")
+        self._wait_for_gallery_to_settle()
+
+    def click_view_scans_button(self, row_locator):
+        """Click the 'View' button inside an already-located row (for rows read
+        via get_rows()/get_all_rows() rather than by index)."""
+        row_locator.locator(L.SCAN_GALLERY_VIEW_BUTTON).click()
+
+    def is_scan_gallery_expanded(self) -> bool:
+        """True if a scan gallery is currently expanded. At most one is ever
+        mounted — expandedRowKeys holds a single key."""
+        return self.page.locator(L.SCAN_GALLERY).count() > 0
+
+    def get_scan_gallery_toggle_label(self) -> str:
+        """Currently-selected Service/Leftover label — Consumption mode only."""
+        return self.page.locator(L.SCAN_GALLERY_TOGGLE).inner_text().strip()
+
+    def select_scan_gallery_option(self, label: str):
+        """Switch the expanded gallery's Service/Leftover toggle (Consumption
+        mode only). Waits out the resulting scan refetch before returning."""
+        self.page.locator(L.SCAN_GALLERY_TOGGLE).click()
+        select_dropdown_option(self.page, label, exact=True)
+        self._wait_for_gallery_to_settle()
+
+    def _wait_for_gallery_to_settle(self):
+        """Poll until the expanded gallery shows scan cards or its own 'No
+        data' message — i.e. the async scan fetch triggered by expanding or
+        switching Service/Leftover has actually finished. A fixed sleep here
+        previously masked this: short seed days finished within the sleep and
+        passed by luck, while a slower fetch left the gallery mid-load with
+        neither cards nor the empty message rendered yet.
+
+        Once content appears, also wait out AntD's row-expand height
+        animation before returning — clicking something inside the row (e.g.
+        the Service/Leftover select) while it's still animating can silently
+        fail to open. Confirmed live: content can render before that
+        animation finishes, so "content appeared" alone isn't "settled".
+        """
+        deadline = time.time() + (settings.timeouts.default / 1000)
+        while time.time() < deadline:
+            if self.page.locator(L.SCAN_GALLERY_CARD).count() > 0 or self.is_scan_gallery_empty():
+                self.page.wait_for_timeout(settings.timeouts.medium)
+                return
+            self.page.wait_for_timeout(settings.timeouts.short)
+        raise TimeoutError(
+            f"Scan gallery didn't settle (no cards, no 'No data' message) within {settings.timeouts.default}ms"
+        )
+
+    def has_scan_gallery_toggle(self) -> bool:
+        """True only in Consumption mode — every other mode shows a static title instead."""
+        return self.page.locator(L.SCAN_GALLERY_TOGGLE).count() > 0
+
+    def get_scan_gallery_static_title(self) -> str:
+        """Static gallery title text — every mode other than Consumption."""
+        return self.page.locator(L.SCAN_GALLERY_STATIC_TITLE).inner_text().strip()
+
+    def is_scan_gallery_empty(self) -> bool:
+        """True if the expanded gallery shows its own 'No data' message."""
+        return self.page.locator(L.SCAN_GALLERY_EMPTY).count() > 0
+
+    def get_scan_cards(self) -> list[dict]:
+        """Read each visible scan card's name/weight/time/temperature text in
+        the currently expanded gallery."""
+        cards = self.page.locator(L.SCAN_GALLERY_CARD).all()
+        result = []
+        for card in cards:
+            def _text(selector):
+                loc = card.locator(selector)
+                return loc.first.inner_text().strip() if loc.count() else ""
+
+            result.append({
+                "name": _text(L.SCAN_CARD_NAME),
+                "weight": _text(L.SCAN_CARD_WEIGHT),
+                "time": _text(L.SCAN_CARD_TIME),
+                "temperature": _text(L.SCAN_CARD_TEMPERATURE),
+            })
+        return result
+
+    def open_scan_preview(self, card_index: int = 0):
+        """Click the image of the given scan card (by position in the
+        currently expanded gallery) to open the enlarged preview modal."""
+        cards = self.page.locator(L.SCAN_GALLERY_CARD).all()
+        if card_index >= len(cards):
+            raise IndexError(f"Card {card_index} out of range ({len(cards)} cards)")
+        cards[card_index].locator("img").first.click()
+        self.page.locator(L.SCAN_PREVIEW_MODAL).first.wait_for(state="visible")
+
+    def close_scan_preview(self):
+        """Close the open scan preview modal."""
+        self.page.locator(L.SCAN_PREVIEW_CLOSE).click()
+        self.page.locator(L.SCAN_PREVIEW_MODAL).wait_for(state="hidden")
+
+    def is_scan_preview_open(self) -> bool:
+        modal = self.page.locator(L.SCAN_PREVIEW_MODAL)
+        return modal.count() > 0 and modal.first.is_visible()
+
+    def get_scan_preview_fields(self) -> dict[str, str]:
+        """Read label -> first value text for every field in the open preview
+        modal. A field with multiple value divs (e.g. Pan Size & Depth) only
+        contributes its first value here — see get_scan_preview_pan_size_and_depth."""
+        result = {}
+        for label_el in self.page.locator(L.SCAN_PREVIEW_FIELD_LABEL).all():
+            label_text = label_el.inner_text().strip()
+            values = label_el.locator("xpath=following-sibling::div[contains(@class,'preview-label')]")
+            result[label_text] = values.first.inner_text().strip() if values.count() else ""
+        return result
+
+    def get_scan_preview_pan_size_and_depth(self) -> tuple[str, str]:
+        """Both value divs under the 'Pan Size & Depth' label: (size, depth)."""
+        label = self.page.locator(L.SCAN_PREVIEW_FIELD_LABEL).filter(has_text="Pan Size & Depth")
+        texts = label.locator("xpath=following-sibling::div[contains(@class,'preview-label')]").all_inner_texts()
+        return (
+            texts[0].strip() if len(texts) > 0 else "",
+            texts[1].strip() if len(texts) > 1 else "",
+        )
+
+    def click_scan_preview_prev(self):
+        self.page.locator(L.SCAN_PREVIEW_PREV_BUTTON).click()
+
+    def click_scan_preview_next(self):
+        self.page.locator(L.SCAN_PREVIEW_NEXT_BUTTON).click()
+
+    def is_scan_preview_prev_visible(self) -> bool:
+        return self.page.locator(L.SCAN_PREVIEW_PREV_BUTTON).count() > 0
+
+    def is_scan_preview_next_visible(self) -> bool:
+        return self.page.locator(L.SCAN_PREVIEW_NEXT_BUTTON).count() > 0
 
     def navigate_back_to_summary(self):
         """Two-step navigate back. Wait for the table to fully settle after each click,

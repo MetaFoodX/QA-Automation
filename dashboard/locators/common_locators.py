@@ -36,6 +36,15 @@ BREADCRUMB_RESET_LINK = ".custom-breadcrumb a[href='#']"
 # Breadcrumb item text nodes (span.ant-breadcrumb-link inside .custom-breadcrumb).
 BREADCRUMB_ITEM_LINK = ".custom-breadcrumb .ant-breadcrumb-link"
 
+# Breadcrumb venue crumb (3rd li) — plain-text venue name (breadCrumbParent2), only
+# rendered while drilled into a menu item. Never wrapped in <a> — see BreadCrumbs
+# component: breadCrumbParent2 is always rendered as raw children, never a Link.
+BREADCRUMB_VENUE_ITEM = ".custom-breadcrumb li:nth-child(3)"
+
+# Breadcrumb item-name crumb (4th li) — plain-text menu item name (breadCrumbActive),
+# only rendered while drilled into a menu item. Never wrapped in <a>, same as above.
+BREADCRUMB_ITEM_CRUMB = ".custom-breadcrumb li:nth-child(4)"
+
 # Filter dropdown selection item (shows the currently selected value in any filter select).
 FILTER_SELECTION_ITEM = "form.ant-form .ant-select-selection-item"
 
@@ -54,3 +63,46 @@ SEARCH_MINIMIZE_BUTTON = "form.ant-form button:has(.anticon-arrow-right)"
 # Ant Design renders placeholder as a <span>, not input[placeholder],
 # so match by .ant-select-multiple (only multi-select in this form).
 MENU_ITEM_SEARCH_SELECT = "form.ant-form .ant-select-multiple"
+
+# --- Menu Item Drill Down — scan gallery (ScanLogDrillDown component) ---
+
+# 'View' button per data-by-dates row — only rendered inside a standard
+# (non-catering) menu-item drill-down, scoped within a single row.
+SCAN_GALLERY_VIEW_BUTTON = "button:has-text('View')"
+
+# Root container of the expanded scan gallery. At most one is ever mounted,
+# since expandedRowKeys holds a single key (one row expanded at a time).
+SCAN_GALLERY = ".scan-log-drilldown"
+
+# "No data" message shown inside an expanded gallery when no scans match the
+# current Service/Leftover selection — distinct from the outer table's own
+# "No data" text (that one lives outside .scan-log-drilldown).
+SCAN_GALLERY_EMPTY = ".scan-log-drilldown-empty"
+
+# Service/Leftover dropdown — only rendered when mode="consumption" (Consumption Summary).
+SCAN_GALLERY_TOGGLE = ".scan-log-drilldown-type"
+
+# Static "Scan For Leftover" label — rendered instead of the toggle in every
+# other mode (e.g. Overproduction Summary, mode="leftover").
+SCAN_GALLERY_STATIC_TITLE = ".scan-log-drilldown-title"
+
+# Individual scan thumbnail card within the gallery, and its content pieces.
+SCAN_GALLERY_CARD = ".scan-image-thumbnail-refill-div, .scan-image-thumbnail-leftover-div"
+SCAN_CARD_NAME = ".scan-menu-label-overflow"
+SCAN_CARD_WEIGHT = ".weight-label"
+SCAN_CARD_TEMPERATURE = ".temperature-label"
+SCAN_CARD_TIME = ".capturedAt-label"
+
+# --- Menu Item Drill Down — scan preview modal (PreviewModal component) ---
+
+# Root of the open Ant Design modal. Scoped narrowly enough for this file's
+# use — only ever one scan-preview-shaped modal is open during these flows.
+SCAN_PREVIEW_MODAL = ".ant-modal-content"
+SCAN_PREVIEW_CLOSE = ".ant-modal-close"
+SCAN_PREVIEW_PREV_BUTTON = ".scanPrevBtn"
+SCAN_PREVIEW_NEXT_BUTTON = ".scanNextBtn"
+
+# Each detail field is a label (<p class="panPreviewTitle">) followed by one
+# or more sibling value divs within the same wrapper.
+SCAN_PREVIEW_FIELD_LABEL = ".panPreviewTitle"
+SCAN_PREVIEW_FIELD_VALUE = ".scan-thumbnail-info-label.preview-label"
