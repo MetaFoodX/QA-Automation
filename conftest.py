@@ -53,7 +53,15 @@ def pytest_sessionstart(session):  # noqa: ARG001
 def pytest_runtest_makereport(item, call):
     outcome = yield
     report = outcome.get_result()
-    if report.when == "call" and report.outcome != "rerun":
+    if report.outcome == "rerun":
+        return
+    # A test skipped via a marker (e.g. @pytest.mark.skip) — or one whose
+    # fixture setup itself errors — is decided during "setup", before "call"
+    # ever runs, so there is no "call" phase report for it at all. Missing
+    # this meant skip-marked tests (and setup errors) vanished from every
+    # downstream report instead of showing up as skipped/errored.
+    is_relevant = report.when == "call" or (report.when == "setup" and not report.passed)
+    if is_relevant:
         marker = item.get_closest_marker("testcase")
         if marker:
             # classname/function mirror exactly how scripts/xray_common.py's

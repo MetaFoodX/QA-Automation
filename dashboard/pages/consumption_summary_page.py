@@ -29,7 +29,8 @@ class ConsumptionSummaryPage(ExecutiveInsightsPage):
     EXPORT_HEADERS = [
         "Menu Item",
         "Venue",
-        "Number of Pan",
+        "Number of Pans for Service",
+        "Number of Pans for Leftover",
         "Production (lb)",
         "Consumption (lb)",
         "Overproduction (lb)",

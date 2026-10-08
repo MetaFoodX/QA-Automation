@@ -72,6 +72,13 @@ class OverproductionSummaryPage(ExecutiveInsightsPage):
         self.page.wait_for_load_state("networkidle")
         self.page.locator(L.TABLE_BODY_ROW, has_text=target_item).first.wait_for(state="visible")
         self._wait_for_rows_to_match_item(target_item)
+        # See the base class's identical final step: the by-day column headers
+        # render before the real per-day rows replace the stale summary rows
+        # underneath them, so callers can still act on a still-transitioning
+        # table right after _wait_for_rows_to_match_item passes. This override
+        # had been missing this wait, which is exactly what made
+        # click_view_scans_in_row/etc. flaky right after drilling in here.
+        self._wait_for_table_to_settle()
 
     def set_destination(self, destination: str):
         """Set the destination filter (All Destinations, Reuse, Donation, Compostable)."""

@@ -105,7 +105,14 @@ def push_to_xray(merged: dict, build: str):
     from xray_common import push_execution_results
     from xray_report import build_entries
 
-    junit_results = {key: (e["status"], e["error_detail"]) for key, e in merged.items()}
+    # Xray's status vocabulary isn't pytest's: a skipped test must be reported
+    # as "TODO", not the raw "SKIPPED" outcome string (mirrors what
+    # xray_common.load_junit_results() has always done for the junit.xml path).
+    xray_status = {"SKIPPED": "TODO"}
+    junit_results = {
+        key: (xray_status.get(e["status"], e["status"]), e["error_detail"])
+        for key, e in merged.items()
+    }
 
     print("Xray: matching test results against onboarded keys ...")
     keyed, skipped = build_entries(junit_results=junit_results)
