@@ -337,7 +337,7 @@ def test_destination_back_to_all_restores_columns(logged_in_page, seeded_basic_s
 @allure.title("Venue filter changes data shown in the table")
 @pytest.mark.testcase(
     component="overproduction_summary",
-    type="regression",
+    type="smoke, regression",
     description="Switching venue filter loads data for that venue only",
     steps=(
         "1. Log in as kitchen_sapna\n"
@@ -348,6 +348,7 @@ def test_destination_back_to_all_restores_columns(logged_in_page, seeded_basic_s
     ),
     key="FQL-145",
 )
+@pytest.mark.smoke
 @pytest.mark.regression
 def test_venue_filter_changes_data(logged_in_page, seeded_basic_scans):
     """Switching venue must change the table data."""
@@ -463,7 +464,7 @@ def test_venue_b_data_matches_seeded(logged_in_page, seeded_basic_scans):
 @allure.title("Math invariant Total = R + D + C holds per row with Lunch meal filter")
 @pytest.mark.testcase(
     component="overproduction_summary",
-    type="regression",
+    type="smoke, regression",
     description="Total Overproduction = Reuse + Donation + Compostable for every row when Lunch filter is applied",
     steps=(
         "1. Log in as kitchen_sapna\n"
@@ -474,6 +475,7 @@ def test_venue_b_data_matches_seeded(logged_in_page, seeded_basic_scans):
     ),
     key="FQL-148",
 )
+@pytest.mark.smoke
 @pytest.mark.regression
 def test_meal_lunch_math_invariant(logged_in_page, seeded_basic_scans):
     """Math invariant must hold when Lunch meal filter is applied."""
@@ -934,7 +936,7 @@ def test_export_button_enabled_with_data(logged_in_page, seeded_basic_scans):
 @allure.title("Export downloads a CSV file")
 @pytest.mark.testcase(
     component="overproduction_summary",
-    type="regression",
+    type="smoke, regression",
     description="Clicking the export button triggers a CSV file download",
     steps=(
         "1. Log in as kitchen_sapna\n"
@@ -945,6 +947,7 @@ def test_export_button_enabled_with_data(logged_in_page, seeded_basic_scans):
     ),
     key="FQL-159",
 )
+@pytest.mark.smoke
 @pytest.mark.regression
 def test_export_downloads_csv_file(logged_in_page, seeded_basic_scans):
     """Export button must trigger a file download."""
@@ -1047,7 +1050,7 @@ def test_export_csv_has_data_rows(logged_in_page, seeded_basic_scans):
 @allure.title("Clicking Total Overproduction header sorts column in ascending then descending order")
 @pytest.mark.testcase(
     component="overproduction_summary",
-    type="regression",
+    type="smoke, regression",
     description="Two clicks on Total Overproduction header produce ascending then descending sort",
     steps=(
         "1. Log in as kitchen_sapna\n"
@@ -1060,6 +1063,7 @@ def test_export_csv_has_data_rows(logged_in_page, seeded_basic_scans):
     ),
     key="FQL-162",
 )
+@pytest.mark.smoke
 @pytest.mark.regression
 def test_sort_total_overproduction_ascending_then_descending(logged_in_page, seeded_basic_scans):
     """Total Overproduction column header must cycle sort asc → desc."""
@@ -1096,7 +1100,7 @@ def test_sort_total_overproduction_ascending_then_descending(logged_in_page, see
 @allure.title("Day view with Reuse destination shows Date column and Reuse values")
 @pytest.mark.testcase(
     component="overproduction_summary",
-    type="regression",
+    type="smoke, regression",
     description="Day view combined with Reuse destination filter shows per-date rows with Reuse column",
     steps=(
         "1. Log in as kitchen_sapna\n"
@@ -1108,6 +1112,7 @@ def test_sort_total_overproduction_ascending_then_descending(logged_in_page, see
     ),
     key="FQL-163",
 )
+@pytest.mark.smoke
 @pytest.mark.regression
 def test_day_view_with_reuse_destination(logged_in_page, seeded_basic_scans):
     """Day view + Reuse destination filter must show Date column and Reuse values."""
@@ -1366,7 +1371,7 @@ def test_meal_all_day_data_accuracy(logged_in_page, seeded_basic_scans):
 @allure.title("Fruits category: math invariant Total = R + D + C holds per row")
 @pytest.mark.testcase(
     component="overproduction_summary",
-    type="regression",
+    type="smoke, regression",
     description="Math invariant holds for all rows when Fruits category filter is applied",
     steps=(
         "1. Log in as kitchen_sapna\n"
@@ -1376,6 +1381,7 @@ def test_meal_all_day_data_accuracy(logged_in_page, seeded_basic_scans):
     ),
     key="FQL-170",
 )
+@pytest.mark.smoke
 @pytest.mark.regression
 def test_category_fruits_math_invariant(logged_in_page, seeded_basic_scans):
     """Math invariant must hold when Fruits category filter is applied."""
@@ -1638,7 +1644,7 @@ def test_combined_vegetables_dinner_math_invariant(logged_in_page, seeded_basic_
 @allure.title("Changing category preserves the current meal filter")
 @pytest.mark.testcase(
     component="overproduction_summary",
-    type="regression",
+    type="smoke, regression",
     description="After applying Lunch meal filter, switching category should keep Lunch still selected",
     steps=(
         "1. Log in as kitchen_sapna\n"
@@ -1649,6 +1655,7 @@ def test_combined_vegetables_dinner_math_invariant(logged_in_page, seeded_basic_
     ),
     key="FQL-176",
 )
+@pytest.mark.smoke
 @pytest.mark.regression
 def test_category_change_preserves_meal_filter(logged_in_page, seeded_basic_scans):
     """Changing category must not reset the meal filter."""
@@ -1894,7 +1901,7 @@ def test_search_button_visible_in_header(logged_in_page):
 @allure.title("Search button toggles the menu item multi-select visible and hidden")
 @pytest.mark.testcase(
     component="overproduction_summary",
-    type="regression",
+    type="smoke, regression",
     description="Clicking the search button shows the menu item select; clicking again hides it",
     steps=(
         "1. Log in as kitchen_sapna\n"
@@ -1906,6 +1913,7 @@ def test_search_button_visible_in_header(logged_in_page):
     ),
     key="FQL-183",
 )
+@pytest.mark.smoke
 @pytest.mark.regression
 def test_search_button_toggles_menu_item_select(logged_in_page):
     """Search button must show/hide the menu item multi-select."""

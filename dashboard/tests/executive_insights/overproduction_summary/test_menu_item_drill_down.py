@@ -35,7 +35,7 @@ def _apply_filters(page: Page, venue: str = CURRENT_VENUE_NAME, meal: str = MEAL
 @allure.title("Clicking a menu item row drills down in place, without a page navigation")
 @pytest.mark.testcase(
     component="overproduction_summary",
-    type="regression",
+    type="smoke, regression",
     description="Clicking a menu item row opens the daily drill-down in place (SPA state change), not a full page navigation",
     steps=(
         "1. Log in as kitchen_sapna\n"
@@ -46,6 +46,7 @@ def _apply_filters(page: Page, venue: str = CURRENT_VENUE_NAME, meal: str = MEAL
         "6. Assert Date and Day columns are now present (drill-down confirmed)"
     ),
 )
+@pytest.mark.smoke
 @pytest.mark.regression
 def test_row_click_drills_down_without_page_navigation(logged_in_page, seeded_basic_scans):
     page = Page(logged_in_page)
@@ -74,7 +75,7 @@ def test_row_click_drills_down_without_page_navigation(logged_in_page, seeded_ba
 @allure.title("Breadcrumb reads 'Overproduction Summary / [Venue] / [Item]' after drill-down")
 @pytest.mark.testcase(
     component="overproduction_summary",
-    type="regression",
+    type="smoke, regression",
     description="After drilling into a menu item, the breadcrumb shows exactly page name, venue, then item name",
     steps=(
         "1. Log in as kitchen_sapna\n"
@@ -85,6 +86,7 @@ def test_row_click_drills_down_without_page_navigation(logged_in_page, seeded_ba
         "6. Assert crumbs are exactly ['Overproduction Summary', <venue>, <item>] in that order"
     ),
 )
+@pytest.mark.smoke
 @pytest.mark.regression
 def test_breadcrumb_format_shows_summary_venue_item(logged_in_page, seeded_basic_scans):
     page = Page(logged_in_page)
@@ -111,7 +113,7 @@ def test_breadcrumb_format_shows_summary_venue_item(logged_in_page, seeded_basic
 @allure.title("Breadcrumb parent is clickable and returns to summary with filters preserved")
 @pytest.mark.testcase(
     component="overproduction_summary",
-    type="regression",
+    type="smoke, regression",
     description="The 'Overproduction Summary' breadcrumb crumb is a real link while drilled down; clicking it returns to the summary with the venue filter still applied",
     steps=(
         "1. Log in as kitchen_sapna\n"
@@ -123,6 +125,7 @@ def test_breadcrumb_format_shows_summary_venue_item(logged_in_page, seeded_basic
         "7. Assert the venue filter still shows the previously selected venue"
     ),
 )
+@pytest.mark.smoke
 @pytest.mark.regression
 def test_breadcrumb_parent_clickable_returns_with_filters_preserved(logged_in_page, seeded_basic_scans):
     page = Page(logged_in_page)
@@ -234,7 +237,7 @@ def test_returning_via_breadcrumb_restores_day_view_state(logged_in_page, seeded
 @allure.title("Drilling into a menu item renders a per-day breakdown")
 @pytest.mark.testcase(
     component="overproduction_summary",
-    type="regression",
+    type="smoke, regression",
     description="Drilling into a menu item shows one row per day the item was produced, each with a valid Date",
     steps=(
         "1. Log in as kitchen_sapna\n"
@@ -244,6 +247,7 @@ def test_returning_via_breadcrumb_restores_day_view_state(logged_in_page, seeded
         "5. Assert at least one row is present and every row has a non-empty Date"
     ),
 )
+@pytest.mark.smoke
 @pytest.mark.regression
 def test_daily_breakdown_renders_per_day_rows(logged_in_page, seeded_basic_scans):
     page = Page(logged_in_page)
@@ -269,7 +273,7 @@ def test_daily_breakdown_renders_per_day_rows(logged_in_page, seeded_basic_scans
 @allure.title("'Scan Images' column and its View button are present in the daily drill-down")
 @pytest.mark.testcase(
     component="overproduction_summary",
-    type="regression",
+    type="smoke, regression",
     description="Each data-by-dates row in a menu-item drill-down shows a 'Scan Images' column with a View button",
     steps=(
         "1. Log in as kitchen_sapna\n"
@@ -278,6 +282,7 @@ def test_daily_breakdown_renders_per_day_rows(logged_in_page, seeded_basic_scans
         "4. Assert the first row has a visible 'View' button"
     ),
 )
+@pytest.mark.smoke
 @pytest.mark.regression
 def test_scan_images_column_and_view_button_present(logged_in_page, seeded_basic_scans):
     page = Page(logged_in_page)
@@ -337,7 +342,7 @@ def test_view_button_hidden_in_combined_view(logged_in_page, seeded_basic_scans)
 @allure.title("Clicking View expands the scan gallery for that date")
 @pytest.mark.testcase(
     component="overproduction_summary",
-    type="regression",
+    type="smoke, regression",
     description="Clicking the View button in a daily row expands the scan gallery below it",
     steps=(
         "1. Log in as kitchen_sapna\n"
@@ -347,6 +352,7 @@ def test_view_button_hidden_in_combined_view(logged_in_page, seeded_basic_scans)
         "5. Assert a scan gallery is now expanded"
     ),
 )
+@pytest.mark.smoke
 @pytest.mark.regression
 def test_clicking_view_expands_scan_gallery(logged_in_page, seeded_basic_scans):
     page = Page(logged_in_page)
@@ -371,7 +377,7 @@ def test_clicking_view_expands_scan_gallery(logged_in_page, seeded_basic_scans):
 @allure.title("Clicking View again collapses the scan gallery")
 @pytest.mark.testcase(
     component="overproduction_summary",
-    type="regression",
+    type="smoke, regression",
     description="Re-clicking the View button on an already-expanded row collapses its scan gallery",
     steps=(
         "1. Log in as kitchen_sapna\n"
@@ -381,6 +387,7 @@ def test_clicking_view_expands_scan_gallery(logged_in_page, seeded_basic_scans):
         "5. Assert the gallery is no longer expanded"
     ),
 )
+@pytest.mark.smoke
 @pytest.mark.regression
 def test_clicking_view_again_collapses_scan_gallery(logged_in_page, seeded_basic_scans):
     page = Page(logged_in_page)
@@ -448,7 +455,7 @@ def test_expanding_new_row_collapses_previous_gallery(logged_in_page, seeded_bas
 @allure.title("Scan gallery shows Leftover only, with no Service/Leftover toggle")
 @pytest.mark.testcase(
     component="overproduction_summary",
-    type="regression",
+    type="smoke, regression",
     description="On Overproduction Summary, the expanded scan gallery has no Service/Leftover toggle — it's a static 'Scan For Leftover' view",
     steps=(
         "1. Log in as kitchen_sapna\n"
@@ -458,6 +465,7 @@ def test_expanding_new_row_collapses_previous_gallery(logged_in_page, seeded_bas
         "5. Assert the static title reads 'Scan For Leftover'"
     ),
 )
+@pytest.mark.smoke
 @pytest.mark.regression
 def test_scan_gallery_shows_leftover_only_no_toggle(logged_in_page, seeded_basic_scans):
     page = Page(logged_in_page)
@@ -585,7 +593,7 @@ def test_scan_gallery_has_no_independent_scroll():
 @allure.title("Clicking a scan image opens the enlarged preview")
 @pytest.mark.testcase(
     component="overproduction_summary",
-    type="regression",
+    type="smoke, regression",
     description="Clicking a scan card's image in the gallery opens the enlarged preview modal",
     steps=(
         "1. Log in as kitchen_sapna\n"
@@ -595,6 +603,7 @@ def test_scan_gallery_has_no_independent_scroll():
         "5. Assert the enlarged preview modal is now open"
     ),
 )
+@pytest.mark.smoke
 @pytest.mark.regression
 def test_clicking_scan_image_opens_preview(logged_in_page, seeded_basic_scans):
     page = Page(logged_in_page)
@@ -664,7 +673,7 @@ def test_preview_shows_all_detail_fields(logged_in_page, seeded_basic_scans):
 @allure.title("Prev/Next navigation cycles between scans in the current gallery")
 @pytest.mark.testcase(
     component="overproduction_summary",
-    type="regression",
+    type="smoke, regression",
     description="Next moves to a different scan and shows Prev; Prev returns to the original scan",
     steps=(
         "1. Log in as kitchen_sapna\n"
@@ -674,6 +683,7 @@ def test_preview_shows_all_detail_fields(logged_in_page, seeded_basic_scans):
         "5. Click Prev — assert the Menu Item Weight value returns to the original"
     ),
 )
+@pytest.mark.smoke
 @pytest.mark.regression
 def test_preview_prev_next_navigation_cycles_scans(logged_in_page, seeded_basic_scans):
     page = Page(logged_in_page)

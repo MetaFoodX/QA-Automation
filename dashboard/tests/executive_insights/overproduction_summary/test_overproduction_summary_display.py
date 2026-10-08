@@ -124,7 +124,7 @@ def test_cost_view_shows_dollar_unit(logged_in_page, seeded_basic_scans):
 @allure.title("Toggling cost view and back returns all destination headers to (lb) unit")
 @pytest.mark.testcase(
     component="overproduction_summary",
-    type="regression",
+    type="smoke, regression",
     description="Toggling cost view off returns all destination headers to lb unit",
     steps=(
         "1. Log in as kitchen_sapna\n"
@@ -137,6 +137,7 @@ def test_cost_view_shows_dollar_unit(logged_in_page, seeded_basic_scans):
     ),
     key="FQL-108",
 )
+@pytest.mark.smoke
 @pytest.mark.regression
 def test_toggle_cost_back_to_weight(logged_in_page, seeded_basic_scans):
     """Toggle to cost view then back — headers must return to lb unit."""
@@ -197,7 +198,7 @@ def test_cost_view_all_columns_present(logged_in_page, seeded_basic_scans):
 @allure.title("Breakdown view shows Served and Not Served sub-columns")
 @pytest.mark.testcase(
     component="overproduction_summary",
-    type="regression",
+    type="smoke, regression",
     description="Enabling breakdown view shows Served/Not Served sub-columns for each destination",
     steps=(
         "1. Log in as kitchen_sapna\n"
@@ -208,6 +209,7 @@ def test_cost_view_all_columns_present(logged_in_page, seeded_basic_scans):
     ),
     key="FQL-110",
 )
+@pytest.mark.smoke
 @pytest.mark.regression
 def test_breakdown_view_shows_served_columns(logged_in_page, seeded_basic_scans):
     """Breakdown view must reveal Served / Not Served sub-columns."""
@@ -271,7 +273,7 @@ def test_breakdown_toggle_off_removes_served_columns(logged_in_page, seeded_basi
 @allure.title("Day view toggle shows Date and Day columns")
 @pytest.mark.testcase(
     component="overproduction_summary",
-    type="regression",
+    type="smoke, regression",
     description="Enabling day view adds Date and Day columns to the table",
     steps=(
         "1. Log in as kitchen_sapna\n"
@@ -282,6 +284,7 @@ def test_breakdown_toggle_off_removes_served_columns(logged_in_page, seeded_basi
     ),
     key="FQL-112",
 )
+@pytest.mark.smoke
 @pytest.mark.regression
 def test_day_view_shows_date_and_day_columns(logged_in_page, seeded_basic_scans):
     """Day view must add Date and Day columns."""
@@ -782,7 +785,7 @@ def test_all_rows_have_non_empty_menu_item(logged_in_page, seeded_basic_scans):
 @allure.title("All rows show only the selected venue")
 @pytest.mark.testcase(
     component="overproduction_summary",
-    type="regression",
+    type="smoke, regression",
     description="After selecting a specific venue, every row's Venue column matches that venue",
     steps=(
         "1. Log in as kitchen_sapna\n"
@@ -793,6 +796,7 @@ def test_all_rows_have_non_empty_menu_item(logged_in_page, seeded_basic_scans):
     ),
     key="FQL-126",
 )
+@pytest.mark.smoke
 @pytest.mark.regression
 def test_venue_filter_shows_only_selected_venue(logged_in_page, seeded_basic_scans):
     """All rows must show the selected venue name in the Venue column."""
@@ -823,7 +827,7 @@ def test_venue_filter_shows_only_selected_venue(logged_in_page, seeded_basic_sca
 @allure.title("Default sort is alphabetical by Menu Item name")
 @pytest.mark.testcase(
     component="overproduction_summary",
-    type="regression",
+    type="smoke, regression",
     description="Without explicit sort, table rows are ordered alphabetically by Menu Item",
     steps=(
         "1. Log in as kitchen_sapna\n"
@@ -834,6 +838,7 @@ def test_venue_filter_shows_only_selected_venue(logged_in_page, seeded_basic_sca
     ),
     key="FQL-127",
 )
+@pytest.mark.smoke
 @pytest.mark.regression
 def test_default_sort_is_alphabetical_by_menu_item(logged_in_page, seeded_basic_scans):
     """Default table order must be alphabetical by Menu Item."""
@@ -857,7 +862,7 @@ def test_default_sort_is_alphabetical_by_menu_item(logged_in_page, seeded_basic_
 @allure.title("Reuse column sorts ascending on first click")
 @pytest.mark.testcase(
     component="overproduction_summary",
-    type="regression",
+    type="smoke, regression",
     description="Clicking Reuse column header once produces ascending sort",
     steps=(
         "1. Log in as kitchen_sapna\n"
@@ -868,6 +873,7 @@ def test_default_sort_is_alphabetical_by_menu_item(logged_in_page, seeded_basic_
     ),
     key="FQL-128",
 )
+@pytest.mark.smoke
 @pytest.mark.regression
 def test_reuse_sort_ascending(logged_in_page, seeded_basic_scans):
     """First click on Reuse column header must sort ascending."""
@@ -1070,7 +1076,7 @@ def test_compostable_sort_descending(logged_in_page, seeded_basic_scans):
 @allure.title("Sort order persists after changing the meal filter")
 @pytest.mark.testcase(
     component="overproduction_summary",
-    type="regression",
+    type="smoke, regression",
     description="A sort applied to Total Overproduction column persists after switching meal filter",
     steps=(
         "1. Log in as kitchen_sapna\n"
@@ -1082,6 +1088,7 @@ def test_compostable_sort_descending(logged_in_page, seeded_basic_scans):
     ),
     key="FQL-134",
 )
+@pytest.mark.smoke
 @pytest.mark.regression
 def test_sort_persists_after_filter_change(logged_in_page, seeded_basic_scans):
     """Sort order on Total Overproduction must persist after changing the meal filter."""

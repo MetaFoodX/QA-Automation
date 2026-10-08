@@ -19,11 +19,17 @@ from pathlib import Path
 from xray_common import extract_tests, load_junit_results, push_execution_results
 
 
-def build_entries():
-    """Match dashboard/tests source (via extract_tests) against reports/junit.xml,
-    returning (keyed_entries, skipped_unkeyed_names)."""
+def build_entries(junit_results=None):
+    """Match dashboard/tests source (via extract_tests) against test results,
+    returning (keyed_entries, skipped_unkeyed_names).
+
+    junit_results: optional {(classname, name): (status, message)} — pass this
+    (e.g. scripts/finalize_report.py's merged-across-attempts results) instead
+    of reading reports/junit.xml directly, which only ever reflects the last
+    of however many pytest processes a run involved."""
     entries = extract_tests()
-    junit_results = load_junit_results()
+    if junit_results is None:
+        junit_results = load_junit_results()
 
     keyed, skipped_unkeyed = [], []
     for e in entries:

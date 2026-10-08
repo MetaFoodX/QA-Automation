@@ -124,7 +124,7 @@ def test_cost_view_shows_dollar_unit(logged_in_page, seeded_basic_scans):
 @allure.title("Toggling cost view and back returns headers to (lb) unit")
 @pytest.mark.testcase(
     component="consumption_summary",
-    type="regression",
+    type="smoke, regression",
     description="Toggling cost view off returns headers to lb unit",
     steps=(
         "1. Log in as kitchen_sapna\n"
@@ -137,6 +137,7 @@ def test_cost_view_shows_dollar_unit(logged_in_page, seeded_basic_scans):
     ),
     key="FQL-21",
 )
+@pytest.mark.smoke
 @pytest.mark.regression
 def test_toggle_cost_back_to_weight(logged_in_page):
     """Toggle to cost view then back — headers must return to lb unit."""
@@ -556,7 +557,7 @@ def test_all_rows_have_non_empty_menu_item(logged_in_page, seeded_basic_scans):
 @allure.title("Venue filter shows only rows belonging to the selected venue")
 @pytest.mark.testcase(
     component="consumption_summary",
-    type="regression",
+    type="smoke, regression",
     description="Venue filter shows only rows belonging to the selected venue",
     steps=(
         "1. Log in as kitchen_sapna\n"
@@ -569,6 +570,7 @@ def test_all_rows_have_non_empty_menu_item(logged_in_page, seeded_basic_scans):
     ),
     key="FQL-33",
 )
+@pytest.mark.smoke
 @pytest.mark.regression
 def test_venue_filter_shows_only_selected_venue(logged_in_page, seeded_basic_scans):
     """When a venue is selected, every row must belong to that venue only."""
@@ -699,7 +701,7 @@ def test_breadcrumb_preserves_filters_and_day_toggle(logged_in_page, seeded_basi
 @allure.title("Clicking a menu item auto-enables day toggle showing Date and Day columns")
 @pytest.mark.testcase(
     component="consumption_summary",
-    type="regression",
+    type="smoke, regression",
     description="Clicking a menu item auto-enables day toggle (Date and Day columns appear)",
     steps=(
         "1. Log in as kitchen_sapna\n"
@@ -712,6 +714,7 @@ def test_breadcrumb_preserves_filters_and_day_toggle(logged_in_page, seeded_basi
     ),
     key="FQL-37",
 )
+@pytest.mark.smoke
 @pytest.mark.regression
 def test_clicking_menu_item_enables_day_toggle(logged_in_page, seeded_basic_scans):
     """Clicking a menu item must auto-enable day toggle — Date and Day columns appear in detail view."""
@@ -732,7 +735,7 @@ def test_clicking_menu_item_enables_day_toggle(logged_in_page, seeded_basic_scan
 @allure.title("Day toggle shows Date and Day columns")
 @pytest.mark.testcase(
     component="consumption_summary",
-    type="regression",
+    type="smoke, regression",
     description="Day toggle shows Date and Day columns",
     steps=(
         "1. Log in as kitchen_sapna\n"
@@ -745,6 +748,7 @@ def test_clicking_menu_item_enables_day_toggle(logged_in_page, seeded_basic_scan
     ),
     key="FQL-38",
 )
+@pytest.mark.smoke
 @pytest.mark.regression
 def test_day_toggle_shows_date_and_day_columns(logged_in_page, seeded_basic_scans):
     """Switching to day view must show Date and Day columns."""
@@ -875,7 +879,7 @@ def test_breadcrumb_unchanged_after_applying_filters(logged_in_page, seeded_basi
 @allure.title("Clicking a menu item adds the item name as a second breadcrumb level")
 @pytest.mark.testcase(
     component="consumption_summary",
-    type="regression",
+    type="smoke, regression",
     description="After clicking a menu item the breadcrumb shows 'Consumption Summary / <item name>'",
     steps=(
         "1. Log in as kitchen_sapna\n"
@@ -888,6 +892,7 @@ def test_breadcrumb_unchanged_after_applying_filters(logged_in_page, seeded_basi
     ),
     key="FQL-42",
 )
+@pytest.mark.smoke
 @pytest.mark.regression
 def test_breadcrumb_adds_item_name_after_drill_down(logged_in_page, seeded_basic_scans):
     _ = seeded_basic_scans
@@ -1176,7 +1181,7 @@ def test_default_sort_is_alphabetical_by_menu_item(logged_in_page, seeded_basic_
 @allure.title("Clicking Production column once sorts values low to high")
 @pytest.mark.testcase(
     component="consumption_summary",
-    type="regression",
+    type="smoke, regression",
     description="Clicking Production column header once sorts values ascending (low to high)",
     steps=(
         "1. Log in as kitchen_sapna\n"
@@ -1189,6 +1194,7 @@ def test_default_sort_is_alphabetical_by_menu_item(logged_in_page, seeded_basic_
     ),
     key="FQL-48",
 )
+@pytest.mark.smoke
 @pytest.mark.regression
 def test_production_sort_ascending(logged_in_page, seeded_basic_scans):
     """Clicking Production column once sorts values low to high."""
@@ -1454,7 +1460,7 @@ def test_days_served_sort_descending(logged_in_page, seeded_basic_scans):
 @allure.title("Active sort persists after changing the date filter")
 @pytest.mark.testcase(
     component="consumption_summary",
-    type="regression",
+    type="smoke, regression",
     description="Active sort order persists after changing a filter",
     steps=(
         "1. Log in as kitchen_sapna\n"
@@ -1468,6 +1474,7 @@ def test_days_served_sort_descending(logged_in_page, seeded_basic_scans):
     ),
     key="FQL-56",
 )
+@pytest.mark.smoke
 @pytest.mark.regression
 def test_sort_persists_after_filter_change(logged_in_page, seeded_basic_scans):
     """Active sort must persist when a filter changes — AntD re-applies sort on reloaded data."""

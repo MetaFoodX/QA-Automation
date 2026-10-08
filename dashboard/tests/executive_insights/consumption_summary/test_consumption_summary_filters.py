@@ -34,7 +34,7 @@ from dashboard.tests.executive_insights.consumption_summary._helpers import (
 @allure.title("Math invariant P = C + O holds per row with Lunch meal filter")
 @pytest.mark.testcase(
     component="consumption_summary",
-    type="regression",
+    type="smoke, regression",
     description="Production equals Consumption + Overproduction for every row when Lunch filter is applied",
     steps=(
         "1. Log in as kitchen_sapna\n"
@@ -45,6 +45,7 @@ from dashboard.tests.executive_insights.consumption_summary._helpers import (
     ),
     key="FQL-57",
 )
+@pytest.mark.smoke
 @pytest.mark.regression
 def test_meal_period_lunch_math_invariant(logged_in_page, seeded_basic_scans):
     relevant = _filter_by_service_period(_filter_for_current_view(seeded_basic_scans), LUNCH_SP_ID)
@@ -909,7 +910,7 @@ def test_category_vegetables_production_sums_match_summary(logged_in_page, seede
 @allure.title("Kitchen Waste filter shows only menu items belonging to the Kitchen Waste category")
 @pytest.mark.testcase(
     component="consumption_summary",
-    type="regression",
+    type="smoke, regression",
     description="When Kitchen Waste filter is applied, every visible item across all pages must be a Kitchen Waste item",
     steps=(
         "1. Log in as kitchen_sapna\n"
@@ -919,6 +920,7 @@ def test_category_vegetables_production_sums_match_summary(logged_in_page, seede
     ),
     key="FQL-79",
 )
+@pytest.mark.smoke
 @pytest.mark.regression
 def test_category_kitchen_waste_filter_shows_only_kitchen_waste_items(logged_in_page, seeded_basic_scans):
     # kw_items = {mi.name for mi in RESTAURANT_A.menu_items.values() if mi.category == CATEGORY_KITCHEN_WASTE}
@@ -1195,7 +1197,7 @@ def test_combined_vegetables_dinner_math_invariant(logged_in_page, seeded_basic_
 @allure.title("Switching category filter updates table without resetting meal filter")
 @pytest.mark.testcase(
     component="consumption_summary",
-    type="regression",
+    type="smoke, regression",
     description="Changing the category filter preserves the currently selected meal period filter",
     steps=(
         "1. Log in as kitchen_sapna\n"
@@ -1206,6 +1208,7 @@ def test_combined_vegetables_dinner_math_invariant(logged_in_page, seeded_basic_
     ),
     key="FQL-85",
 )
+@pytest.mark.smoke
 @pytest.mark.regression
 def test_category_change_preserves_meal_filter(logged_in_page, seeded_basic_scans):
     _ = seeded_basic_scans
@@ -1318,7 +1321,7 @@ def test_all_venues_shows_rows_from_both_venues(logged_in_page, seeded_basic_sca
 @allure.title("Math invariant P = C + O holds per row with All Venues filter")
 @pytest.mark.testcase(
     component="consumption_summary",
-    type="regression",
+    type="smoke, regression",
     description="Production equals Consumption + Overproduction for every row when All Venues is selected",
     steps=(
         "1. Log in as kitchen_sapna\n"
@@ -1328,6 +1331,7 @@ def test_all_venues_shows_rows_from_both_venues(logged_in_page, seeded_basic_sca
     ),
     key="FQL-88",
 )
+@pytest.mark.smoke
 @pytest.mark.regression
 def test_all_venues_math_invariant(logged_in_page, seeded_basic_scans):
     _ = seeded_basic_scans
@@ -1629,7 +1633,7 @@ def test_search_button_visible_in_header(logged_in_page, seeded_basic_scans):
 @allure.title("Search button toggles Menu Items select and changes icon")
 @pytest.mark.testcase(
     component="consumption_summary",
-    type="regression",
+    type="smoke, regression",
     description="Clicking the search button shows the Menu Items multi-select and switches icon to arrow; clicking again hides it",
     steps=(
         "1. Log in as kitchen_sapna\n"
@@ -1640,6 +1644,7 @@ def test_search_button_visible_in_header(logged_in_page, seeded_basic_scans):
     ),
     key="FQL-94",
 )
+@pytest.mark.smoke
 @pytest.mark.regression
 def test_search_button_toggles_menu_item_select(logged_in_page, seeded_basic_scans):
     _ = seeded_basic_scans
@@ -1677,7 +1682,7 @@ def test_search_button_toggles_menu_item_select(logged_in_page, seeded_basic_sca
 @allure.title("Selecting a single menu item filters the table to that item only")
 @pytest.mark.testcase(
     component="consumption_summary",
-    type="regression",
+    type="smoke, regression",
     description="After selecting one item in the search filter, every visible table row shows only that item",
     steps=(
         "1. Log in as kitchen_sapna\n"
@@ -1688,6 +1693,7 @@ def test_search_button_toggles_menu_item_select(logged_in_page, seeded_basic_sca
     ),
     key="FQL-95",
 )
+@pytest.mark.smoke
 @pytest.mark.regression
 def test_search_single_item_filters_table(logged_in_page, seeded_basic_scans):
     relevant = _filter_for_current_view(seeded_basic_scans)
@@ -1771,7 +1777,7 @@ def test_search_multiple_items_shows_all_selected(logged_in_page, seeded_basic_s
 @allure.title("Clearing search selection restores the full table")
 @pytest.mark.testcase(
     component="consumption_summary",
-    type="regression",
+    type="smoke, regression",
     description="After clearing the Menu Items search filter, the table returns to its unfiltered row count",
     steps=(
         "1. Log in as kitchen_sapna\n"
@@ -1783,6 +1789,7 @@ def test_search_multiple_items_shows_all_selected(logged_in_page, seeded_basic_s
     ),
     key="FQL-97",
 )
+@pytest.mark.smoke
 @pytest.mark.regression
 def test_search_clear_restores_all_rows(logged_in_page, seeded_basic_scans):
     relevant = _filter_for_current_view(seeded_basic_scans)
@@ -1908,7 +1915,7 @@ def test_export_headers_are_correct(logged_in_page, seeded_basic_scans):
 @allure.title("Exported CSV row count matches UI table row count")
 @pytest.mark.testcase(
     component="consumption_summary",
-    type="regression",
+    type="smoke, regression",
     description="Number of data rows in the downloaded CSV equals the number of rows shown in the UI",
     steps=(
         "1. Log in as kitchen_sapna\n"
@@ -1919,6 +1926,7 @@ def test_export_headers_are_correct(logged_in_page, seeded_basic_scans):
     ),
     key="FQL-100",
 )
+@pytest.mark.smoke
 @pytest.mark.regression
 def test_export_row_count_matches_ui(logged_in_page, seeded_basic_scans):
     page = Page(logged_in_page)

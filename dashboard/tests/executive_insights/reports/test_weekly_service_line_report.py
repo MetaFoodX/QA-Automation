@@ -91,7 +91,7 @@ def test_weekly_service_line_report_shows_only_start_day_and_date_fields(logged_
 @allure.title("Report Type dropdown labels it 'Weekly Service Line Report' for a Regular restaurant")
 @pytest.mark.testcase(
     component="reports",
-    type="regression",
+    type="smoke, regression",
     description="For a non-Catering restaurant (Test Kitchen), the dropdown option reads 'Weekly Service Line Report', not 'Weekly Catering Report'",
     steps=(
         "1. Navigate to Reports\n"
@@ -101,6 +101,7 @@ def test_weekly_service_line_report_shows_only_start_day_and_date_fields(logged_
     ),
     key="FQL-206",
 )
+@pytest.mark.smoke
 @pytest.mark.regression
 def test_report_type_label_for_regular_restaurant(logged_in_page):
     page = Page(logged_in_page)
@@ -117,7 +118,7 @@ def test_report_type_label_for_regular_restaurant(logged_in_page):
 @allure.title("Switching away and back to Weekly Service Line Report restores the week field")
 @pytest.mark.testcase(
     component="reports",
-    type="regression",
+    type="smoke, regression",
     description="After switching to Consumption Summary and back, the Date field is the week-select again (not date-range pickers), and Venue stays hidden",
     steps=(
         "1. Navigate to Reports, select Weekly Service Line Report\n"
@@ -128,6 +129,7 @@ def test_report_type_label_for_regular_restaurant(logged_in_page):
     ),
     key="FQL-207",
 )
+@pytest.mark.smoke
 @pytest.mark.regression
 def test_switching_away_and_back_restores_week_field(logged_in_page):
     page = Page(logged_in_page)
@@ -249,7 +251,7 @@ def test_week_options_are_contiguous(logged_in_page):
 @allure.title("Selecting a different week updates the selection")
 @pytest.mark.testcase(
     component="reports",
-    type="regression",
+    type="smoke, regression",
     description="Picking a week other than the default changes the Date field's selected value",
     steps=(
         "1. Navigate to Reports, select Weekly Service Line Report\n"
@@ -259,6 +261,7 @@ def test_week_options_are_contiguous(logged_in_page):
     ),
     key="FQL-211",
 )
+@pytest.mark.smoke
 @pytest.mark.regression
 def test_selecting_a_different_week_updates_selection(logged_in_page):
     page = Page(logged_in_page)
@@ -304,7 +307,7 @@ def restore_report_start_day(logged_in_page):
 @allure.title("Editing the Report Start Day shifts the Date field's week options accordingly")
 @pytest.mark.testcase(
     component="reports",
-    type="regression",
+    type="smoke, regression",
     description=(
         "Changing the Report Start Day (e.g. Monday to Tuesday) recomputes the Date field's week "
         "options to start on the new day and span 7 days from there, instead of the previous anchor day"
@@ -320,6 +323,7 @@ def restore_report_start_day(logged_in_page):
     ),
     key="FQL-212",
 )
+@pytest.mark.smoke
 @pytest.mark.regression
 def test_editing_report_start_day_shifts_week_options(logged_in_page, restore_report_start_day):
     original_day = restore_report_start_day
@@ -410,7 +414,7 @@ def test_download_opens_pdf_modal_directly(logged_in_page):
 @allure.title("Cancel button on the PDF generation modal closes it")
 @pytest.mark.testcase(
     component="reports",
-    type="regression",
+    type="smoke, regression",
     description=(
         "Clicking Cancel on the generation modal closes it without leaving the page in a broken state — "
         "the only way out of generation for this report type, since there is no CSV alternative"
@@ -424,6 +428,7 @@ def test_download_opens_pdf_modal_directly(logged_in_page):
     ),
     key="FQL-214",
 )
+@pytest.mark.smoke
 @pytest.mark.regression
 def test_pdf_modal_cancel_closes_modal(logged_in_page):
     page = Page(logged_in_page)
@@ -1309,7 +1314,7 @@ def test_no_overproduction_hides_ai_ranking_section(logged_in_page):
 @allure.title("No overproduction and no consumption at all means the venue's page stays empty")
 @pytest.mark.testcase(
     component="reports",
-    type="regression",
+    type="smoke, regression",
     description=(
         "When a venue has zero scans of any kind for the report week, its entire page in the PDF "
         "shows the 'no data available' fallback state, not populated charts/tables"
@@ -1326,6 +1331,7 @@ def test_no_overproduction_hides_ai_ranking_section(logged_in_page):
     ),
     key="FQL-217",
 )
+@pytest.mark.smoke
 @pytest.mark.regression
 # Broader than the zero-overproduction-only test above: this checks the whole-page fallback
 # template, not just the AI Ranking sub-section's own skip condition.
