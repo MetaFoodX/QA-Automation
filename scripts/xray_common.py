@@ -3,6 +3,7 @@ from source, reading pytest's junit.xml, and authenticating against Xray Cloud.
 """
 import ast
 import os
+import time
 import xml.etree.ElementTree as ET
 from datetime import date
 from pathlib import Path
@@ -194,10 +195,26 @@ def push_execution_results(entries, build, existing_key=None):
             }
 
         print(f"Xray: importing chunk {i}/{len(chunks)} ({len(chunk)} test result(s)) ...")
-        resp = requests.post(IMPORT_URL, headers={"Authorization": f"Bearer {token}"}, json=payload)
-        print(f"Xray: chunk {i}/{len(chunks)} import call returned HTTP {resp.status_code}")
-        print(f"Xray: chunk {i}/{len(chunks)} raw response body: {resp.text}")
-        resp.raise_for_status()
+        # A freshly-created Test Execution issue (from an earlier chunk in
+        # THIS same call) isn't immediately queryable by key on Xray Cloud's
+        # backend -- it comes back in that chunk's response instantly, but a
+        # following chunk referencing it as testExecutionKey within the next
+        # second or two can 400 with "Test Execution with key ... not found"
+        # purely from that propagation lag, not a real problem. Retrying
+        # after a short wait is enough; this never fires when existing_key
+        # was given, or once Xray's backend has caught up.
+        max_attempts = 4
+        for attempt in range(1, max_attempts + 1):
+            resp = requests.post(IMPORT_URL, headers={"Authorization": f"Bearer {token}"}, json=payload)
+            print(f"Xray: chunk {i}/{len(chunks)} import call returned HTTP {resp.status_code}")
+            print(f"Xray: chunk {i}/{len(chunks)} raw response body: {resp.text}")
+            if resp.status_code == 400 and "not found" in resp.text.lower() and attempt < max_attempts:
+                print(f"Xray: chunk {i}/{len(chunks)} hit the execution-not-yet-indexed race, "
+                      f"retrying in 5s (attempt {attempt}/{max_attempts}) ...")
+                time.sleep(5)
+                continue
+            resp.raise_for_status()
+            break
         execution = resp.json()
 
     try:
