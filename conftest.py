@@ -68,10 +68,18 @@ def pytest_runtest_makereport(item, call):
             # extract_tests() identifies the same test from source (dotted
             # module path + function name) — this is also this test's merge
             # key across multiple raw dumps, see finalize_report.py.
+            # item.location[2] carries a "[chromium]"-style parametrize
+            # suffix for any test using a fixture named page/context/browser
+            # (pytest-playwright >=0.10 injects this by fixture NAME alone,
+            # even for our own same-named fixtures in browser_fixtures.py
+            # that never touch its browser_name fixture at all) -- split on
+            # "[" is a no-op when there's no suffix, so this is safe either
+            # way; extract_tests() reads the bare function name from source
+            # via AST and never has a suffix to begin with.
             filepath = Path(item.location[0])
             _test_results.append({
                 "classname":    ".".join(filepath.with_suffix("").parts),
-                "function":     item.location[2],
+                "function":     item.location[2].split("[")[0],
                 "component":    marker.kwargs.get("component", ""),
                 "type":         marker.kwargs.get("type", ""),
                 "description":  marker.kwargs.get("description", ""),

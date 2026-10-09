@@ -7,7 +7,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     default-jre-headless \
     awscli \
     && npm install -g allure-commandline \
-    && pip install --no-cache-dir playwright \
+    && pip install --no-cache-dir playwright==1.63.0 \
     && playwright install --with-deps chromium \
     && rm -rf /var/lib/apt/lists/*
 
