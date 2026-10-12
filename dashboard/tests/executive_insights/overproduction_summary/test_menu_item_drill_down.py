@@ -45,6 +45,7 @@ def _apply_filters(page: Page, venue: str = CURRENT_VENUE_NAME, meal: str = MEAL
         "5. Assert the URL is unchanged after the click\n"
         "6. Assert Date and Day columns are now present (drill-down confirmed)"
     ),
+    key="FQL-319",
 )
 @pytest.mark.smoke
 @pytest.mark.regression
@@ -85,6 +86,7 @@ def test_row_click_drills_down_without_page_navigation(logged_in_page, seeded_ba
         "5. Read breadcrumb crumb texts\n"
         "6. Assert crumbs are exactly ['Overproduction Summary', <venue>, <item>] in that order"
     ),
+    key="FQL-320",
 )
 @pytest.mark.smoke
 @pytest.mark.regression
@@ -124,6 +126,7 @@ def test_breadcrumb_format_shows_summary_venue_item(logged_in_page, seeded_basic
         "6. Assert the table is back at summary level (no Date/Day columns)\n"
         "7. Assert the venue filter still shows the previously selected venue"
     ),
+    key="FQL-321",
 )
 @pytest.mark.smoke
 @pytest.mark.regression
@@ -165,6 +168,7 @@ def test_breadcrumb_parent_clickable_returns_with_filters_preserved(logged_in_pa
         "4. Assert the venue crumb contains no link\n"
         "5. Assert the item-name crumb contains no link"
     ),
+    key="FQL-322",
 )
 @pytest.mark.regression
 def test_breadcrumb_venue_and_item_are_not_clickable(logged_in_page, seeded_basic_scans):
@@ -199,6 +203,7 @@ def test_breadcrumb_venue_and_item_are_not_clickable(logged_in_page, seeded_basi
         "6. Click the 'Overproduction Summary' breadcrumb crumb to return\n"
         "7. Assert Date/Day columns are absent again — day-view state restored automatically"
     ),
+    key="FQL-323",
 )
 @pytest.mark.regression
 def test_returning_via_breadcrumb_restores_day_view_state(logged_in_page, seeded_basic_scans):
@@ -246,6 +251,7 @@ def test_returning_via_breadcrumb_restores_day_view_state(logged_in_page, seeded
         "4. Read all detail rows\n"
         "5. Assert at least one row is present and every row has a non-empty Date"
     ),
+    key="FQL-324",
 )
 @pytest.mark.smoke
 @pytest.mark.regression
@@ -281,6 +287,7 @@ def test_daily_breakdown_renders_per_day_rows(logged_in_page, seeded_basic_scans
         "3. Assert the 'Scan Images' column header is present\n"
         "4. Assert the first row has a visible 'View' button"
     ),
+    key="FQL-325",
 )
 @pytest.mark.smoke
 @pytest.mark.regression
@@ -315,6 +322,7 @@ def test_scan_images_column_and_view_button_present(logged_in_page, seeded_basic
         "4. Toggle day view off (combined view) while still drilled into the item\n"
         "5. Assert the 'Scan Images' column is no longer present"
     ),
+    key="FQL-326",
 )
 @pytest.mark.regression
 def test_view_button_hidden_in_combined_view(logged_in_page, seeded_basic_scans):
@@ -351,6 +359,7 @@ def test_view_button_hidden_in_combined_view(logged_in_page, seeded_basic_scans)
         "4. Click View in the first daily row\n"
         "5. Assert a scan gallery is now expanded"
     ),
+    key="FQL-327",
 )
 @pytest.mark.smoke
 @pytest.mark.regression
@@ -386,6 +395,7 @@ def test_clicking_view_expands_scan_gallery(logged_in_page, seeded_basic_scans):
         "4. Click View again on the same row\n"
         "5. Assert the gallery is no longer expanded"
     ),
+    key="FQL-328",
 )
 @pytest.mark.smoke
 @pytest.mark.regression
@@ -423,6 +433,7 @@ def test_clicking_view_again_collapses_scan_gallery(logged_in_page, seeded_basic
         "4. Click View on row 1\n"
         "5. Assert exactly one gallery is mounted (row 0's collapsed automatically)"
     ),
+    key="FQL-329",
 )
 @pytest.mark.regression
 def test_expanding_new_row_collapses_previous_gallery(logged_in_page, seeded_basic_scans):
@@ -464,6 +475,7 @@ def test_expanding_new_row_collapses_previous_gallery(logged_in_page, seeded_bas
         "4. Assert no Service/Leftover toggle is present\n"
         "5. Assert the static title reads 'Scan For Leftover'"
     ),
+    key="FQL-330",
 )
 @pytest.mark.smoke
 @pytest.mark.regression
@@ -499,6 +511,7 @@ def test_scan_gallery_shows_leftover_only_no_toggle(logged_in_page, seeded_basic
         "4. Read every scan card's name/weight/time\n"
         "5. Assert none are empty"
     ),
+    key="FQL-331",
 )
 @pytest.mark.regression
 def test_scan_card_shows_weight_time_and_name(logged_in_page, seeded_basic_scans):
@@ -551,6 +564,7 @@ def test_scan_card_shows_weight_time_and_name(logged_in_page, seeded_basic_scans
         "4. Visually compare the wrap layout against the Scan Log page's gallery\n"
         "5. Confirm they match"
     ),
+    key="FQL-332",
 )
 @pytest.mark.skip(
     reason="Visual layout check (thumbnail wrap arrangement) — not meaningfully assertable via DOM/CSS "
@@ -574,6 +588,7 @@ def test_scan_gallery_layout_matches_scan_log():
         "3. Click View to expand the gallery\n"
         "4. Scroll the page and visually confirm the gallery scrolls with it, with no separate inner scrollbar"
     ),
+    key="FQL-333",
 )
 @pytest.mark.skip(
     reason="Visual/manual check — a computed-style (overflow) assertion would be too brittle to catch the "
@@ -602,6 +617,7 @@ def test_scan_gallery_has_no_independent_scroll():
         "4. Click the first scan card's image\n"
         "5. Assert the enlarged preview modal is now open"
     ),
+    key="FQL-334",
 )
 @pytest.mark.smoke
 @pytest.mark.regression
@@ -639,6 +655,7 @@ def test_clicking_scan_image_opens_preview(logged_in_page, seeded_basic_scans):
         "3. Open the first scan's preview\n"
         "4. Assert every expected field label is present"
     ),
+    key="FQL-335",
 )
 @pytest.mark.regression
 def test_preview_shows_all_detail_fields(logged_in_page, seeded_basic_scans):
@@ -682,6 +699,7 @@ def test_preview_shows_all_detail_fields(logged_in_page, seeded_basic_scans):
         "4. Click Next — assert the Menu Item Weight value changed and Prev is now visible\n"
         "5. Click Prev — assert the Menu Item Weight value returns to the original"
     ),
+    key="FQL-336",
 )
 @pytest.mark.smoke
 @pytest.mark.regression
@@ -734,6 +752,7 @@ def test_preview_prev_next_navigation_cycles_scans(logged_in_page, seeded_basic_
         "4. Close the preview\n"
         "5. Assert the preview is closed and the gallery is still expanded"
     ),
+    key="FQL-337",
 )
 @pytest.mark.regression
 def test_closing_preview_preserves_drill_down_state(logged_in_page, seeded_basic_scans):
@@ -772,6 +791,7 @@ def test_closing_preview_preserves_drill_down_state(logged_in_page, seeded_basic
         "3. Click the menu item name text under the first scan card\n"
         "4. Assert no preview opened, the gallery is still expanded, and the URL is unchanged"
     ),
+    key="FQL-338",
 )
 @pytest.mark.regression
 def test_clicking_scan_card_name_does_nothing(logged_in_page, seeded_basic_scans):
