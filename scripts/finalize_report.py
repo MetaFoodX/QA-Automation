@@ -121,6 +121,15 @@ def push_to_xray(merged: dict, build: str):
         try:
             execution = push_execution_results(keyed, build)
             print(f"Xray: reported {len(keyed)} result(s) -> {execution['key']}")
+            # Only here, after push_execution_results has returned (every
+            # chunk sent and verified, including any race-condition retries)
+            # -- never from inside that function's per-chunk loop, and never
+            # from the except branch below, so a partial/failed push never
+            # posts a "results uploaded" message.
+            # Counts cover the FULL run (merged, every test), not just the
+            # keyed subset actually reported to Xray -- the Slack message is
+            # about the whole regression run, not just its Xray-visible slice.
+            notify_slack_of_run(execution["key"], _count_statuses(merged))
         except Exception as exc:
             import traceback
             print(f"Xray: reporting failed, non-fatal ({exc})")
@@ -128,6 +137,54 @@ def push_to_xray(merged: dict, build: str):
     if skipped:
         print(f"Xray: {len(skipped)} test(s) ran without a key, skipped reporting — "
               f"run scripts/xray_onboard.py to onboard them: {', '.join(skipped)}")
+
+
+def _count_statuses(merged: dict) -> dict:
+    counts = {"passed": 0, "failed": 0, "skipped": 0}
+    for e in merged.values():
+        status = e["status"]
+        if status == "PASSED":
+            counts["passed"] += 1
+        elif status == "SKIPPED":
+            counts["skipped"] += 1
+        else:
+            # FAILED/ERROR/anything else -- lumped as "failed" for this
+            # summary line, same as pytest's own short summary does.
+            counts["failed"] += 1
+    return counts
+
+
+def notify_slack_of_run(execution_key: str, counts: dict):
+    """Posts only for real Jenkins runs -- DEPLOYED_BRANCH/DEPLOYED_COMMIT are
+    only ever set by run_qa.sh (sourced from the Jenkinsfile), never for a
+    local/ad hoc run, so their absence is exactly the "only Jenkins" gate."""
+    import os
+    branch = os.environ.get("DEPLOYED_BRANCH")
+    commit = os.environ.get("DEPLOYED_COMMIT")
+    if not branch or branch == "unknown" or not commit or commit == "unknown":
+        print("Slack: no DEPLOYED_BRANCH/DEPLOYED_COMMIT (not a Jenkins run) — skipping notification.")
+        return
+
+    webhook_url = os.environ.get("SLACK_WEBHOOK_URL")
+    if not webhook_url:
+        print("Slack: SLACK_WEBHOOK_URL not set — skipping notification.")
+        return
+
+    text = (
+        "Hello everyone, sharing the results from the latest QA regression run.\n"
+        f"{execution_key}\n\n"
+        f"Results: {counts['passed']} passed, {counts['failed']} failed, {counts['skipped']} skipped\n\n"
+        "Current branch status on staging for which regression was run :\n"
+        f"Branch: {branch}\n"
+        f"Commit: {commit}"
+    )
+    try:
+        import requests
+        resp = requests.post(webhook_url, json={"text": text})
+        resp.raise_for_status()
+        print("Slack: notification posted.")
+    except Exception as exc:
+        print(f"Slack: notification failed, non-fatal ({exc})")
 
 
 def build_report_for_label(label: str | None):
