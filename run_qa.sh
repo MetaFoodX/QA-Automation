@@ -24,7 +24,21 @@ echo "==> Pulling latest image"
 docker pull $ECR_URI:latest
 
 echo "==> Fetching secrets"
+# ===== TEMP DEBUG BLOCK — remove once slack-webhook-url mystery is solved =====
+echo "DEBUG: whoami on this box for AWS purposes:"
+aws sts get-caller-identity --region $AWS_REGION || echo "DEBUG: get-caller-identity FAILED (exit $?)"
+echo "DEBUG: SECRET_ID=$SECRET_ID  AWS_REGION=$AWS_REGION"
+echo "DEBUG: secret ARN/name as AWS resolves it:"
+aws secretsmanager describe-secret --region $AWS_REGION --secret-id "$SECRET_ID" --query '{ARN:ARN,Name:Name,LastChangedDate:LastChangedDate}' --output json || echo "DEBUG: describe-secret FAILED (exit $?)"
+# ===== end whoami/describe part =====
 SECRET=$(aws secretsmanager get-secret-value --region $AWS_REGION --secret-id $SECRET_ID --query SecretString --output text)
+GET_SECRET_EXIT=$?
+echo "DEBUG: get-secret-value exit code: $GET_SECRET_EXIT"
+echo "DEBUG: fetched SECRET length (chars): ${#SECRET}"
+echo "DEBUG: is SECRET valid JSON? $(echo "$SECRET" | jq empty 2>&1 && echo YES || echo NO)"
+echo "DEBUG: top-level keys in fetched secret: $(echo "$SECRET" | jq -r 'keys | join(", ")' 2>&1)"
+echo "DEBUG: does fetched secret have 'slack-webhook-url' key? $(echo "$SECRET" | jq 'has("slack-webhook-url")' 2>&1)"
+# ===== end TEMP DEBUG BLOCK =====
 COGNITO_CLIENT_ID=$(echo "$SECRET" | jq -r '.["cognito-client-id"]')
 API_USERNAME=$(echo "$SECRET"      | jq -r '.["api-username"]')
 API_PASSWORD=$(echo "$SECRET"      | jq -r '.["api-password"]')
@@ -32,6 +46,8 @@ UI_EMAIL=$(echo "$SECRET"          | jq -r '.["ui-email"]')
 UI_PASSWORD=$(echo "$SECRET"       | jq -r '.["ui-password"]')
 XRAY_CLIENT_ID=$(echo "$SECRET"     | jq -r '.["xray-client-id"] // ""')
 XRAY_CLIENT_SECRET=$(echo "$SECRET" | jq -r '.["xray-client-secret"] // ""')
+SLACK_WEBHOOK_URL=$(echo "$SECRET"  | jq -r '.["slack-webhook-url"] // ""')
+echo "DEBUG: SLACK_WEBHOOK_URL extracted length (chars): ${#SLACK_WEBHOOK_URL}"
 
 echo "==> Running tests (suite: $TEST_SUITE, env: $ENV)"
 WORKDIR="/tmp/qa-run-$BUILD_NUMBER"
@@ -53,6 +69,7 @@ CID=$(docker create \
     -e DEPLOYED_COMMIT="$DEPLOYED_COMMIT" \
     -e XRAY_CLIENT_ID="$XRAY_CLIENT_ID" \
     -e XRAY_CLIENT_SECRET="$XRAY_CLIENT_SECRET" \
+    -e SLACK_WEBHOOK_URL="$SLACK_WEBHOOK_URL" \
     -e BUILD_NUMBER="$BUILD_NUMBER" \
     $ECR_URI:latest \
     bash scripts/run_suite.sh "$ENV" "$BASE_URL" "$TEST_SUITE")
